@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class QAction;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -14,11 +15,11 @@ public:
     ~MainWindow();
 
 private:
-    QAction *newArtAct;
-    QAction *openArtAct;
-    QAction *closeArtAct;
-    QAction *saveArtAct;
-    QAction *saveAsArtAct;
+    QAction *newPostAct;
+    QAction *openPostAct;
+    QAction *closePostAct;
+    QAction *savePostAct;
+    QAction *saveAsPostAct;
     QAction *exitAct;
 
     QAction *undoAct;
@@ -27,10 +28,17 @@ private:
     QAction *copyAct;
     QAction *pasteAct;
 
+    QAction *helpAct;
     QAction *aboutAct;
+
+    QAction *publishAct;
+
+    QLabel *msgLabel;
 
     void createActions();
     void createMenus();
+    void createToolBars();
+    void createStatusBar();
 };
 
 #endif // MAINWINDOW_H

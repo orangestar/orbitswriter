@@ -1,5 +1,8 @@
 #include <QAction>
 #include <QMenuBar>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QLabel>
 
 #include "mainwindow.h"
 
@@ -8,6 +11,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     createActions();
     createMenus();
+    createToolBars();
+    createStatusBar();
+
+    this->setWindowIcon(QIcon(":/img/orbitswriter"));
 }
 
 MainWindow::~MainWindow()
@@ -17,29 +24,59 @@ MainWindow::~MainWindow()
 
 void MainWindow::createActions()
 {
-    newArtAct = new QAction(tr("&New"), this);
+    newPostAct = new QAction(QIcon(":/img/new_16"), tr("&New"), this);
+    newPostAct->setShortcut(QKeySequence::New);
+    newPostAct->setStatusTip(tr("Create a new post."));
 
-    openArtAct = new QAction(tr("&Open..."), this);
+    openPostAct = new QAction(QIcon(":/img/open_16"), tr("&Open..."), this);
+    openPostAct->setShortcut(QKeySequence::Open);
+    openPostAct->setStatusTip(tr("Open a post."));
 
-    closeArtAct = new QAction(tr("Close"), this);
+    closePostAct = new QAction(QIcon(":/img/close_16"), tr("Close"), this);
+    closePostAct->setShortcut(QKeySequence::Close);
+    closePostAct->setStatusTip(tr("Close the post."));
 
-    saveArtAct = new QAction(tr("Save"), this);
+    savePostAct = new QAction(QIcon(":/img/save_16"), tr("Save"), this);
+    savePostAct->setShortcut(QKeySequence::Save);
+    savePostAct->setStatusTip(tr("Save the post."));
 
-    saveAsArtAct = new QAction(tr("Save As"), this);
+    saveAsPostAct = new QAction(QIcon(":/img/save_as_16"), tr("Save As"), this);
+    saveAsPostAct->setShortcut(QKeySequence::SaveAs);
+    saveAsPostAct->setStatusTip(tr("Save the post as another one."));
 
-    exitAct = new QAction(tr("E&xit..."), this);
+    exitAct = new QAction(QIcon(":/img/exit_16"), tr("E&xit..."), this);
+    exitAct->setShortcut(tr("Ctrl+Q"));
+    exitAct->setStatusTip(tr("Exit OrbitsWriter."));
 
-    undoAct = new QAction(tr("Undo"), this);
+    undoAct = new QAction(QIcon(":/img/undo_16"), tr("Undo"), this);
+    undoAct->setShortcut(QKeySequence::Undo);
+    undoAct->setStatusTip(tr("Undo."));
 
-    redoAct = new QAction(tr("Redo"), this);
+    redoAct = new QAction(QIcon(":/img/redo_16"), tr("Redo"), this);
+    redoAct->setShortcut(QKeySequence::Redo);
+    redoAct->setStatusTip(tr("Redo."));
 
-    cutAct = new QAction(tr("Cut"), this);
+    cutAct = new QAction(QIcon(":/img/cut_16"), tr("Cut"), this);
+    cutAct->setShortcut(QKeySequence::Cut);
+    cutAct->setStatusTip(tr("Cut."));
 
-    copyAct = new QAction(tr("Copy"), this);
+    copyAct = new QAction(QIcon(":/img/copy_16"), tr("Copy"), this);
+    copyAct->setShortcut(QKeySequence::Copy);
+    copyAct->setStatusTip(tr("Copy."));
 
-    pasteAct = new QAction(tr("Paste"), this);
+    pasteAct = new QAction(QIcon(":/img/paste_16"), tr("Paste"), this);
+    pasteAct->setShortcut(QKeySequence::Paste);
+    pasteAct->setStatusTip(tr("Paste."));
 
-    aboutAct = new QAction(tr("About"), this);
+    helpAct = new QAction(QIcon(":/img/help_16"), tr("Help"), this);
+    helpAct->setShortcut(QKeySequence::HelpContents);
+    helpAct->setStatusTip(tr("Open help contents."));
+
+    aboutAct = new QAction(QIcon(":/img/about_16"), tr("About"), this);
+    aboutAct->setStatusTip(tr("About OrbitsWriter."));
+
+    publishAct = new QAction(QIcon(":/img/publish_32"), tr("Publish"), this);
+    publishAct->setStatusTip(tr("Publish the post."));
 }
 
 void MainWindow::createMenus()
@@ -47,12 +84,12 @@ void MainWindow::createMenus()
     QMenuBar *bar = this->menuBar();
 
     QMenu *fileMenu = new QMenu(tr("File"), bar);
-    fileMenu->addAction(newArtAct);
-    fileMenu->addAction(openArtAct);
-    fileMenu->addAction(closeArtAct);
+    fileMenu->addAction(newPostAct);
+    fileMenu->addAction(openPostAct);
+    fileMenu->addAction(closePostAct);
     fileMenu->addSeparator();
-    fileMenu->addAction(saveArtAct);
-    fileMenu->addAction(saveAsArtAct);
+    fileMenu->addAction(savePostAct);
+    fileMenu->addAction(saveAsPostAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
     bar->addMenu(fileMenu);
@@ -67,6 +104,24 @@ void MainWindow::createMenus()
     bar->addMenu(editMenu);
 
     QMenu *helpMenu = new QMenu(tr("Help"), bar);
+    helpMenu->addAction(helpAct);
     helpMenu->addAction(aboutAct);
     bar->addMenu(helpMenu);
+}
+
+void MainWindow::createToolBars()
+{
+    QToolBar *bar = new QToolBar(this);
+    bar->addAction(publishAct);
+
+    this->addToolBar(bar);
+}
+
+void MainWindow::createStatusBar()
+{
+    QStatusBar *bar = this->statusBar();
+
+    msgLabel = new QLabel(bar);
+    msgLabel->setMinimumSize(msgLabel->sizeHint());
+    bar->addWidget(msgLabel);
 }
