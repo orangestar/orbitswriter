@@ -5,6 +5,7 @@
 
 class QAction;
 class QLabel;
+class QTextEdit;
 
 class MainWindow : public QMainWindow
 {
@@ -34,6 +35,8 @@ private:
     QAction *publishAct;
 
     QLabel *msgLabel;
+
+    QTextEdit *docArea;
 
     void createActions();
     void createMenus();

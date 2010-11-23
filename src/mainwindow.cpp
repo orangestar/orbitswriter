@@ -2,6 +2,7 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
+#include <QTextEdit>
 #include <QLabel>
 
 #include "mainwindow.h"
@@ -13,8 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus();
     createToolBars();
     createStatusBar();
+    docArea = new QTextEdit(this);
 
     this->setWindowIcon(QIcon(":/img/orbitswriter"));
+    this->setCentralWidget(docArea);
 }
 
 MainWindow::~MainWindow()
@@ -111,10 +114,14 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    QToolBar *bar = new QToolBar(this);
-    bar->addAction(publishAct);
+    QToolBar *appBar = new QToolBar(this);
+    appBar->addAction(publishAct);
 
-    this->addToolBar(bar);
+    QToolBar *editBar = new QToolBar(this);
+
+    addToolBar(appBar);
+    addToolBarBreak();
+    addToolBar(editBar);
 }
 
 void MainWindow::createStatusBar()
