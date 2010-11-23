@@ -1,19 +1,31 @@
 <RCC>
     <qresource prefix="/img">
-        <file alias="close_16">images/close.png</file>
-        <file alias="copy_16">images/copy.png</file>
-        <file alias="cut_16">images/cut.png</file>
-        <file alias="exit_16">images/exit.png</file>
-        <file alias="help_16">images/help.png</file>
-        <file alias="new_16">images/new.png</file>
-        <file alias="open_16">images/open.png</file>
-        <file alias="paste_16">images/paste.png</file>
-        <file alias="redo_16">images/redo.png</file>
-        <file alias="save_16">images/save.png</file>
-        <file alias="save_as_16">images/save_as.png</file>
-        <file alias="undo_16">images/undo.png</file>
-        <file alias="about_16">images/about.png</file>
-        <file alias="publish_32">images/publish.png</file>
+        <file alias="about">images/about.png</file>
+        <file alias="bold">images/bold.png</file>
+        <file alias="copy">images/copy.png</file>
+        <file alias="cut">images/cut.png</file>
+        <file alias="exit">images/exit.png</file>
+        <file alias="help">images/help.png</file>
+        <file alias="italic">images/italic.png</file>
+        <file alias="open">images/open.png</file>
         <file alias="orbitswriter">images/orbitswriter.png</file>
+        <file alias="paste">images/paste.png</file>
+        <file alias="publish">images/publish.png</file>
+        <file alias="redo">images/redo.png</file>
+        <file alias="save">images/save.png</file>
+        <file alias="save_as">images/save_as.png</file>
+        <file alias="underline">images/underline.png</file>
+        <file alias="undo">images/undo.png</file>
+        <file alias="doc_close">images/doc_close.png</file>
+        <file alias="doc_new">images/doc_new.png</file>
+        <file alias="strike">images/strike.png</file>
+        <file alias="font">images/font.png</file>
+        <file alias="ol">images/ol.png</file>
+        <file alias="ul">images/ul.png</file>
+        <file alias="table">images/table.png</file>
+        <file alias="justify_center">images/justify_center.png</file>
+        <file alias="justify_fill">images/justify_fill.png</file>
+        <file alias="justify_left">images/justify_left.png</file>
+        <file alias="justify_right">images/justify_right.png</file>
     </qresource>
 </RCC>
