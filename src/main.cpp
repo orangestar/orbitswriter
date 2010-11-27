@@ -3,9 +3,13 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
+    app.setOrganizationName("Galaxy");
+    app.setApplicationName("OrbitsWriter");
+    app.setApplicationVersion("0.0.1");
+
     MainWindow w;
     w.showMaximized();
 
-    return a.exec();
+    return app.exec();
 }

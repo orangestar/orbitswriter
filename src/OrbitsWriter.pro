@@ -12,10 +12,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    editorstack.cpp
+    visualeditor.cpp
 
 HEADERS  += mainwindow.h \
-    editorstack.h
+    visualeditor.h
 
 RESOURCES += \
     ../res/orbitswriter.qrc

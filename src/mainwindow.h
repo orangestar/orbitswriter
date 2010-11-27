@@ -4,8 +4,9 @@
 #include <QMainWindow>
 
 class QAction;
-class QLabel;
-class EditorStack;
+class QTabWidget;
+class VisualEditor;
+class QTextEdit;
 
 class MainWindow : public QMainWindow
 {
@@ -15,9 +16,12 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+private slots:
+    void docChanged();
+
 private:
     /*
-     * file
+     * file actions
      */
     QAction *newPostAct;
     QAction *openPostAct;
@@ -27,7 +31,7 @@ private:
     QAction *exitAct;
 
     /*
-     * edit
+     * edit actions
      */
     QAction *undoAct;
     QAction *redoAct;
@@ -36,18 +40,13 @@ private:
     QAction *pasteAct;
 
     /*
-     * help
+     * help actions
      */
     QAction *helpAct;
     QAction *aboutAct;
 
     /*
-     * tool bar
-     */
-    QAction *publishAct;
-
-    /*
-     * format
+     * format actions
      */
     QAction *textBoldAct;
     QAction *textItalicAct;
@@ -62,14 +61,21 @@ private:
     QAction *justifyLeftAct;
     QAction *justifyRightAct;
 
-    QLabel *msgLabel;
+    /*
+     * web actions
+     */
+    QAction *publishAct;
 
-    EditorStack *editor;
+    QTabWidget *editorStack;
+    VisualEditor *visualEditor;
+    QTextEdit *previewEditor;
+    QTextEdit *sourceEditor;
 
     void createActions();
     void createMenus();
     void createToolBars();
     void createStatusBar();
+    void createEditors();
 };
 
 #endif // MAINWINDOW_H

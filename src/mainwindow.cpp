@@ -4,21 +4,25 @@
 #include <QStatusBar>
 #include <QToolButton>
 #include <QLabel>
+#include <QTabWidget>
+#include <QTextEdit>
 
 #include "mainwindow.h"
-#include "editorstack.h"
+#include "visualeditor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    createEditors();
     createActions();
     createMenus();
     createToolBars();
     createStatusBar();
-    editor = new EditorStack(this);
 
-    this->setWindowIcon(QIcon(":/img/orbitswriter"));
-    this->setCentralWidget(editor);
+    setCentralWidget(editorStack);
+    setWindowTitle(tr("OrbitsWriter [*]"));
+    setWindowIcon(QIcon(":/img/orbitswriter"));
+    setUnifiedTitleAndToolBarOnMac(true);
 }
 
 MainWindow::~MainWindow()
@@ -55,18 +59,38 @@ void MainWindow::createActions()
     undoAct = new QAction(QIcon(":/img/undo"), tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
     undoAct->setStatusTip(tr("Undo."));
+    undoAct->setEnabled(false);
+    connect(visualEditor, SIGNAL(undoAvailable(bool)),
+            undoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(undoAvailable(bool)),
+            undoAct, SLOT(setEnabled(bool)));
 
     redoAct = new QAction(QIcon(":/img/redo"), tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo."));
+    redoAct->setEnabled(false);
+    connect(visualEditor, SIGNAL(redoAvailable(bool)),
+            redoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(redoAvailable(bool)),
+            redoAct, SLOT(setEnabled(bool)));
 
     cutAct = new QAction(QIcon(":/img/cut"), tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut."));
+    cutAct->setEnabled(false);
+    connect(visualEditor, SIGNAL(copyAvailable(bool)),
+            cutAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)),
+            cutAct, SLOT(setEnabled(bool)));
 
     copyAct = new QAction(QIcon(":/img/copy"), tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy."));
+    copyAct->setEnabled(false);
+    connect(visualEditor, SIGNAL(copyAvailable(bool)),
+            copyAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)),
+            copyAct, SLOT(setEnabled(bool)));
 
     pasteAct = new QAction(QIcon(":/img/paste"), tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
@@ -100,8 +124,8 @@ void MainWindow::createActions()
     olAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
     olAct->setStatusTip(tr("Add ordered list."));
 
-    ulAct = new QAction(QIcon(":/img/ul"), tr("Unordered list"), this);
-    ulAct->setStatusTip(tr("Add unordered list."));
+    ulAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
+    ulAct->setStatusTip(tr("Add bullet list."));
 
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
@@ -143,6 +167,8 @@ void MainWindow::createMenus()
     editMenu->addAction(pasteAct);
     bar->addMenu(editMenu);
 
+    bar->addSeparator();
+
     QMenu *helpMenu = new QMenu(tr("Help"), bar);
     helpMenu->addAction(helpAct);
     helpMenu->addAction(aboutAct);
@@ -151,43 +177,65 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    QToolBar *bar = new QToolBar(this);
-    bar->addAction(publishAct);
-    bar->addSeparator();
-    QMenu *editList = new QMenu(bar);
+    QToolBar *webToolBar = addToolBar(tr("Web Tool Bar"));
+    webToolBar->addAction(publishAct);
+
+    QToolBar *editToolBar = addToolBar(tr("Edit Tool Bar"));
+    QToolButton *editButton = new QToolButton(editToolBar);
+    QMenu *editList = new QMenu(editButton);
     editList->addAction(cutAct);
     editList->addAction(copyAct);
     editList->addAction(pasteAct);
-    QToolButton *editButton = new QToolButton(bar);
     editButton->setPopupMode(QToolButton::InstantPopup);
     editButton->setIcon(cutAct->icon());
     editButton->setMenu(editList);
-    bar->addWidget(editButton);
-    bar->addSeparator();
-    bar->addAction(textBoldAct);
-    bar->addAction(textItalicAct);
-    bar->addAction(textUnderlineAct);
-    bar->addAction(textStrikeoutAct);
-    bar->addAction(textFontAct);
-    bar->addSeparator();
-    bar->addAction(olAct);
-    bar->addAction(ulAct);
-    bar->addAction(tableAct);
-    bar->addSeparator();
-    bar->addAction(justifyCenterAct);
-    bar->addAction(justifyFillAct);
-    bar->addAction(justifyLeftAct);
-    bar->addAction(justifyRightAct);
+    editToolBar->addWidget(editButton);
 
-    addToolBar(bar);
+    QToolBar *textToolBar = addToolBar(tr("Text Tool Bar"));
+    textToolBar->addAction(textBoldAct);
+    textToolBar->addAction(textItalicAct);
+    textToolBar->addAction(textUnderlineAct);
+    textToolBar->addAction(textStrikeoutAct);
+    textToolBar->addAction(textFontAct);
+    textToolBar->addSeparator();
+    textToolBar->addAction(olAct);
+    textToolBar->addAction(ulAct);
+    textToolBar->addAction(tableAct);
+    textToolBar->addSeparator();
+    textToolBar->addAction(justifyCenterAct);
+    textToolBar->addAction(justifyFillAct);
+    textToolBar->addAction(justifyLeftAct);
+    textToolBar->addAction(justifyRightAct);
 }
 
 void MainWindow::createStatusBar()
 {
     QStatusBar *bar = this->statusBar();
+    bar->showMessage(tr("Ready."));
+}
 
-    msgLabel = new QLabel(bar);
-    msgLabel->setText(tr("Welcome to OrbitsWriter."));
-    msgLabel->setMinimumSize(msgLabel->sizeHint());
-    bar->addWidget(msgLabel);
+void MainWindow::createEditors()
+{
+    editorStack = new QTabWidget(this);
+    visualEditor = new VisualEditor(editorStack);
+    editorStack->addTab(visualEditor, tr("Visual"));
+    connect(visualEditor->document(), SIGNAL(contentsChanged()),
+            this, SLOT(docChanged()));
+
+    previewEditor = new QTextEdit(editorStack);
+    editorStack->addTab(previewEditor, tr("Preview"));
+
+    sourceEditor = new QTextEdit(editorStack);
+    editorStack->addTab(sourceEditor, tr("Source"));
+    connect(sourceEditor->document(), SIGNAL(contentsChanged()),
+            this, SLOT(docChanged()));
+
+    editorStack->setTabPosition(QTabWidget::South);
+}
+
+void MainWindow::docChanged()
+{
+    bool modified = visualEditor->document()->isModified()
+            || sourceEditor->document()->isModified();
+    setWindowModified(modified);
 }
