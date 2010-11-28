@@ -6,13 +6,20 @@
 #include <QLabel>
 #include <QTabWidget>
 #include <QTextEdit>
+#include <QMessageBox>
+#include <QSignalMapper>
 
 #include "mainwindow.h"
 #include "visualeditor.h"
+#include "pluginmanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      pluginManager(PluginManager::instance()),
+      textFormatMapper(new QSignalMapper(this))
 {
+    pluginManager->loadPlugins();
+
     createEditors();
     createActions();
     createMenus();
@@ -96,6 +103,11 @@ void MainWindow::createActions()
     pasteAct->setShortcut(QKeySequence::Paste);
     pasteAct->setStatusTip(tr("Paste."));
 
+    pluginAct = new QAction(QIcon(":/img/plugin"), tr("Plugins..."), this);
+    pluginAct->setStatusTip(tr("Manage plugins."));
+    connect(pluginAct, SIGNAL(triggered()),
+            this, SLOT(showPluginDialog()));
+
     helpAct = new QAction(QIcon(":/img/help"), tr("Help"), this);
     helpAct->setShortcut(QKeySequence::HelpContents);
     helpAct->setStatusTip(tr("Open help contents."));
@@ -108,6 +120,9 @@ void MainWindow::createActions()
 
     textBoldAct = new QAction(QIcon(":/img/bold"), tr("Bold"), this);
     textBoldAct->setStatusTip(tr("Set text bold."));
+    textFormatMapper->setMapping(textBoldAct, QString("Bold"));
+    connect(textBoldAct, SIGNAL(triggered()),
+            textFormatMapper, SLOT(map()));
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setStatusTip(tr("Set text italic."));
@@ -141,13 +156,16 @@ void MainWindow::createActions()
 
     justifyRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
     justifyRightAct->setStatusTip(tr("Justify Right."));
+
+    connect(textFormatMapper, SIGNAL(mapped(QString)),
+            visualEditor, SLOT(setTextFormat(QString)));
 }
 
 void MainWindow::createMenus()
 {
     QMenuBar *bar = this->menuBar();
 
-    QMenu *fileMenu = new QMenu(tr("File"), bar);
+    QMenu *fileMenu = new QMenu(tr("&File"), bar);
     fileMenu->addAction(newPostAct);
     fileMenu->addAction(openPostAct);
     fileMenu->addAction(closePostAct);
@@ -158,7 +176,7 @@ void MainWindow::createMenus()
     fileMenu->addAction(exitAct);
     bar->addMenu(fileMenu);
 
-    QMenu *editMenu = new QMenu(tr("Edit"), bar);
+    QMenu *editMenu = new QMenu(tr("&Edit"), bar);
     editMenu->addAction(undoAct);
     editMenu->addAction(redoAct);
     editMenu->addSeparator();
@@ -166,6 +184,10 @@ void MainWindow::createMenus()
     editMenu->addAction(copyAct);
     editMenu->addAction(pasteAct);
     bar->addMenu(editMenu);
+
+    QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
+    toolMenu->addAction(pluginAct);
+    bar->addMenu(toolMenu);
 
     bar->addSeparator();
 
@@ -238,4 +260,10 @@ void MainWindow::docChanged()
     bool modified = visualEditor->document()->isModified()
             || sourceEditor->document()->isModified();
     setWindowModified(modified);
+}
+
+void MainWindow::showPluginDialog()
+{
+    QMessageBox::information(this, tr("Plugins"),
+                             tr("plugins list"));
 }

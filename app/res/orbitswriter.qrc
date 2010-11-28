@@ -27,5 +27,6 @@
         <file alias="justify_fill">images/justify_fill.png</file>
         <file alias="justify_left">images/justify_left.png</file>
         <file alias="justify_right">images/justify_right.png</file>
+        <file alias="plugin">images/plugin.png</file>
     </qresource>
 </RCC>
