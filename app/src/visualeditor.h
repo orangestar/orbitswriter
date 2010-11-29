@@ -21,6 +21,8 @@
 
 #include <QTextEdit>
 
+class QAction;
+
 /*!
    \class VisualEditor
    \brief The visual editor.
@@ -37,10 +39,14 @@ public:
 signals:
 
 public slots:
-    void setTextFormat(const QString &format);
+    void setTextFormat(QObject* a);
 
 private:
     void applyFormat(const QTextCharFormat &format);
+    void textBold(QAction *action);
+    void textItalic(QAction *action);
+    void textUnderline(QAction *action);
+    void textStrike(QAction *action);
 };
 
 #endif // VISUALEDITOR_H

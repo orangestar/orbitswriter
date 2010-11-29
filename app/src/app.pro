@@ -17,9 +17,10 @@ SOURCES     += main.cpp\
 
 HEADERS     += mainwindow.h \
                visualeditor.h \
-               plugins\textformatinterface.h \
+               plugins/textformatinterface.h \
     pluginmanager.h \
-    plugins/plugin.h
+    plugins/plugin.h \
+    common.h
 
 RESOURCES   += ../res/orbitswriter.qrc
 

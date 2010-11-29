@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QSignalMapper>
 
+#include "common.h"
 #include "mainwindow.h"
 #include "visualeditor.h"
 #include "pluginmanager.h"
@@ -67,37 +68,29 @@ void MainWindow::createActions()
     undoAct->setShortcut(QKeySequence::Undo);
     undoAct->setStatusTip(tr("Undo."));
     undoAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(undoAvailable(bool)),
-            undoAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(undoAvailable(bool)),
-            undoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
 
     redoAct = new QAction(QIcon(":/img/redo"), tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo."));
     redoAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(redoAvailable(bool)),
-            redoAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(redoAvailable(bool)),
-            redoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
 
     cutAct = new QAction(QIcon(":/img/cut"), tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut."));
     cutAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(copyAvailable(bool)),
-            cutAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(copyAvailable(bool)),
-            cutAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
 
     copyAct = new QAction(QIcon(":/img/copy"), tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy."));
     copyAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(copyAvailable(bool)),
-            copyAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(copyAvailable(bool)),
-            copyAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
 
     pasteAct = new QAction(QIcon(":/img/paste"), tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
@@ -105,8 +98,7 @@ void MainWindow::createActions()
 
     pluginAct = new QAction(QIcon(":/img/plugin"), tr("Plugins..."), this);
     pluginAct->setStatusTip(tr("Manage plugins."));
-    connect(pluginAct, SIGNAL(triggered()),
-            this, SLOT(showPluginDialog()));
+    connect(pluginAct, SIGNAL(triggered()), this, SLOT(showPluginDialog()));
 
     helpAct = new QAction(QIcon(":/img/help"), tr("Help"), this);
     helpAct->setShortcut(QKeySequence::HelpContents);
@@ -120,18 +112,31 @@ void MainWindow::createActions()
 
     textBoldAct = new QAction(QIcon(":/img/bold"), tr("Bold"), this);
     textBoldAct->setStatusTip(tr("Set text bold."));
-    textFormatMapper->setMapping(textBoldAct, QString("Bold"));
-    connect(textBoldAct, SIGNAL(triggered()),
-            textFormatMapper, SLOT(map()));
+    textBoldAct->setCheckable(true);
+    textBoldAct->setData(TextFormat::TEXT_BOLD);
+    textFormatMapper->setMapping(textBoldAct, textBoldAct);
+    connect(textBoldAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setStatusTip(tr("Set text italic."));
+    textItalicAct->setCheckable(true);
+    textItalicAct->setData(TextFormat::TEXT_ITALIC);
+    textFormatMapper->setMapping(textItalicAct, textItalicAct);
+    connect(textItalicAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
     textUnderlineAct->setStatusTip(tr("Add underline."));
+    textUnderlineAct->setCheckable(true);
+    textUnderlineAct->setData(TextFormat::TEXT_UNDERLINE);
+    textFormatMapper->setMapping(textUnderlineAct, textUnderlineAct);
+    connect(textUnderlineAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
+    textStrikeoutAct->setCheckable(true);
+    textStrikeoutAct->setData(TextFormat::TEXT_STRIKE);
+    textFormatMapper->setMapping(textStrikeoutAct, textStrikeoutAct);
+    connect(textStrikeoutAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font"), this);
     textFontAct->setStatusTip(tr("Set font."));
@@ -157,8 +162,7 @@ void MainWindow::createActions()
     justifyRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
     justifyRightAct->setStatusTip(tr("Justify Right."));
 
-    connect(textFormatMapper, SIGNAL(mapped(QString)),
-            visualEditor, SLOT(setTextFormat(QString)));
+    connect(textFormatMapper, SIGNAL(mapped(QObject*)), visualEditor, SLOT(setTextFormat(QObject*)));
 }
 
 void MainWindow::createMenus()
@@ -241,16 +245,14 @@ void MainWindow::createEditors()
     editorStack = new QTabWidget(this);
     visualEditor = new VisualEditor(editorStack);
     editorStack->addTab(visualEditor, tr("Visual"));
-    connect(visualEditor->document(), SIGNAL(contentsChanged()),
-            this, SLOT(docChanged()));
+    connect(visualEditor->document(), SIGNAL(contentsChanged()), this, SLOT(docChanged()));
 
     previewEditor = new QTextEdit(editorStack);
     editorStack->addTab(previewEditor, tr("Preview"));
 
     sourceEditor = new QTextEdit(editorStack);
     editorStack->addTab(sourceEditor, tr("Source"));
-    connect(sourceEditor->document(), SIGNAL(contentsChanged()),
-            this, SLOT(docChanged()));
+    connect(sourceEditor->document(), SIGNAL(contentsChanged()), this, SLOT(docChanged()));
 
     editorStack->setTabPosition(QTabWidget::South);
 }
