@@ -21,35 +21,42 @@ void VisualEditor::setTextFormat(QObject* a)
 {
     QAction *action = qobject_cast<QAction*>(a);
     QString format = action->data().toString();
+    bool val = action->isChecked();
     if(format == TextFormat::TEXT_BOLD) {
-        textBold(action);
+        setTextBold(val);
     } else if(format == TextFormat::TEXT_ITALIC) {
-        textItalic(action);
+        setTextItalic(val);
     } else if(format == TextFormat::TEXT_STRIKE) {
-        textStrike(action);
+        setTextStrike(val);
     } else if(format == TextFormat::TEXT_UNDERLINE) {
-        textUnderline(action);
+        setTextUnderline(val);
     }
 }
 
-void VisualEditor::textBold(QAction *action)
+void VisualEditor::setTextBold(bool value)
 {
     QTextCharFormat fmt;
-    fmt.setFontWeight(action->isChecked() ? QFont::Bold : QFont::Normal);
+    fmt.setFontWeight(value ? QFont::Bold : QFont::Normal);
     applyFormat(fmt);
 }
 
-void VisualEditor::textItalic(QAction *action)
+void VisualEditor::setTextItalic(bool value)
 {
-
+    QTextCharFormat fmt;
+    fmt.setFontItalic(value);
+    applyFormat(fmt);
 }
 
-void VisualEditor::textStrike(QAction *action)
+void VisualEditor::setTextStrike(bool value)
 {
-
+    QTextCharFormat fmt;
+    fmt.setFontStrikeOut(value);
+    applyFormat(fmt);
 }
 
-void VisualEditor::textUnderline(QAction *action)
+void VisualEditor::setTextUnderline(bool value)
 {
-
+    QTextCharFormat fmt;
+    fmt.setFontUnderline(value);
+    applyFormat(fmt);
 }

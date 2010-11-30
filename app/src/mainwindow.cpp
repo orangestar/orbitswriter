@@ -8,6 +8,7 @@
 #include <QTextEdit>
 #include <QMessageBox>
 #include <QSignalMapper>
+#include <QFontDialog>
 
 #include "common.h"
 #include "mainwindow.h"
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     createToolBars();
     createStatusBar();
 
+    visualEditor->setFocus();
     setCentralWidget(editorStack);
     setWindowTitle(tr("OrbitsWriter [*]"));
     setWindowIcon(QIcon(":/img/orbitswriter"));
@@ -53,8 +55,11 @@ void MainWindow::createActions()
     closePostAct->setStatusTip(tr("Close the post."));
 
     savePostAct = new QAction(QIcon(":/img/save"), tr("Save"), this);
+    savePostAct->setEnabled(false);
     savePostAct->setShortcut(QKeySequence::Save);
     savePostAct->setStatusTip(tr("Save the post."));
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
 
     saveAsPostAct = new QAction(QIcon(":/img/save_as"), tr("Save As"), this);
     saveAsPostAct->setShortcut(QKeySequence::SaveAs);
@@ -111,6 +116,7 @@ void MainWindow::createActions()
     publishAct->setStatusTip(tr("Publish the post."));
 
     textBoldAct = new QAction(QIcon(":/img/bold"), tr("Bold"), this);
+    textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
     textBoldAct->setData(TextFormat::TEXT_BOLD);
@@ -118,6 +124,7 @@ void MainWindow::createActions()
     connect(textBoldAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
+    textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
     textItalicAct->setData(TextFormat::TEXT_ITALIC);
@@ -125,6 +132,7 @@ void MainWindow::createActions()
     connect(textItalicAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
+    textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
     textUnderlineAct->setData(TextFormat::TEXT_UNDERLINE);
@@ -132,6 +140,7 @@ void MainWindow::createActions()
     connect(textUnderlineAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
+    textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
     textStrikeoutAct->setData(TextFormat::TEXT_STRIKE);
@@ -245,27 +254,46 @@ void MainWindow::createEditors()
     editorStack = new QTabWidget(this);
     visualEditor = new VisualEditor(editorStack);
     editorStack->addTab(visualEditor, tr("Visual"));
-    connect(visualEditor->document(), SIGNAL(contentsChanged()), this, SLOT(docChanged()));
+    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     previewEditor = new QTextEdit(editorStack);
     editorStack->addTab(previewEditor, tr("Preview"));
 
     sourceEditor = new QTextEdit(editorStack);
     editorStack->addTab(sourceEditor, tr("Source"));
-    connect(sourceEditor->document(), SIGNAL(contentsChanged()), this, SLOT(docChanged()));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     editorStack->setTabPosition(QTabWidget::South);
 }
 
-void MainWindow::docChanged()
+void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
-    bool modified = visualEditor->document()->isModified()
-            || sourceEditor->document()->isModified();
-    setWindowModified(modified);
+    fontChanged(format.font());
 }
 
 void MainWindow::showPluginDialog()
 {
     QMessageBox::information(this, tr("Plugins"),
                              tr("plugins list"));
+}
+
+void MainWindow::showFontDialog()
+{
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont("Helvetica [Cronyx]", 10), this);
+    if (ok) {
+        // the user clicked OK and font is set to the font the user selected
+    } else {
+        // the user canceled the dialog; font is set to the initial
+        // value, in this case Helvetica [Cronyx], 10
+    }
+}
+
+void MainWindow::fontChanged(const QFont &font)
+{
+    textBoldAct->setChecked(font.bold());
+    textItalicAct->setChecked(font.italic());
+    textUnderlineAct->setChecked(font.underline());
+    textStrikeoutAct->setChecked(font.strikeOut());
 }

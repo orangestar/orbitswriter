@@ -43,10 +43,10 @@ public slots:
 
 private:
     void applyFormat(const QTextCharFormat &format);
-    void textBold(QAction *action);
-    void textItalic(QAction *action);
-    void textUnderline(QAction *action);
-    void textStrike(QAction *action);
+    void setTextBold(bool value);
+    void setTextItalic(bool value);
+    void setTextUnderline(bool value);
+    void setTextStrike(bool value);
 };
 
 #endif // VISUALEDITOR_H

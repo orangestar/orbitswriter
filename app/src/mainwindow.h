@@ -27,6 +27,7 @@ class VisualEditor;
 class QTextEdit;
 class PluginManager;
 class QSignalMapper;
+class QTextCharFormat;
 
 /*!
    \class MainWindow
@@ -42,8 +43,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void docChanged();
+    void currentCharFormatChanged(const QTextCharFormat &format);
     void showPluginDialog();
+    void showFontDialog();
 
 private:
     /*
@@ -110,6 +112,7 @@ private:
     void createToolBars();
     void createStatusBar();
     void createEditors();
+    void fontChanged(const QFont &font);
 };
 
 #endif // MAINWINDOW_H
