@@ -1,3 +1,21 @@
+//
+// Copyright (C) 2006-2010  by the original authors of Galaxy
+// and all its contributors ("Galaxy.org").
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
 #include <QAction>
 #include <QMenuBar>
 #include <QToolBar>
@@ -9,11 +27,13 @@
 #include <QMessageBox>
 #include <QSignalMapper>
 #include <QFontDialog>
+#include <QCloseEvent>
 
 #include "common.h"
 #include "mainwindow.h"
 #include "visualeditor.h"
 #include "pluginmanager.h"
+#include "appcontext.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -254,7 +274,8 @@ void MainWindow::createEditors()
     editorStack = new QTabWidget(this);
     visualEditor = new VisualEditor(editorStack);
     editorStack->addTab(visualEditor, tr("Visual"));
-    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
+            this, SLOT(currentCharFormatChanged(QTextCharFormat)));
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     previewEditor = new QTextEdit(editorStack);
@@ -281,7 +302,7 @@ void MainWindow::showPluginDialog()
 void MainWindow::showFontDialog()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont("Helvetica [Cronyx]", 10), this);
+    QFont font = QFontDialog::getFont(&ok, QFont("Arial", 10), this);
     if (ok) {
         // the user clicked OK and font is set to the font the user selected
     } else {
@@ -296,4 +317,14 @@ void MainWindow::fontChanged(const QFont &font)
     textItalicAct->setChecked(font.italic());
     textUnderlineAct->setChecked(font.underline());
     textStrikeoutAct->setChecked(font.strikeOut());
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+//    if (maybeSave()) {
+        AppContext::instance()->updateData();
+        event->accept();
+//    } else {
+//        event->ignore();
+//    }
 }

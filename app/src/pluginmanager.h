@@ -40,8 +40,8 @@ public:
      */
     static inline PluginManager * instance()
     {
-        static PluginManager _instance;
-        return &_instance;
+        static PluginManager mgr;
+        return &mgr;
     }
 
     /*!

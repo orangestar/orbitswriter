@@ -13,14 +13,16 @@ TEMPLATE     = app
 SOURCES     += main.cpp\
                mainwindow.cpp \
                visualeditor.cpp \
-    pluginmanager.cpp
+    pluginmanager.cpp \
+    appcontext.cpp
 
 HEADERS     += mainwindow.h \
                visualeditor.h \
                plugins/textformatinterface.h \
     pluginmanager.h \
     plugins/plugin.h \
-    common.h
+    common.h \
+    appcontext.h
 
 RESOURCES   += ../res/orbitswriter.qrc
 
