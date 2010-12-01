@@ -42,6 +42,13 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    /*!
+       \brief Emits when user selected a different font.
+       \param font font user selected
+     */
+    void fontChange(const QFont &font);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -115,7 +122,7 @@ private:
     void createToolBars();
     void createStatusBar();
     void createEditors();
-    void fontChanged(const QFont &font);
+    void cursorPositionFontChanged(const QFont &font);
 };
 
 #endif // MAINWINDOW_H

@@ -31,8 +31,6 @@
 class AppContext
 {
 public:
-    QFont defaultFont;
-
     /*!
        \brief Gets the only singleton instance.
        \return the pointer to the instance
@@ -60,11 +58,23 @@ public:
      */
     void updateData();
 
+    void setDefaultFont(QFont &font)
+    {
+        _defaultFont = font;
+    }
+
+    const QFont& defaultFont() const
+    {
+        return _defaultFont;
+    }
+
 private:
     AppContext();
     ~AppContext() { }
     AppContext(const AppContext &);
     AppContext& operator=(const AppContext &);
+
+    QFont _defaultFont;
 };
 
 #endif // COMMONDATA_H

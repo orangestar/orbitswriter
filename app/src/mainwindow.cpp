@@ -53,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(tr("OrbitsWriter [*]"));
     setWindowIcon(QIcon(":/img/orbitswriter"));
     setUnifiedTitleAndToolBarOnMac(true);
+
+    connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
 }
 
 MainWindow::~MainWindow()
@@ -169,6 +171,7 @@ void MainWindow::createActions()
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font"), this);
     textFontAct->setStatusTip(tr("Set font."));
+    connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
 
     olAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
     olAct->setStatusTip(tr("Add ordered list."));
@@ -290,7 +293,7 @@ void MainWindow::createEditors()
 
 void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
-    fontChanged(format.font());
+    cursorPositionFontChanged(format.font());
 }
 
 void MainWindow::showPluginDialog()
@@ -302,16 +305,16 @@ void MainWindow::showPluginDialog()
 void MainWindow::showFontDialog()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont("Arial", 10), this);
+    QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
     if (ok) {
-        // the user clicked OK and font is set to the font the user selected
+        emit fontChange(font);
     } else {
         // the user canceled the dialog; font is set to the initial
         // value, in this case Helvetica [Cronyx], 10
     }
 }
 
-void MainWindow::fontChanged(const QFont &font)
+void MainWindow::cursorPositionFontChanged(const QFont &font)
 {
     textBoldAct->setChecked(font.bold());
     textItalicAct->setChecked(font.italic());

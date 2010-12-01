@@ -26,7 +26,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     QTextEdit(parent)
 {
     AppContext *ctx = AppContext::instance();
-    setFont(ctx->defaultFont);
+    setFont(ctx->defaultFont());
 }
 
 void VisualEditor::applyFormat(const QTextCharFormat &format)
@@ -79,5 +79,12 @@ void VisualEditor::setTextUnderline(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(value);
+    applyFormat(fmt);
+}
+
+void VisualEditor::fontChanged(const QFont &font)
+{
+    QTextCharFormat fmt;
+    fmt.setFont(font);
     applyFormat(fmt);
 }

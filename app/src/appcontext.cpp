@@ -23,7 +23,7 @@
 #include "appcontext.h"
 
 AppContext::AppContext()
-    : defaultFont(QFont("Arial", 12))
+    : _defaultFont(QFont("Verdana", 12))
 {
 
 }
@@ -32,7 +32,7 @@ void AppContext::loadData()
 {
     QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
     if(settings.contains(AppContextValue::DEFAULT_FONT)) {
-        defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
+        // _defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
     }
 }
 
@@ -40,6 +40,6 @@ void AppContext::updateData()
 {
     QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
     settings.beginGroup("DefaultValues");
-    settings.setValue(AppContextValue::DEFAULT_FONT, defaultFont);
+    // settings.setValue(AppContextValue::DEFAULT_FONT, _defaultFont);
     settings.endGroup();
 }

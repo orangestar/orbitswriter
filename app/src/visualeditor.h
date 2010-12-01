@@ -40,6 +40,7 @@ signals:
 
 public slots:
     void setTextFormat(QObject* a);
+    void fontChanged(const QFont& font);
 
 private:
     void applyFormat(const QTextCharFormat &format);
