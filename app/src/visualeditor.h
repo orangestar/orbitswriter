@@ -39,15 +39,17 @@ public:
 signals:
 
 public slots:
-    void setTextFormat(QObject* a);
     void fontChanged(const QFont& font);
-
-private:
-    void applyFormat(const QTextCharFormat &format);
+    void textColorChanged(const QColor& color);
+    void textBackgroundColorChanged(const QColor& color);
     void setTextBold(bool value);
     void setTextItalic(bool value);
     void setTextUnderline(bool value);
     void setTextStrike(bool value);
+
+private:
+    void applyFormat(const QTextCharFormat &format);
+
 };
 
 #endif // VISUALEDITOR_H

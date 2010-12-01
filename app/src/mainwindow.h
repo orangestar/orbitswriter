@@ -26,7 +26,6 @@ class QTabWidget;
 class VisualEditor;
 class QTextEdit;
 class PluginManager;
-class QSignalMapper;
 class QTextCharFormat;
 
 /*!
@@ -50,10 +49,16 @@ signals:
     void fontChange(const QFont &font);
 
     /*!
-       \brief Emits when user selected a different font color.
-       \param color font color user selected
+       \brief Emits when user selected a different text color.
+       \param color text color user selected
      */
-    void fontColorChange(const QColor &color);
+    void textColorChange(const QColor &color);
+
+    /*!
+       \brief Emits when user selected a different nackground color.
+       \param color text background color user selected
+     */
+    void textBackgroundColorChange(const QColor &color);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -62,7 +67,8 @@ private slots:
     void currentCharFormatChanged(const QTextCharFormat &format);
     void showPluginDialog();
     void showFontDialog();
-    void showFontColorDialog();
+    void showTextColorDialog();
+    void showTextBackgroundColorDialog();
 
 private:
     /*
@@ -103,6 +109,9 @@ private:
     QAction *textUnderlineAct;
     QAction *textStrikeoutAct;
     QAction *textFontAct;
+    QAction *textColorAct;
+    QAction *textBackgroundColorAct;
+
     QAction *olAct;
     QAction *ulAct;
     QAction *tableAct;
@@ -122,14 +131,15 @@ private:
     QTextEdit *sourceEditor;
 
     PluginManager *pluginManager;
-    QSignalMapper *textFormatMapper;
 
     void createActions();
     void createMenus();
     void createToolBars();
     void createStatusBar();
     void createEditors();
-    void cursorPositionFontChanged(const QFont &font);
+    void currentFontChanged(const QFont &font);
+    void currentTextColorChanged(const QColor &color);
+    void currentTextBackgroundColorChanged(const QColor &color);
 };
 
 #endif // MAINWINDOW_H

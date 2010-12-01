@@ -38,22 +38,6 @@ void VisualEditor::applyFormat(const QTextCharFormat &format)
     this->mergeCurrentCharFormat(format);
 }
 
-void VisualEditor::setTextFormat(QObject* a)
-{
-    QAction *action = qobject_cast<QAction*>(a);
-    QString format = action->data().toString();
-    bool val = action->isChecked();
-    if(format == TextFormat::TEXT_BOLD) {
-        setTextBold(val);
-    } else if(format == TextFormat::TEXT_ITALIC) {
-        setTextItalic(val);
-    } else if(format == TextFormat::TEXT_STRIKE) {
-        setTextStrike(val);
-    } else if(format == TextFormat::TEXT_UNDERLINE) {
-        setTextUnderline(val);
-    }
-}
-
 void VisualEditor::setTextBold(bool value)
 {
     QTextCharFormat fmt;
@@ -86,5 +70,19 @@ void VisualEditor::fontChanged(const QFont &font)
 {
     QTextCharFormat fmt;
     fmt.setFont(font);
+    applyFormat(fmt);
+}
+
+void VisualEditor::textColorChanged(const QColor &color)
+{
+    QTextCharFormat fmt;
+    fmt.setForeground(color);
+    applyFormat(fmt);
+}
+
+void VisualEditor::textBackgroundColorChanged(const QColor &color)
+{
+    QTextCharFormat fmt;
+    fmt.setBackground(color);
     applyFormat(fmt);
 }

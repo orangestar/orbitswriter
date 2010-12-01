@@ -25,7 +25,6 @@
 #include <QTabWidget>
 #include <QTextEdit>
 #include <QMessageBox>
-#include <QSignalMapper>
 #include <QFontDialog>
 #include <QCloseEvent>
 #include <QColorDialog>
@@ -38,8 +37,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      pluginManager(PluginManager::instance()),
-      textFormatMapper(new QSignalMapper(this))
+      pluginManager(PluginManager::instance())
 {
     pluginManager->loadPlugins();
 
@@ -56,6 +54,8 @@ MainWindow::MainWindow(QWidget *parent)
     setUnifiedTitleAndToolBarOnMac(true);
 
     connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
+    connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
+    connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
 }
 
 MainWindow::~MainWindow()
@@ -142,37 +142,41 @@ void MainWindow::createActions()
     textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
-    textBoldAct->setData(TextFormat::TEXT_BOLD);
-    textFormatMapper->setMapping(textBoldAct, textBoldAct);
-    connect(textBoldAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
+    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextBold(bool)));
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
-    textItalicAct->setData(TextFormat::TEXT_ITALIC);
-    textFormatMapper->setMapping(textItalicAct, textItalicAct);
-    connect(textItalicAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
+    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextItalic(bool)));
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
     textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
-    textUnderlineAct->setData(TextFormat::TEXT_UNDERLINE);
-    textFormatMapper->setMapping(textUnderlineAct, textUnderlineAct);
-    connect(textUnderlineAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
+    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextUnderline(bool)));
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
     textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
-    textStrikeoutAct->setData(TextFormat::TEXT_STRIKE);
-    textFormatMapper->setMapping(textStrikeoutAct, textStrikeoutAct);
-    connect(textStrikeoutAct, SIGNAL(triggered()), textFormatMapper, SLOT(map()));
+    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font"), this);
     textFontAct->setStatusTip(tr("Set font."));
     connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
+
+    QPixmap pix(16, 16);
+    pix.fill(Qt::black);
+    textColorAct = new QAction(pix, tr("Text Color"), this);
+    textColorAct->setStatusTip(tr("Text color."));
+    connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
+
+    QPixmap bpix(16, 16);
+    bpix.fill(Qt::white);
+    textBackgroundColorAct = new QAction(bpix, tr("Text Background Color"), this);
+    textBackgroundColorAct->setStatusTip(tr("Text background color."));
+    connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
 
     olAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
     olAct->setStatusTip(tr("Add ordered list."));
@@ -194,8 +198,6 @@ void MainWindow::createActions()
 
     justifyRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
     justifyRightAct->setStatusTip(tr("Justify Right."));
-
-    connect(textFormatMapper, SIGNAL(mapped(QObject*)), visualEditor, SLOT(setTextFormat(QObject*)));
 }
 
 void MainWindow::createMenus()
@@ -256,15 +258,17 @@ void MainWindow::createToolBars()
     textToolBar->addAction(textUnderlineAct);
     textToolBar->addAction(textStrikeoutAct);
     textToolBar->addAction(textFontAct);
-    textToolBar->addSeparator();
-    textToolBar->addAction(olAct);
-    textToolBar->addAction(ulAct);
-    textToolBar->addAction(tableAct);
+    textToolBar->addAction(textColorAct);
+    textToolBar->addAction(textBackgroundColorAct);
     textToolBar->addSeparator();
     textToolBar->addAction(justifyCenterAct);
     textToolBar->addAction(justifyFillAct);
     textToolBar->addAction(justifyLeftAct);
     textToolBar->addAction(justifyRightAct);
+    textToolBar->addSeparator();
+    textToolBar->addAction(olAct);
+    textToolBar->addAction(ulAct);
+    textToolBar->addAction(tableAct);
 }
 
 void MainWindow::createStatusBar()
@@ -294,7 +298,7 @@ void MainWindow::createEditors()
 
 void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
-    cursorPositionFontChanged(format.font());
+    currentFontChanged(format.font());
 }
 
 void MainWindow::showPluginDialog()
@@ -312,17 +316,45 @@ void MainWindow::showFontDialog()
     }
 }
 
-void MainWindow::showFontColorDialog()
+void MainWindow::showTextColorDialog()
 {
-    QColor color = QColorDialog::getColor(Qt::black, this);
+    QColor color = QColorDialog::getColor(visualEditor->textColor(), this);
+    if(color.isValid()) {
+        emit textColorChange(color);
+        currentTextColorChanged(color);
+    }
 }
 
-void MainWindow::cursorPositionFontChanged(const QFont &font)
+void MainWindow::showTextBackgroundColorDialog()
+{
+    // FIXME when editor has not set background color, textBackgroundColor() always return black.
+    QColor color = QColorDialog::getColor(visualEditor->textBackgroundColor(), this);
+    if(color.isValid()) {
+        emit textBackgroundColorChange(color);
+        currentTextBackgroundColorChanged(color);
+    }
+}
+
+void MainWindow::currentFontChanged(const QFont &font)
 {
     textBoldAct->setChecked(font.bold());
     textItalicAct->setChecked(font.italic());
     textUnderlineAct->setChecked(font.underline());
     textStrikeoutAct->setChecked(font.strikeOut());
+}
+
+void MainWindow::currentTextColorChanged(const QColor &color)
+{
+    QPixmap pix(16, 16);
+    pix.fill(color);
+    textColorAct->setIcon(pix);
+}
+
+void MainWindow::currentTextBackgroundColorChanged(const QColor &color)
+{
+    QPixmap pix(16, 16);
+    pix.fill(color);
+    textBackgroundColorAct->setIcon(pix);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
