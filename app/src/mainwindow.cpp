@@ -28,6 +28,7 @@
 #include <QSignalMapper>
 #include <QFontDialog>
 #include <QCloseEvent>
+#include <QColorDialog>
 
 #include "common.h"
 #include "mainwindow.h"
@@ -306,12 +307,14 @@ void MainWindow::showFontDialog()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
-    if (ok) {
+    if(ok) {
         emit fontChange(font);
-    } else {
-        // the user canceled the dialog; font is set to the initial
-        // value, in this case Helvetica [Cronyx], 10
     }
+}
+
+void MainWindow::showFontColorDialog()
+{
+    QColor color = QColorDialog::getColor(Qt::black, this);
 }
 
 void MainWindow::cursorPositionFontChanged(const QFont &font)

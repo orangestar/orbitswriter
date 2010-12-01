@@ -49,6 +49,12 @@ signals:
      */
     void fontChange(const QFont &font);
 
+    /*!
+       \brief Emits when user selected a different font color.
+       \param color font color user selected
+     */
+    void fontColorChange(const QColor &color);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -56,6 +62,7 @@ private slots:
     void currentCharFormatChanged(const QTextCharFormat &format);
     void showPluginDialog();
     void showFontDialog();
+    void showFontColorDialog();
 
 private:
     /*
