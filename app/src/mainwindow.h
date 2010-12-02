@@ -60,11 +60,26 @@ signals:
      */
     void textBackgroundColorChange(const QColor &color);
 
+    /*!
+       \brief Emits when text alignment changed.
+       \param align text alignment value
+     */
+    void textAlignmentChange(Qt::Alignment align);
+
+public slots:
+
+    /*!
+       \brief Actives this main window.
+       \param message message passed from \a main()
+     */
+    void activeWindow(const QString &message);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
     void currentCharFormatChanged(const QTextCharFormat &format);
+    void textAlignmentChanged(QAction *act);
     void showPluginDialog();
     void showFontDialog();
     void showTextColorDialog();
@@ -115,10 +130,10 @@ private:
     QAction *olAct;
     QAction *ulAct;
     QAction *tableAct;
-    QAction *justifyCenterAct;
-    QAction *justifyFillAct;
-    QAction *justifyLeftAct;
-    QAction *justifyRightAct;
+    QAction *alignCenterAct;
+    QAction *alignJustifyAct;
+    QAction *alignLeftAct;
+    QAction *alignRightAct;
 
     /*
      * web actions

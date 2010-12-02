@@ -27,6 +27,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
 {
     AppContext *ctx = AppContext::instance();
     setFont(ctx->defaultFont());
+    setAlignment(Qt::AlignJustify);
 }
 
 void VisualEditor::applyFormat(const QTextCharFormat &format)
@@ -85,4 +86,9 @@ void VisualEditor::textBackgroundColorChanged(const QColor &color)
     QTextCharFormat fmt;
     fmt.setBackground(color);
     applyFormat(fmt);
+}
+
+void VisualEditor::textAlignmentChanged(Qt::Alignment align)
+{
+    this->setAlignment(align);
 }

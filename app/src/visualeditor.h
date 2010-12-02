@@ -42,6 +42,7 @@ public slots:
     void fontChanged(const QFont& font);
     void textColorChanged(const QColor& color);
     void textBackgroundColorChanged(const QColor& color);
+    void textAlignmentChanged(Qt::Alignment align);
     void setTextBold(bool value);
     void setTextItalic(bool value);
     void setTextUnderline(bool value);

@@ -16,7 +16,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QApplication>
 #include <QAction>
+#include <QActionGroup>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
@@ -56,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
     connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
     connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
+    connect(this, SIGNAL(textAlignmentChange(Qt::Alignment)), visualEditor, SLOT(textAlignmentChanged(Qt::Alignment)));
 }
 
 MainWindow::~MainWindow()
@@ -187,17 +190,33 @@ void MainWindow::createActions()
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
 
-    justifyCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
-    justifyCenterAct->setStatusTip(tr("Justify center."));
+    QActionGroup *alignGroup = new QActionGroup(this);
+    connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
 
-    justifyFillAct = new QAction(QIcon(":/img/justify_fill"), tr("Fill"), this);
-    justifyFillAct->setStatusTip(tr("Justify fill."));
+    alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
+    alignCenterAct->setStatusTip(tr("Justify center."));
+    alignCenterAct->setShortcut(Qt::CTRL + Qt::Key_E);
+    alignCenterAct->setCheckable(true);
+    alignGroup->addAction(alignCenterAct);
 
-    justifyLeftAct = new QAction(QIcon(":/img/justify_left"), tr("Left"), this);
-    justifyLeftAct->setStatusTip(tr("Justify left."));
+    alignJustifyAct = new QAction(QIcon(":/img/justify_fill"), tr("Fill"), this);
+    alignJustifyAct->setStatusTip(tr("Justify fill."));
+    alignJustifyAct->setShortcut(Qt::CTRL + Qt::Key_F);
+    alignJustifyAct->setCheckable(true);
+    alignJustifyAct->setChecked(true);
+    alignGroup->addAction(alignJustifyAct);
 
-    justifyRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
-    justifyRightAct->setStatusTip(tr("Justify Right."));
+    alignLeftAct = new QAction(QIcon(":/img/justify_left"), tr("Left"), this);
+    alignLeftAct->setStatusTip(tr("Justify left."));
+    alignLeftAct->setShortcut(Qt::CTRL + Qt::Key_L);
+    alignLeftAct->setCheckable(true);
+    alignGroup->addAction(alignLeftAct);
+
+    alignRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
+    alignRightAct->setStatusTip(tr("Justify Right."));
+    alignRightAct->setShortcut(Qt::CTRL + Qt::Key_R);
+    alignRightAct->setCheckable(true);
+    alignGroup->addAction(alignRightAct);
 }
 
 void MainWindow::createMenus()
@@ -261,10 +280,16 @@ void MainWindow::createToolBars()
     textToolBar->addAction(textColorAct);
     textToolBar->addAction(textBackgroundColorAct);
     textToolBar->addSeparator();
-    textToolBar->addAction(justifyCenterAct);
-    textToolBar->addAction(justifyFillAct);
-    textToolBar->addAction(justifyLeftAct);
-    textToolBar->addAction(justifyRightAct);
+    if(QApplication::isLeftToRight()) {
+        textToolBar->addAction(alignLeftAct);
+        textToolBar->addAction(alignCenterAct);
+        textToolBar->addAction(alignRightAct);
+    } else {
+        textToolBar->addAction(alignRightAct);
+        textToolBar->addAction(alignCenterAct);
+        textToolBar->addAction(alignLeftAct);
+    }
+    textToolBar->addAction(alignJustifyAct);
     textToolBar->addSeparator();
     textToolBar->addAction(olAct);
     textToolBar->addAction(ulAct);
@@ -355,6 +380,25 @@ void MainWindow::currentTextBackgroundColorChanged(const QColor &color)
     QPixmap pix(16, 16);
     pix.fill(color);
     textBackgroundColorAct->setIcon(pix);
+}
+
+void MainWindow::textAlignmentChanged(QAction *act)
+{
+    if(act == alignCenterAct) {
+        emit textAlignmentChange(Qt::AlignHCenter);
+    } else if(act == alignJustifyAct) {
+        emit textAlignmentChange(Qt::AlignJustify);
+    } else if(act == alignLeftAct) {
+        emit textAlignmentChange(Qt::AlignLeft | Qt::AlignAbsolute);
+    } else if(act == alignRightAct) {
+        emit textAlignmentChange(Qt::AlignRight | Qt::AlignAbsolute);
+    }
+}
+
+void MainWindow::activeWindow(const QString &message)
+{
+    Q_UNUSED(message);
+    this->show();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
