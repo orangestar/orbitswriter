@@ -24,6 +24,8 @@ HEADERS     += mainwindow.h \
     common.h \
     appcontext.h
 
+include(qtsingleapplication/qtsingleapplication.pri)
+
 RESOURCES   += ../res/orbitswriter.qrc
 
 win32 {
