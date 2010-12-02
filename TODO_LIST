@@ -1,3 +1,5 @@
+TODO LIST
+  2010-12-2 Create.
    ___       _     _ _     __        __    _ _
   / _ \ _ __| |__ (_) |_ __\ \      / / __(_) |_ ___ _ __
  | | | | '__| '_ \| | __/ __\ \ /\ / / '__| | __/ _ \ '__|
@@ -14,6 +16,7 @@ version 0.0.1
 The main goal of this version is a complete rich text editor. Blog parts
 of OrbitsWriter is not so important. It should become a plugin system
 while blog parts and more HTML elements can be added dynamically.
+A more complete blog module should be added in the next version.
 
 Part 1. Rich text edit
     1.1 Text format: bold, italic, underline, strike out;

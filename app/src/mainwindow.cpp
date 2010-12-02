@@ -324,6 +324,8 @@ void MainWindow::createEditors()
 void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
     currentFontChanged(format.font());
+    currentTextColorChanged(format.foreground().color());
+    currentTextBackgroundColorChanged(format.background().color());
 }
 
 void MainWindow::showPluginDialog()
