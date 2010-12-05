@@ -2,18 +2,20 @@
 // Copyright (C) 2006-2010  by the original authors of Galaxy
 // and all its contributors ("Galaxy.org").
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of OrbitsWriter.
+//
+// OrbitsWriter is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// OrbitsWriter is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 #include <QApplication>
@@ -30,6 +32,7 @@
 #include <QFontDialog>
 #include <QCloseEvent>
 #include <QColorDialog>
+#include <QDockWidget>
 
 #include "common.h"
 #include "mainwindow.h"
@@ -48,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     createMenus();
     createToolBars();
     createStatusBar();
+    createDockWidget();
 
     visualEditor->setFocus();
     setCentralWidget(editorStack);
@@ -165,19 +169,19 @@ void MainWindow::createActions()
     textStrikeoutAct->setCheckable(true);
     connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
 
-    textFontAct = new QAction(QIcon(":/img/font"), tr("Font"), this);
+    textFontAct = new QAction(QIcon(":/img/font"), tr("Font..."), this);
     textFontAct->setStatusTip(tr("Set font."));
     connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
-    textColorAct = new QAction(pix, tr("Text Color"), this);
+    textColorAct = new QAction(pix, tr("Text Color..."), this);
     textColorAct->setStatusTip(tr("Text color."));
     connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
 
     QPixmap bpix(16, 16);
     bpix.fill(Qt::white);
-    textBackgroundColorAct = new QAction(bpix, tr("Text Background Color"), this);
+    textBackgroundColorAct = new QAction(bpix, tr("Text Background Color..."), this);
     textBackgroundColorAct->setStatusTip(tr("Text background color."));
     connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
 
@@ -242,6 +246,28 @@ void MainWindow::createMenus()
     editMenu->addAction(copyAct);
     editMenu->addAction(pasteAct);
     bar->addMenu(editMenu);
+
+    QMenu *formatMenu = new QMenu(tr("F&ormat"), bar);
+    formatMenu->addAction(textFontAct);
+    formatMenu->addAction(textColorAct);
+    formatMenu->addAction(textBackgroundColorAct);
+    formatMenu->addSeparator();
+    QMenu *alignMenu = new QMenu(tr("Alignment"), formatMenu);
+    if(QApplication::isLeftToRight()) {
+        alignMenu->addAction(alignLeftAct);
+        alignMenu->addAction(alignCenterAct);
+        alignMenu->addAction(alignRightAct);
+    } else {
+        alignMenu->addAction(alignRightAct);
+        alignMenu->addAction(alignCenterAct);
+        alignMenu->addAction(alignLeftAct);
+    }
+    alignMenu->addAction(alignJustifyAct);
+    formatMenu->addMenu(alignMenu);
+    formatMenu->addSeparator();
+    formatMenu->addAction(olAct);
+    formatMenu->addAction(ulAct);
+    bar->addMenu(formatMenu);
 
     QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
     toolMenu->addAction(pluginAct);
@@ -321,6 +347,13 @@ void MainWindow::createEditors()
     editorStack->setTabPosition(QTabWidget::South);
 }
 
+void MainWindow::createDockWidget()
+{
+    dockWidget = new QDockWidget(tr("Insert"), this);
+    dockWidget->setMinimumWidth(200);
+    addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+}
+
 void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
     currentFontChanged(format.font());
@@ -354,7 +387,6 @@ void MainWindow::showTextColorDialog()
 
 void MainWindow::showTextBackgroundColorDialog()
 {
-    // FIXME when editor has not set background color, textBackgroundColor() always return black.
     QColor color = QColorDialog::getColor(visualEditor->textBackgroundColor(), this);
     if(color.isValid()) {
         emit textBackgroundColorChange(color);

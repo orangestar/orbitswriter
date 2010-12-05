@@ -2,18 +2,20 @@
 // Copyright (C) 2006-2010  by the original authors of Galaxy
 // and all its contributors ("Galaxy.org").
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of OrbitsWriter.
+//
+// OrbitsWriter is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// OrbitsWriter is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 #ifndef MAINWINDOW_H
@@ -27,6 +29,7 @@ class VisualEditor;
 class QTextEdit;
 class PluginManager;
 class QTextCharFormat;
+class QDockWidget;
 
 /*!
    \class MainWindow
@@ -144,6 +147,7 @@ private:
     VisualEditor *visualEditor;
     QTextEdit *previewEditor;
     QTextEdit *sourceEditor;
+    QDockWidget *dockWidget;
 
     PluginManager *pluginManager;
 
@@ -152,6 +156,7 @@ private:
     void createToolBars();
     void createStatusBar();
     void createEditors();
+    void createDockWidget();
     void currentFontChanged(const QFont &font);
     void currentTextColorChanged(const QColor &color);
     void currentTextBackgroundColorChanged(const QColor &color);

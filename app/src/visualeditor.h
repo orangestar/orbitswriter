@@ -2,18 +2,20 @@
 // Copyright (C) 2006-2010  by the original authors of Galaxy
 // and all its contributors ("Galaxy.org").
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of OrbitsWriter.
+//
+// OrbitsWriter is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// OrbitsWriter is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
 #ifndef VISUALEDITOR_H
@@ -36,17 +38,60 @@ class VisualEditor : public QTextEdit
 public:
     explicit VisualEditor(QWidget *parent = 0);
 
-signals:
-
 public slots:
+
+    /*!
+       \brief Changes text font.
+       \param font new font
+     */
     void fontChanged(const QFont& font);
+
+    /*!
+       \brief Changes text color.
+       \param color text color
+     */
     void textColorChanged(const QColor& color);
+
+    /*!
+       \brief Changes text background color.
+       \param color text background text
+     */
     void textBackgroundColorChanged(const QColor& color);
+
+    /*!
+       \brief Changes text alignment.
+       \param align text alignment
+     */
     void textAlignmentChanged(Qt::Alignment align);
+
+    /*!
+       \brief Sets text bold.
+       \param value \a true if text should be bold
+     */
     void setTextBold(bool value);
+
+    /*!
+       \brief Sets text italic.
+       \param value \a true if text should be italic
+     */
     void setTextItalic(bool value);
+
+    /*!
+       \brief Sets text underline.
+       \param value \a true if text should be underlined
+     */
     void setTextUnderline(bool value);
+
+    /*!
+       \brief Sets text strike out.
+       \param value \a true if text should be striked out
+     */
     void setTextStrike(bool value);
+
+    /*!
+       \brief Inserts a list at current cursor.
+     */
+    void insertList();
 
 private:
     void applyFormat(const QTextCharFormat &format);

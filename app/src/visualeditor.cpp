@@ -2,21 +2,23 @@
 // Copyright (C) 2006-2010  by the original authors of Galaxy
 // and all its contributors ("Galaxy.org").
 //
-// This program is free software: you can redistribute it and/or modify
+// This file is part of OrbitsWriter.
+//
+// OrbitsWriter is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// This program is distributed in the hope that it will be useful,
+// OrbitsWriter is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <QAction>
+#include <QTextList>
 
 #include "visualeditor.h"
 #include "common.h"
@@ -28,6 +30,8 @@ VisualEditor::VisualEditor(QWidget *parent) :
     AppContext *ctx = AppContext::instance();
     setFont(ctx->defaultFont());
     setAlignment(Qt::AlignJustify);
+    // FIXME Text background color should be set through blog theme.
+    setTextBackgroundColor(Qt::white);
 }
 
 void VisualEditor::applyFormat(const QTextCharFormat &format)
@@ -91,4 +95,22 @@ void VisualEditor::textBackgroundColorChanged(const QColor &color)
 void VisualEditor::textAlignmentChanged(Qt::Alignment align)
 {
     this->setAlignment(align);
+}
+
+void VisualEditor::insertList()
+{
+    QTextCursor cursor = this->textCursor();
+    cursor.beginEditBlock();
+    QTextListFormat listFmt;
+    if(cursor.currentList()) {
+        listFmt = cursor.currentList()->format();
+    } else {
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+        listFmt.setIndent(blockFmt.indent() + 1);
+        blockFmt.setIndent(0);
+        cursor.setBlockFormat(blockFmt);
+    }
+    listFmt.setStyle(QTextListFormat::ListDisc);
+    cursor.createList(listFmt);
+    cursor.endEditBlock();
 }
