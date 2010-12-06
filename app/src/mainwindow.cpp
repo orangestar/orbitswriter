@@ -190,6 +190,7 @@ void MainWindow::createActions()
 
     ulAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
     ulAct->setStatusTip(tr("Add bullet list."));
+    connect(olAct, SIGNAL(triggered()), visualEditor, SLOT(insertList()));
 
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
