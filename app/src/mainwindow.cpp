@@ -39,6 +39,7 @@
 #include "visualeditor.h"
 #include "pluginmanager.h"
 #include "appcontext.h"
+#include "sourceeditor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -341,11 +342,12 @@ void MainWindow::createEditors()
     previewEditor = new QTextEdit(editorStack);
     editorStack->addTab(previewEditor, tr("Preview"));
 
-    sourceEditor = new QTextEdit(editorStack);
+    sourceEditor = new SourceEditor(editorStack);
     editorStack->addTab(sourceEditor, tr("Source"));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     editorStack->setTabPosition(QTabWidget::South);
+    connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }
 
 void MainWindow::createDockWidget()
@@ -434,6 +436,23 @@ void MainWindow::activeWindow(const QString &message)
 {
     Q_UNUSED(message);
     this->show();
+}
+
+void MainWindow::editorChanged(int idx)
+{
+    switch(idx) {
+    case 0: // visual editor
+        visualEditor->setHtml(visualEditor->toPlainText());
+        break;
+    case 1: // previewer
+        break;
+    case 2: // source editor
+        sourceEditor->setPlainText(visualEditor->toHtml());
+        break;
+    default:
+        // no such case
+        break;
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

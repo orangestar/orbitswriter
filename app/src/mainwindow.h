@@ -26,6 +26,7 @@
 class QAction;
 class QTabWidget;
 class VisualEditor;
+class SourceEditor;
 class QTextEdit;
 class PluginManager;
 class QTextCharFormat;
@@ -87,6 +88,7 @@ private slots:
     void showFontDialog();
     void showTextColorDialog();
     void showTextBackgroundColorDialog();
+    void editorChanged(int idx);
 
 private:
     /*
@@ -146,7 +148,7 @@ private:
     QTabWidget *editorStack;
     VisualEditor *visualEditor;
     QTextEdit *previewEditor;
-    QTextEdit *sourceEditor;
+    SourceEditor *sourceEditor;
     QDockWidget *dockWidget;
 
     PluginManager *pluginManager;
