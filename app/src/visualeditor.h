@@ -38,6 +38,14 @@ class VisualEditor : public QTextEdit
 public:
     explicit VisualEditor(QWidget *parent = 0);
 
+signals:
+
+    /*!
+       \brief Emits when bullet list removes.
+       \param r false if list removed
+     */
+    void bulletListExists(bool r);
+
 public slots:
 
     /*!
@@ -100,6 +108,7 @@ protected:
 
 private:
     void applyFormat(const QTextCharFormat &format);
+    void removeListItem(const QTextBlock &block);
 
 };
 

@@ -50,23 +50,19 @@ MainWindow::MainWindow(QWidget *parent)
 {
     pluginManager->loadPlugins();
 
-    createEditors();
     createActions();
+    createEditors();
     createMenus();
     createToolBars();
     createStatusBar();
     createDockWidget();
+    createConnections();
 
     visualEditor->setFocus();
     setCentralWidget(editorStack);
     setWindowTitle(tr("OrbitsWriter [*]"));
     setWindowIcon(QIcon(":/img/orbitswriter"));
     setUnifiedTitleAndToolBarOnMac(true);
-
-    connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
-    connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
-    connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
-    connect(this, SIGNAL(textAlignmentChange(Qt::Alignment)), visualEditor, SLOT(textAlignmentChanged(Qt::Alignment)));
 }
 
 MainWindow::~MainWindow()
@@ -92,8 +88,6 @@ void MainWindow::createActions()
     savePostAct->setEnabled(false);
     savePostAct->setShortcut(QKeySequence::Save);
     savePostAct->setStatusTip(tr("Save the post."));
-    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
 
     saveAsPostAct = new QAction(QIcon(":/img/save_as"), tr("Save As"), this);
     saveAsPostAct->setShortcut(QKeySequence::SaveAs);
@@ -107,29 +101,21 @@ void MainWindow::createActions()
     undoAct->setShortcut(QKeySequence::Undo);
     undoAct->setStatusTip(tr("Undo."));
     undoAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
 
     redoAct = new QAction(QIcon(":/img/redo"), tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo."));
     redoAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
 
     cutAct = new QAction(QIcon(":/img/cut"), tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut."));
     cutAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
 
     copyAct = new QAction(QIcon(":/img/copy"), tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy."));
     copyAct->setEnabled(false);
-    connect(visualEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-    connect(sourceEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
 
     pasteAct = new QAction(QIcon(":/img/paste"), tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
@@ -137,7 +123,6 @@ void MainWindow::createActions()
 
     pluginAct = new QAction(QIcon(":/img/plugin"), tr("Plugins..."), this);
     pluginAct->setStatusTip(tr("Manage plugins."));
-    connect(pluginAct, SIGNAL(triggered()), this, SLOT(showPluginDialog()));
 
     helpAct = new QAction(QIcon(":/img/help"), tr("Help"), this);
     helpAct->setShortcut(QKeySequence::HelpContents);
@@ -153,41 +138,34 @@ void MainWindow::createActions()
     textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
-    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextBold(bool)));
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
-    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextItalic(bool)));
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
     textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
-    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextUnderline(bool)));
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
     textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
-    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font..."), this);
     textFontAct->setStatusTip(tr("Set font."));
-    connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     textColorAct = new QAction(pix, tr("Text Color..."), this);
     textColorAct->setStatusTip(tr("Text color."));
-    connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
 
     QPixmap bpix(16, 16);
     bpix.fill(Qt::white);
     textBackgroundColorAct = new QAction(bpix, tr("Text Background Color..."), this);
     textBackgroundColorAct->setStatusTip(tr("Text background color."));
-    connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
 
     numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
     numberedListAct->setStatusTip(tr("Add ordered list."));
@@ -196,13 +174,11 @@ void MainWindow::createActions()
     bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
     bulletListAct->setStatusTip(tr("Add bullet list."));
     bulletListAct->setCheckable(true);
-    connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
 
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
 
-    QActionGroup *alignGroup = new QActionGroup(this);
-    connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
+    alignGroup = new QActionGroup(this);
 
     alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
     alignCenterAct->setStatusTip(tr("Justify center."));
@@ -340,21 +316,14 @@ void MainWindow::createEditors()
     editorStack = new QTabWidget(this);
     visualEditor = new VisualEditor(editorStack);
     editorStack->addTab(visualEditor, tr("Visual"));
-    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
-            this, SLOT(currentCharFormatChanged(QTextCharFormat)));
-    connect(visualEditor, SIGNAL(cursorPositionChanged()),
-            this, SLOT(visualEditorCursorPositionChanged()));
-    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     previewEditor = new QTextEdit(editorStack);
     editorStack->addTab(previewEditor, tr("Preview"));
 
     sourceEditor = new SourceEditor(editorStack);
     editorStack->addTab(sourceEditor, tr("Source"));
-    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     editorStack->setTabPosition(QTabWidget::South);
-    connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }
 
 void MainWindow::createDockWidget()
@@ -483,4 +452,40 @@ void MainWindow::closeEvent(QCloseEvent *event)
 //    } else {
 //        event->ignore();
 //    }
+}
+
+void MainWindow::createConnections()
+{
+    connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
+    connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
+    connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
+    connect(this, SIGNAL(textAlignmentChange(Qt::Alignment)), visualEditor, SLOT(textAlignmentChanged(Qt::Alignment)));
+
+    connect(pluginAct, SIGNAL(triggered()), this, SLOT(showPluginDialog()));
+    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextBold(bool)));
+    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextItalic(bool)));
+    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextUnderline(bool)));
+    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
+    connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
+    connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
+    connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
+    connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
+    connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
+
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+    connect(visualEditor, SIGNAL(bulletListExists(bool)), bulletListAct, SLOT(setChecked(bool)));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+    connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }

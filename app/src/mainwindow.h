@@ -24,6 +24,7 @@
 #include <QMainWindow>
 
 class QAction;
+class QActionGroup;
 class QTabWidget;
 class VisualEditor;
 class SourceEditor;
@@ -136,6 +137,8 @@ private:
     QAction *numberedListAct;
     QAction *bulletListAct;
     QAction *tableAct;
+
+    QActionGroup *alignGroup;
     QAction *alignCenterAct;
     QAction *alignJustifyAct;
     QAction *alignLeftAct;
@@ -160,6 +163,7 @@ private:
     void createStatusBar();
     void createEditors();
     void createDockWidget();
+    void createConnections();
     void currentFontChanged(const QFont &font);
     void currentTextColorChanged(const QColor &color);
     void currentTextBackgroundColorChanged(const QColor &color);

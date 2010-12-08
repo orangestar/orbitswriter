@@ -115,12 +115,8 @@ void VisualEditor::insertBulletList(bool insert)
         cursor.setBlockFormat(blockFmt);
         listFmt.setStyle(QTextListFormat::ListDisc);
         cursor.createList(listFmt);
-    } else { // remove the exists one
-        QTextBlock item = cursor.block();
-        cursor.currentList()->remove(item);
-        QTextBlockFormat blockFmt = cursor.blockFormat();
-        blockFmt.setIndent(0);
-        cursor.setBlockFormat(blockFmt);
+    } else { // remove the exists item
+        removeListItem(cursor.block());
     }
     cursor.endEditBlock();
 }
@@ -133,29 +129,54 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
         QTextListFormat listFmt = currList->format();
         switch(e->key()) {
         case Qt::Key_Tab:
-            {
-                QTextListFormat::Style style = listFmt.style();
-                if(style == QTextListFormat::ListDisc) {
-                    listFmt.setStyle(QTextListFormat::ListCircle);
-                } else if(style == QTextListFormat::ListCircle) {
-                    listFmt.setStyle(QTextListFormat::ListSquare);
-                }
-                listFmt.setIndent(listFmt.indent() + 1);
+        {
+            QTextListFormat::Style style = listFmt.style();
+            if(style == QTextListFormat::ListDisc) {
+                listFmt.setStyle(QTextListFormat::ListCircle);
+            } else if(style == QTextListFormat::ListCircle) {
+                listFmt.setStyle(QTextListFormat::ListSquare);
             }
+            listFmt.setIndent(listFmt.indent() + 1);
+            currList->setFormat(listFmt);
+        }
             break;
         case Qt::Key_Backspace:
-//            if(cursor.block().length() == 1) {
-//                listFmt.setIndent(listFmt.indent() - 1);
-//            } else {
-//                QTextEdit::keyPressEvent(e);
-//            }
+        {
+            if(cursor.block().length() == 1) {
+                QTextListFormat::Style style = listFmt.style();
+                if(style == QTextListFormat::ListSquare) {
+                    listFmt.setStyle(QTextListFormat::ListCircle);
+                } else if(style == QTextListFormat::ListCircle) {
+                    listFmt.setStyle(QTextListFormat::ListDisc);
+                }
+                if(listFmt.indent() > 1) {
+                    listFmt.setIndent(listFmt.indent() - 1);
+                    currList->setFormat(listFmt);
+                } else if(listFmt.indent() == 1) {
+                    removeListItem(cursor.block());
+                    emit bulletListExists(false);
+                }
+            } else {
+                QTextEdit::keyPressEvent(e);
+            }
+        }
             break;
         default:
             QTextEdit::keyPressEvent(e);
             break;
         }
-        currList->setFormat(listFmt);
     } else {
         QTextEdit::keyPressEvent(e);
+    }
+}
+
+void VisualEditor::removeListItem(const QTextBlock &block)
+{
+    QTextCursor cursor = this->textCursor();
+    if(cursor.currentList()) {
+        cursor.currentList()->remove(block);
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+        blockFmt.setIndent(0);
+        cursor.setBlockFormat(blockFmt);
     }
 }
