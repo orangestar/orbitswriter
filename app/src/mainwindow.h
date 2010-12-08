@@ -89,6 +89,7 @@ private slots:
     void showTextColorDialog();
     void showTextBackgroundColorDialog();
     void editorChanged(int idx);
+    void visualEditorCursorPositionChanged();
 
 private:
     /*
@@ -132,8 +133,8 @@ private:
     QAction *textColorAct;
     QAction *textBackgroundColorAct;
 
-    QAction *olAct;
-    QAction *ulAct;
+    QAction *numberedListAct;
+    QAction *bulletListAct;
     QAction *tableAct;
     QAction *alignCenterAct;
     QAction *alignJustifyAct;

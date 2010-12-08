@@ -18,7 +18,10 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QDebug>
 #include <QTextList>
+#include <QKeyEvent>
+#include <QPalette>
 
 #include "visualeditor.h"
 #include "common.h"
@@ -31,7 +34,10 @@ VisualEditor::VisualEditor(QWidget *parent) :
     setFont(ctx->defaultFont());
     setAlignment(Qt::AlignJustify);
     // FIXME Text background color should be set through blog theme.
-    setTextBackgroundColor(Qt::white);
+//    setTextBackgroundColor(Qt::white);
+//    QPalette p = palette();
+//    p.setColor(QPalette::Base, QColor(255, 255, 255));
+//    setPalette(p);
 }
 
 void VisualEditor::applyFormat(const QTextCharFormat &format)
@@ -97,20 +103,59 @@ void VisualEditor::textAlignmentChanged(Qt::Alignment align)
     this->setAlignment(align);
 }
 
-void VisualEditor::insertList()
+void VisualEditor::insertBulletList(bool insert)
 {
     QTextCursor cursor = this->textCursor();
     cursor.beginEditBlock();
     QTextListFormat listFmt;
-    if(cursor.currentList()) {
-        listFmt = cursor.currentList()->format();
-    } else {
+    if(insert) { // create and insert a new list
         QTextBlockFormat blockFmt = cursor.blockFormat();
         listFmt.setIndent(blockFmt.indent() + 1);
         blockFmt.setIndent(0);
         cursor.setBlockFormat(blockFmt);
+        listFmt.setStyle(QTextListFormat::ListDisc);
+        cursor.createList(listFmt);
+    } else { // remove the exists one
+        QTextBlock item = cursor.block();
+        cursor.currentList()->remove(item);
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+        blockFmt.setIndent(0);
+        cursor.setBlockFormat(blockFmt);
     }
-    listFmt.setStyle(QTextListFormat::ListDisc);
-    cursor.createList(listFmt);
     cursor.endEditBlock();
+}
+
+void VisualEditor::keyPressEvent(QKeyEvent *e)
+{
+    QTextCursor cursor = this->textCursor();
+    QTextList *currList = cursor.currentList();
+    if(currList) {
+        QTextListFormat listFmt = currList->format();
+        switch(e->key()) {
+        case Qt::Key_Tab:
+            {
+                QTextListFormat::Style style = listFmt.style();
+                if(style == QTextListFormat::ListDisc) {
+                    listFmt.setStyle(QTextListFormat::ListCircle);
+                } else if(style == QTextListFormat::ListCircle) {
+                    listFmt.setStyle(QTextListFormat::ListSquare);
+                }
+                listFmt.setIndent(listFmt.indent() + 1);
+            }
+            break;
+        case Qt::Key_Backspace:
+//            if(cursor.block().length() == 1) {
+//                listFmt.setIndent(listFmt.indent() - 1);
+//            } else {
+//                QTextEdit::keyPressEvent(e);
+//            }
+            break;
+        default:
+            QTextEdit::keyPressEvent(e);
+            break;
+        }
+        currList->setFormat(listFmt);
+    } else {
+        QTextEdit::keyPressEvent(e);
+    }
 }

@@ -89,9 +89,14 @@ public slots:
     void setTextStrike(bool value);
 
     /*!
-       \brief Inserts a list at current cursor.
+       \brief Inserts a bullet list at current cursor.
+       \param insert creates and inserts a bullet list into document if is true,
+       remove the exists one if false
      */
-    void insertList();
+    void insertBulletList(bool insert);
+
+protected:
+    void keyPressEvent(QKeyEvent *e);
 
 private:
     void applyFormat(const QTextCharFormat &format);

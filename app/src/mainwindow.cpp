@@ -18,6 +18,7 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QDebug>
 #include <QApplication>
 #include <QAction>
 #include <QActionGroup>
@@ -33,6 +34,8 @@
 #include <QCloseEvent>
 #include <QColorDialog>
 #include <QDockWidget>
+#include <QTextList>
+#include <QTextListFormat>
 
 #include "common.h"
 #include "mainwindow.h"
@@ -186,12 +189,14 @@ void MainWindow::createActions()
     textBackgroundColorAct->setStatusTip(tr("Text background color."));
     connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
 
-    olAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
-    olAct->setStatusTip(tr("Add ordered list."));
+    numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
+    numberedListAct->setStatusTip(tr("Add ordered list."));
+    numberedListAct->setCheckable(true);
 
-    ulAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
-    ulAct->setStatusTip(tr("Add bullet list."));
-    connect(olAct, SIGNAL(triggered()), visualEditor, SLOT(insertList()));
+    bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
+    bulletListAct->setStatusTip(tr("Add bullet list."));
+    bulletListAct->setCheckable(true);
+    connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
 
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
@@ -267,8 +272,8 @@ void MainWindow::createMenus()
     alignMenu->addAction(alignJustifyAct);
     formatMenu->addMenu(alignMenu);
     formatMenu->addSeparator();
-    formatMenu->addAction(olAct);
-    formatMenu->addAction(ulAct);
+    formatMenu->addAction(bulletListAct);
+    formatMenu->addAction(numberedListAct);
     bar->addMenu(formatMenu);
 
     QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
@@ -319,8 +324,8 @@ void MainWindow::createToolBars()
     }
     textToolBar->addAction(alignJustifyAct);
     textToolBar->addSeparator();
-    textToolBar->addAction(olAct);
-    textToolBar->addAction(ulAct);
+    textToolBar->addAction(bulletListAct);
+    textToolBar->addAction(numberedListAct);
     textToolBar->addAction(tableAct);
 }
 
@@ -337,6 +342,8 @@ void MainWindow::createEditors()
     editorStack->addTab(visualEditor, tr("Visual"));
     connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this, SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(visualEditor, SIGNAL(cursorPositionChanged()),
+            this, SLOT(visualEditorCursorPositionChanged()));
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
 
     previewEditor = new QTextEdit(editorStack);
@@ -362,6 +369,19 @@ void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
     currentFontChanged(format.font());
     currentTextColorChanged(format.foreground().color());
     currentTextBackgroundColorChanged(format.background().color());
+}
+
+void MainWindow::visualEditorCursorPositionChanged()
+{
+    QTextCursor cursor = visualEditor->textCursor();
+    if(cursor.currentList()) {
+        QTextListFormat listFmt = cursor.currentList()->format();
+        bulletListAct->setChecked(listFmt.style() > QTextListFormat::ListDecimal);
+        numberedListAct->setChecked(listFmt.style() < QTextListFormat::ListDecimal);
+    } else {
+        bulletListAct->setChecked(false);
+        numberedListAct->setChecked(false);
+    }
 }
 
 void MainWindow::showPluginDialog()
@@ -457,7 +477,7 @@ void MainWindow::editorChanged(int idx)
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-//    if (maybeSave()) {
+//    if (continueToClose()) {
         AppContext::instance()->updateData();
         event->accept();
 //    } else {
