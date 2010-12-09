@@ -43,3 +43,19 @@ Style::ListType StyleUtil::isBulletList(const QTextListFormat &format)
         return Style::UndefinedListType;
     }
 }
+
+QTextListFormat::Style StyleUtil::nextStyle(const QTextListFormat::Style &style)
+{
+    switch(style) {
+    case QTextListFormat::ListDisc:
+        return QTextListFormat::ListCircle;
+    case QTextListFormat::ListCircle:
+        return QTextListFormat::ListSquare;
+    case QTextListFormat::ListDecimal:
+        return QTextListFormat::ListUpperRoman;
+    case QTextListFormat::ListUpperRoman:
+        return QTextListFormat::ListUpperAlpha;
+    default:
+        return QTextListFormat::ListStyleUndefined;
+    }
+}

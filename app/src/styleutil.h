@@ -37,9 +37,18 @@ public:
     StyleUtil();
 
     /*!
-       \brief True if the \a QTextListFormat is a bullet list, otherwise returns false.
+       \brief Gets the list type.
+       \param format current list format
+       \return list type of this format
      */
     static Style::ListType isBulletList(const QTextListFormat &format);
+
+    /*!
+       \brief Returns the style of next level item.
+       \param style current list style
+       \return the style of next level item
+     */
+    static QTextListFormat::Style nextStyle(const QTextListFormat::Style &style);
 };
 
 #endif // STYLEUTIL_H

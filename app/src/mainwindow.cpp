@@ -73,6 +73,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::createActions()
 {
+    formatGroup = new QActionGroup(this);
+    formatGroup->setExclusive(false);
+    eleGroup = new QActionGroup(this);
+    eleGroup->setExclusive(false);
+    alignGroup = new QActionGroup(this);
+
     newPostAct = new QAction(QIcon(":/img/doc_new"), tr("&New"), this);
     newPostAct->setShortcut(QKeySequence::New);
     newPostAct->setStatusTip(tr("Create a new post."));
@@ -139,47 +145,65 @@ void MainWindow::createActions()
     textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
+    formatGroup->addAction(textBoldAct);
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
+    formatGroup->addAction(textItalicAct);
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
     textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
+    formatGroup->addAction(textUnderlineAct);
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
     textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
+    formatGroup->addAction(textStrikeoutAct);
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font..."), this);
     textFontAct->setStatusTip(tr("Set font."));
+    formatGroup->addAction(textFontAct);
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     textColorAct = new QAction(pix, tr("Text Color..."), this);
     textColorAct->setStatusTip(tr("Text color."));
+    formatGroup->addAction(textColorAct);
 
     QPixmap bpix(16, 16);
     bpix.fill(Qt::white);
     textBackgroundColorAct = new QAction(bpix, tr("Text Background Color..."), this);
     textBackgroundColorAct->setStatusTip(tr("Text background color."));
+    formatGroup->addAction(textBackgroundColorAct);
 
-    numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered list"), this);
+    numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered List"), this);
     numberedListAct->setStatusTip(tr("Add ordered list."));
     numberedListAct->setCheckable(true);
+    eleGroup->addAction(numberedListAct);
 
-    bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet list"), this);
+    bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet List"), this);
     bulletListAct->setStatusTip(tr("Add bullet list."));
     bulletListAct->setCheckable(true);
+    eleGroup->addAction(bulletListAct);
+
+    indentMoreAct = new QAction(QIcon(":/img/indent_more"), tr("Indent More"), this);
+    indentMoreAct->setStatusTip(tr("Indent list more."));
+    indentMoreAct->setShortcut(Qt::Key_Tab);
+    eleGroup->addAction(indentMoreAct);
+
+    indentLessAct = new QAction(QIcon(":/img/indent_less"), tr("Indent Less"), this);
+    indentLessAct->setStatusTip(tr("Indent list less."));
+    indentLessAct->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+    eleGroup->addAction(indentLessAct);
 
     tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
     tableAct->setStatusTip(tr("Add table."));
-
-    alignGroup = new QActionGroup(this);
+    eleGroup->addAction(tableAct);
 
     alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
     alignCenterAct->setStatusTip(tr("Justify center."));
@@ -248,10 +272,17 @@ void MainWindow::createMenus()
     }
     alignMenu->addAction(alignJustifyAct);
     formatMenu->addMenu(alignMenu);
-    formatMenu->addSeparator();
-    formatMenu->addAction(bulletListAct);
-    formatMenu->addAction(numberedListAct);
     bar->addMenu(formatMenu);
+
+    QMenu *insertMenu = new QMenu(tr("&Insert"), bar);
+    QMenu *listMenu = new QMenu(tr("List"), insertMenu);
+    listMenu->addAction(bulletListAct);
+    listMenu->addAction(numberedListAct);
+    listMenu->addSeparator();
+    listMenu->addAction(indentMoreAct);
+    listMenu->addAction(indentLessAct);
+    insertMenu->addMenu(listMenu);
+    bar->addMenu(insertMenu);
 
     QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
     toolMenu->addAction(pluginAct);
@@ -432,11 +463,17 @@ void MainWindow::editorChanged(int idx)
 {
     switch(idx) {
     case 0: // visual editor
-        visualEditor->setHtml(visualEditor->toPlainText());
+        formatGroup->setDisabled(false);
+        eleGroup->setDisabled(false);
+        alignGroup->setDisabled(false);
+        visualEditor->setHtml(sourceEditor->toPlainText());
         break;
     case 1: // previewer
         break;
     case 2: // source editor
+        formatGroup->setDisabled(true);
+        eleGroup->setDisabled(true);
+        alignGroup->setDisabled(true);
         sourceEditor->setPlainText(visualEditor->toHtml());
         break;
     default:
@@ -471,6 +508,7 @@ void MainWindow::createConnections()
     connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
     connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
     connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
+    connect(numberedListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertNumberedList(bool)));
     connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
 
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));

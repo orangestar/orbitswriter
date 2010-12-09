@@ -25,6 +25,7 @@
 
 #include "visualeditor.h"
 #include "appcontext.h"
+#include "styleutil.h"
 
 VisualEditor::VisualEditor(QWidget *parent) :
     QTextEdit(parent)
@@ -114,51 +115,78 @@ void VisualEditor::insertNumberedList(bool insert)
 
 void VisualEditor::keyPressEvent(QKeyEvent *e)
 {
-    QTextCursor cursor = this->textCursor();
-    QTextList *currList = cursor.currentList();
-    if(currList) {
-        QTextListFormat listFmt = currList->format();
-        switch(e->key()) {
-        case Qt::Key_Tab:
-        {
-            QTextListFormat::Style style = listFmt.style();
-            if(style == QTextListFormat::ListDisc) {
-                listFmt.setStyle(QTextListFormat::ListCircle);
-            } else if(style == QTextListFormat::ListCircle) {
-                listFmt.setStyle(QTextListFormat::ListSquare);
+    int key = e->key();
+    if(key == Qt::Key_Tab) {
+        // Because there is no TAB in HTML, so we can ignore tab safely.
+        // Only cursor is in a list, tab is enabled.
+        QTextList *list = this->textCursor().currentList();
+        if(list) {
+            QTextListFormat listFmt = list->format();
+            QTextListFormat::Style style = StyleUtil::nextStyle(listFmt.style());
+            if(style != QTextListFormat::ListStyleUndefined) {
+                listFmt.setStyle(style);
             }
             listFmt.setIndent(listFmt.indent() + 1);
-            currList->setFormat(listFmt);
+            list->setFormat(listFmt);
         }
-            break;
-        case Qt::Key_Backspace:
-        {
-            if(cursor.block().length() == 1) {
-                QTextListFormat::Style style = listFmt.style();
-                if(style == QTextListFormat::ListSquare) {
-                    listFmt.setStyle(QTextListFormat::ListCircle);
-                } else if(style == QTextListFormat::ListCircle) {
-                    listFmt.setStyle(QTextListFormat::ListDisc);
-                }
-                if(listFmt.indent() > 1) {
-                    listFmt.setIndent(listFmt.indent() - 1);
-                    currList->setFormat(listFmt);
-                } else if(listFmt.indent() == 1) {
-                    removeListItem(cursor.block());
-                    emit bulletListExists(false);
-                }
-            } else {
-                QTextEdit::keyPressEvent(e);
-            }
-        }
-            break;
-        default:
+    } else if(key == Qt::Key_Backspace) {
+        // When the cursor is in a list and there is no block,
+        // backspace will decrease the indent.
+        QTextList *list = this->textCursor().currentList();
+        if(list) {
+
+        } else {
             QTextEdit::keyPressEvent(e);
-            break;
         }
     } else {
         QTextEdit::keyPressEvent(e);
     }
+
+//    QTextCursor cursor = this->textCursor();
+//    QTextList *currList = cursor.currentList();
+//    if(currList) {
+//        QTextListFormat listFmt = currList->format();
+//        switch(e->key()) {
+//        case Qt::Key_Tab:
+//        {
+//            QTextListFormat::Style style = listFmt.style();
+//            if(style == QTextListFormat::ListDisc) {
+//                listFmt.setStyle(QTextListFormat::ListCircle);
+//            } else if(style == QTextListFormat::ListCircle) {
+//                listFmt.setStyle(QTextListFormat::ListSquare);
+//            }
+//            listFmt.setIndent(listFmt.indent() + 1);
+//            currList->setFormat(listFmt);
+//        }
+//            break;
+//        case Qt::Key_Backspace:
+//        {
+//            if(cursor.block().length() == 1) {
+//                QTextListFormat::Style style = listFmt.style();
+//                if(style == QTextListFormat::ListSquare) {
+//                    listFmt.setStyle(QTextListFormat::ListCircle);
+//                } else if(style == QTextListFormat::ListCircle) {
+//                    listFmt.setStyle(QTextListFormat::ListDisc);
+//                }
+//                if(listFmt.indent() > 1) {
+//                    listFmt.setIndent(listFmt.indent() - 1);
+//                    currList->setFormat(listFmt);
+//                } else if(listFmt.indent() == 1) {
+//                    removeListItem(cursor.block());
+//                    emit bulletListExists(false);
+//                }
+//            } else {
+//                QTextEdit::keyPressEvent(e);
+//            }
+//        }
+//            break;
+//        default:
+//            QTextEdit::keyPressEvent(e);
+//            break;
+//        }
+//    } else {
+//        QTextEdit::keyPressEvent(e);
+//    }
 }
 
 void VisualEditor::removeListItem(const QTextBlock &block)

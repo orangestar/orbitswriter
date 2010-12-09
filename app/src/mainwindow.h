@@ -136,9 +136,10 @@ private:
 
     QAction *numberedListAct;
     QAction *bulletListAct;
+    QAction *indentMoreAct;
+    QAction *indentLessAct;
     QAction *tableAct;
 
-    QActionGroup *alignGroup;
     QAction *alignCenterAct;
     QAction *alignJustifyAct;
     QAction *alignLeftAct;
@@ -148,6 +149,10 @@ private:
      * web actions
      */
     QAction *publishAct;
+
+    QActionGroup *formatGroup;
+    QActionGroup *alignGroup;
+    QActionGroup *eleGroup;
 
     QTabWidget *editorStack;
     VisualEditor *visualEditor;

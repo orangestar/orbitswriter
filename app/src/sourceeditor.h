@@ -21,14 +21,14 @@
 #ifndef SOURCEEDITOR_H
 #define SOURCEEDITOR_H
 
-#include <QTextEdit>
+#include <QPlainTextEdit>
 
 /*!
    \class SourceEditor
    \brief Source editor is the HTML code editor.
  */
 
-class SourceEditor : public QTextEdit
+class SourceEditor : public QPlainTextEdit
 {
     Q_OBJECT
 public:
