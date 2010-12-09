@@ -15,7 +15,8 @@ SOURCES     += main.cpp\
                visualeditor.cpp \
     pluginmanager.cpp \
     appcontext.cpp \
-    sourceeditor.cpp
+    sourceeditor.cpp \
+    styleutil.cpp
 
 HEADERS     += mainwindow.h \
                visualeditor.h \
@@ -24,7 +25,8 @@ HEADERS     += mainwindow.h \
     plugins/plugin.h \
     common.h \
     appcontext.h \
-    sourceeditor.h
+    sourceeditor.h \
+    styleutil.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

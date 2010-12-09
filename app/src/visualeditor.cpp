@@ -24,7 +24,6 @@
 #include <QPalette>
 
 #include "visualeditor.h"
-#include "common.h"
 #include "appcontext.h"
 
 VisualEditor::VisualEditor(QWidget *parent) :
@@ -105,20 +104,12 @@ void VisualEditor::textAlignmentChanged(Qt::Alignment align)
 
 void VisualEditor::insertBulletList(bool insert)
 {
-    QTextCursor cursor = this->textCursor();
-    cursor.beginEditBlock();
-    QTextListFormat listFmt;
-    if(insert) { // create and insert a new list
-        QTextBlockFormat blockFmt = cursor.blockFormat();
-        listFmt.setIndent(blockFmt.indent() + 1);
-        blockFmt.setIndent(0);
-        cursor.setBlockFormat(blockFmt);
-        listFmt.setStyle(QTextListFormat::ListDisc);
-        cursor.createList(listFmt);
-    } else { // remove the exists item
-        removeListItem(cursor.block());
-    }
-    cursor.endEditBlock();
+    insertList(Style::BulletList, insert);
+}
+
+void VisualEditor::insertNumberedList(bool insert)
+{
+    insertList(Style::NumberedList, insert);
 }
 
 void VisualEditor::keyPressEvent(QKeyEvent *e)
@@ -179,4 +170,22 @@ void VisualEditor::removeListItem(const QTextBlock &block)
         blockFmt.setIndent(0);
         cursor.setBlockFormat(blockFmt);
     }
+}
+
+void VisualEditor::insertList(Style::ListType listType, bool insert)
+{
+    QTextCursor cursor = this->textCursor();
+    cursor.beginEditBlock();
+    QTextListFormat listFmt;
+    if(insert) { // create and insert a new list
+        QTextBlockFormat blockFmt = cursor.blockFormat();
+        listFmt.setIndent(blockFmt.indent() + 1);
+        blockFmt.setIndent(0);
+        cursor.setBlockFormat(blockFmt);
+        listFmt.setStyle(listType == Style::BulletList ? QTextListFormat::ListDisc : QTextListFormat::ListDecimal);
+        cursor.createList(listFmt);
+    } else { // remove the exists item
+        removeListItem(cursor.block());
+    }
+    cursor.endEditBlock();
 }

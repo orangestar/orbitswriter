@@ -51,6 +51,22 @@ namespace TextFormat
 
 }
 
+/*!
+   \namespace Style
+   \brief Constants in text style.
+ */
+namespace Style
+{
+    /*!
+       \brief List type.
+     */
+    enum ListType {
+        UndefinedListType = -1, /*!< Undefined list type. */
+        BulletList = 1,         /*!< Bullet list. */
+        NumberedList            /*!< Numbered list. */
+    };
+}
+
 namespace AppContextValue
 {
     const QString DEFAULT_FONT("defaultFont");

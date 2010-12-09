@@ -23,6 +23,8 @@
 
 #include <QTextEdit>
 
+#include "common.h"
+
 class QAction;
 
 /*!
@@ -103,12 +105,20 @@ public slots:
      */
     void insertBulletList(bool insert);
 
+    /*!
+       \brief Inserts a numbered list at current cursor.
+       \param insert creates and inserts a numbered list into document if is true,
+       remove the exists one if false
+     */
+    void insertNumberedList(bool insert);
+
 protected:
     void keyPressEvent(QKeyEvent *e);
 
 private:
     void applyFormat(const QTextCharFormat &format);
     void removeListItem(const QTextBlock &block);
+    void insertList(Style::ListType listType, bool insert);
 
 };
 

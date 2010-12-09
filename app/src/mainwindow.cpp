@@ -43,6 +43,7 @@
 #include "pluginmanager.h"
 #include "appcontext.h"
 #include "sourceeditor.h"
+#include "styleutil.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -344,9 +345,9 @@ void MainWindow::visualEditorCursorPositionChanged()
 {
     QTextCursor cursor = visualEditor->textCursor();
     if(cursor.currentList()) {
-        QTextListFormat listFmt = cursor.currentList()->format();
-        bulletListAct->setChecked(listFmt.style() > QTextListFormat::ListDecimal);
-        numberedListAct->setChecked(listFmt.style() < QTextListFormat::ListDecimal);
+        Style::ListType listType = StyleUtil::isBulletList(cursor.currentList()->format());
+        bulletListAct->setChecked(listType == Style::BulletList);
+        numberedListAct->setChecked(listType == Style::NumberedList);
     } else {
         bulletListAct->setChecked(false);
         numberedListAct->setChecked(false);
