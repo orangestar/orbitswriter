@@ -23,8 +23,6 @@
 
 #include <QTextEdit>
 
-#include "common.h"
-
 class QAction;
 
 /*!
@@ -118,7 +116,7 @@ protected:
 private:
     void applyFormat(const QTextCharFormat &format);
     void removeListItem(const QTextBlock &block);
-    void insertList(Style::ListType listType, bool insert);
+    void insertList(QTextListFormat::Style style, bool insert);
 
 };
 

@@ -105,12 +105,12 @@ void VisualEditor::textAlignmentChanged(Qt::Alignment align)
 
 void VisualEditor::insertBulletList(bool insert)
 {
-    insertList(Style::BulletList, insert);
+    insertList(QTextListFormat::ListDisc, insert);
 }
 
 void VisualEditor::insertNumberedList(bool insert)
 {
-    insertList(Style::NumberedList, insert);
+    insertList(QTextListFormat::ListDecimal, insert);
 }
 
 void VisualEditor::keyPressEvent(QKeyEvent *e)
@@ -119,15 +119,16 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
     if(key == Qt::Key_Tab) {
         // Because there is no TAB in HTML, so we can ignore tab safely.
         // Only cursor is in a list, tab is enabled.
-        QTextList *list = this->textCursor().currentList();
-        if(list) {
-            QTextListFormat listFmt = list->format();
+        QTextCursor cursor = this->textCursor();
+        QTextList *currList = cursor.currentList();
+        if(currList) {
+            QTextListFormat listFmt = currList->format();
             QTextListFormat::Style style = StyleUtil::nextStyle(listFmt.style());
             if(style != QTextListFormat::ListStyleUndefined) {
                 listFmt.setStyle(style);
             }
             listFmt.setIndent(listFmt.indent() + 1);
-            list->setFormat(listFmt);
+            cursor.createList(listFmt);
         }
     } else if(key == Qt::Key_Backspace) {
         // When the cursor is in a list and there is no block,
@@ -200,7 +201,7 @@ void VisualEditor::removeListItem(const QTextBlock &block)
     }
 }
 
-void VisualEditor::insertList(Style::ListType listType, bool insert)
+void VisualEditor::insertList(QTextListFormat::Style style, bool insert)
 {
     QTextCursor cursor = this->textCursor();
     cursor.beginEditBlock();
@@ -210,7 +211,7 @@ void VisualEditor::insertList(Style::ListType listType, bool insert)
         listFmt.setIndent(blockFmt.indent() + 1);
         blockFmt.setIndent(0);
         cursor.setBlockFormat(blockFmt);
-        listFmt.setStyle(listType == Style::BulletList ? QTextListFormat::ListDisc : QTextListFormat::ListDecimal);
+        listFmt.setStyle(style);
         cursor.createList(listFmt);
     } else { // remove the exists item
         removeListItem(cursor.block());
