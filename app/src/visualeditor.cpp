@@ -33,6 +33,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     AppContext *ctx = AppContext::instance();
     setFont(ctx->defaultFont());
     setAlignment(Qt::AlignJustify);
+    document()->setModified(false);
     // FIXME Text background color should be set through blog theme.
 //    setTextBackgroundColor(Qt::white);
 //    QPalette p = palette();
