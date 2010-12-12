@@ -27,8 +27,8 @@ class QTextListFormat;
 
 /*!
    \class StyleUtil
-   \brief A helper class of styles. All functions in this class is static.
-   This class supplies useful functions about text styles.
+   \brief A helper class of styles. This class supplies useful functions about text styles.
+   All functions in this class are static so there is no need to instance this class.
  */
 
 class StyleUtil
@@ -41,14 +41,22 @@ public:
        \param format current list format
        \return list type of this format
      */
-    static Style::ListType isBulletList(const QTextListFormat &format);
+    static Constants::ListType isBulletList(const QTextListFormat &format);
 
     /*!
        \brief Returns the style of next level item.
        \param style current list style
        \return the style of next level item
      */
-    static QTextListFormat::Style nextStyle(const QTextListFormat::Style &style);
+    static QTextListFormat::Style nextLevelStyle(const QTextListFormat::Style &style);
+
+    /*!
+       \brief Returns the style of previous level item.
+       \param style current list style
+       \return the style of previous level item
+     */
+    static QTextListFormat::Style previousLevelStyle(const QTextListFormat::Style &style);
+
 };
 
 #endif // STYLEUTIL_H

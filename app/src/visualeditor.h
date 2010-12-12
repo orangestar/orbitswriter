@@ -41,10 +41,10 @@ public:
 signals:
 
     /*!
-       \brief Emits when bullet list removes.
+       \brief Emits when the list removes.
        \param r false if list removed
      */
-    void bulletListExists(bool r);
+    void listExists(bool r);
 
 public slots:
 

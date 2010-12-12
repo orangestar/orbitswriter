@@ -32,10 +32,10 @@ AppContext::AppContext()
 
 void AppContext::loadData()
 {
-    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
-    if(settings.contains(AppContextValue::DEFAULT_FONT)) {
-        // _defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
-    }
+//    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
+//    if(settings.contains(AppContextValue::DEFAULT_FONT)) {
+//        // _defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
+//    }
 }
 
 void AppContext::updateData()

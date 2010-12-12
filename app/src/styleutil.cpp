@@ -26,25 +26,25 @@ StyleUtil::StyleUtil()
 {
 }
 
-Style::ListType StyleUtil::isBulletList(const QTextListFormat &format)
+Constants::ListType StyleUtil::isBulletList(const QTextListFormat &format)
 {
     switch(format.style()) {
     case QTextListFormat::ListDisc:
     case QTextListFormat::ListCircle:
     case QTextListFormat::ListSquare:
-        return Style::BulletList;
+        return Constants::BulletList;
     case QTextListFormat::ListDecimal:
     case QTextListFormat::ListLowerAlpha:
     case QTextListFormat::ListLowerRoman:
     case QTextListFormat::ListUpperAlpha:
     case QTextListFormat::ListUpperRoman:
-        return Style::NumberedList;
+        return Constants::NumberedList;
     default:
-        return Style::UndefinedListType;
+        return Constants::UndefinedListType;
     }
 }
 
-QTextListFormat::Style StyleUtil::nextStyle(const QTextListFormat::Style &style)
+QTextListFormat::Style StyleUtil::nextLevelStyle(const QTextListFormat::Style &style)
 {
     switch(style) {
     case QTextListFormat::ListDisc:
@@ -55,6 +55,22 @@ QTextListFormat::Style StyleUtil::nextStyle(const QTextListFormat::Style &style)
         return QTextListFormat::ListUpperRoman;
     case QTextListFormat::ListUpperRoman:
         return QTextListFormat::ListUpperAlpha;
+    default:
+        return QTextListFormat::ListStyleUndefined;
+    }
+}
+
+QTextListFormat::Style StyleUtil::previousLevelStyle(const QTextListFormat::Style &style)
+{
+    switch(style) {
+    case QTextListFormat::ListSquare:
+        return QTextListFormat::ListCircle;
+    case QTextListFormat::ListCircle:
+        return QTextListFormat::ListDisc;
+    case QTextListFormat::ListUpperAlpha:
+        return QTextListFormat::ListUpperRoman;
+    case QTextListFormat::ListUpperRoman:
+        return QTextListFormat::ListDecimal;
     default:
         return QTextListFormat::ListStyleUndefined;
     }

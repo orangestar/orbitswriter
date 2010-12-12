@@ -34,7 +34,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     setFont(ctx->defaultFont());
     setAlignment(Qt::AlignJustify);
     // FIXME Text background color should be set through blog theme.
-//    setTextBackgroundColor(Qt::white);
+//    setTextBackgroundColor(Qt::transparent);
 //    QPalette p = palette();
 //    p.setColor(QPalette::Base, QColor(255, 255, 255));
 //    setPalette(p);
@@ -123,7 +123,7 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
         QTextList *currList = cursor.currentList();
         if(currList) {
             QTextListFormat listFmt = currList->format();
-            QTextListFormat::Style style = StyleUtil::nextStyle(listFmt.style());
+            QTextListFormat::Style style = StyleUtil::nextLevelStyle(listFmt.style());
             if(style != QTextListFormat::ListStyleUndefined) {
                 listFmt.setStyle(style);
             }
@@ -133,61 +133,30 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
     } else if(key == Qt::Key_Backspace) {
         // When the cursor is in a list and there is no block,
         // backspace will decrease the indent.
-        QTextList *list = this->textCursor().currentList();
-        if(list) {
-
+        QTextCursor cursor = this->textCursor();
+        QTextList *currList = cursor.currentList();
+        if(currList) {
+            if(cursor.block().length() == 1) {
+                // only bullet point left
+                QTextListFormat listFmt = currList->format();
+                QTextListFormat::Style style = StyleUtil::previousLevelStyle(listFmt.style());
+                if(style != QTextListFormat::ListStyleUndefined) {
+                    listFmt.setIndent(listFmt.indent() - 1);
+                    listFmt.setStyle(style);
+                    cursor.createList(listFmt);
+                } else {
+                    removeListItem(cursor.block());
+                    emit listExists(false);
+                }
+            } else {
+                QTextEdit::keyPressEvent(e);
+            }
         } else {
             QTextEdit::keyPressEvent(e);
         }
     } else {
         QTextEdit::keyPressEvent(e);
     }
-
-//    QTextCursor cursor = this->textCursor();
-//    QTextList *currList = cursor.currentList();
-//    if(currList) {
-//        QTextListFormat listFmt = currList->format();
-//        switch(e->key()) {
-//        case Qt::Key_Tab:
-//        {
-//            QTextListFormat::Style style = listFmt.style();
-//            if(style == QTextListFormat::ListDisc) {
-//                listFmt.setStyle(QTextListFormat::ListCircle);
-//            } else if(style == QTextListFormat::ListCircle) {
-//                listFmt.setStyle(QTextListFormat::ListSquare);
-//            }
-//            listFmt.setIndent(listFmt.indent() + 1);
-//            currList->setFormat(listFmt);
-//        }
-//            break;
-//        case Qt::Key_Backspace:
-//        {
-//            if(cursor.block().length() == 1) {
-//                QTextListFormat::Style style = listFmt.style();
-//                if(style == QTextListFormat::ListSquare) {
-//                    listFmt.setStyle(QTextListFormat::ListCircle);
-//                } else if(style == QTextListFormat::ListCircle) {
-//                    listFmt.setStyle(QTextListFormat::ListDisc);
-//                }
-//                if(listFmt.indent() > 1) {
-//                    listFmt.setIndent(listFmt.indent() - 1);
-//                    currList->setFormat(listFmt);
-//                } else if(listFmt.indent() == 1) {
-//                    removeListItem(cursor.block());
-//                    emit bulletListExists(false);
-//                }
-//            } else {
-//                QTextEdit::keyPressEvent(e);
-//            }
-//        }
-//            break;
-//        default:
-//            QTextEdit::keyPressEvent(e);
-//            break;
-//        }
-//    } else {
-//        QTextEdit::keyPressEvent(e);
-//    }
 }
 
 void VisualEditor::removeListItem(const QTextBlock &block)

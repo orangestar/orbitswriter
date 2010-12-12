@@ -376,9 +376,9 @@ void MainWindow::visualEditorCursorPositionChanged()
 {
     QTextCursor cursor = visualEditor->textCursor();
     if(cursor.currentList()) {
-        Style::ListType listType = StyleUtil::isBulletList(cursor.currentList()->format());
-        bulletListAct->setChecked(listType == Style::BulletList);
-        numberedListAct->setChecked(listType == Style::NumberedList);
+        Constants::ListType listType = StyleUtil::isBulletList(cursor.currentList()->format());
+        bulletListAct->setChecked(listType == Constants::BulletList);
+        numberedListAct->setChecked(listType == Constants::NumberedList);
     } else {
         bulletListAct->setChecked(false);
         numberedListAct->setChecked(false);
@@ -524,7 +524,8 @@ void MainWindow::createConnections()
     connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
     connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
-    connect(visualEditor, SIGNAL(bulletListExists(bool)), bulletListAct, SLOT(setChecked(bool)));
+    connect(visualEditor, SIGNAL(listExists(bool)), bulletListAct, SLOT(setChecked(bool)));
+    connect(visualEditor, SIGNAL(listExists(bool)), numberedListAct, SLOT(setChecked(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }

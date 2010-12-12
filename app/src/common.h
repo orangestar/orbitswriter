@@ -24,39 +24,10 @@
 #include <QString>
 
 /*!
-   \namespace TextFormat
-   \brief Text format.
+   \brief Common constants used in application.
  */
-namespace TextFormat
-{
-    /*!
-       \brief Text bold.
-     */
-    const QString TEXT_BOLD("TextBold");
+namespace Constants {
 
-    /*!
-       \brief Text italic.
-     */
-    const QString TEXT_ITALIC("TextItalic");
-
-    /*!
-       \brief Text underline.
-     */
-    const QString TEXT_UNDERLINE("TextUnderline");
-
-    /*!
-       \brief Text strike.
-     */
-    const QString TEXT_STRIKE("TextStrike");
-
-}
-
-/*!
-   \namespace Style
-   \brief Constants in text style.
- */
-namespace Style
-{
     /*!
        \brief List type.
      */
@@ -65,11 +36,7 @@ namespace Style
         BulletList = 1,         /*!< Bullet list. */
         NumberedList            /*!< Numbered list. */
     };
-}
 
-namespace AppContextValue
-{
-    const QString DEFAULT_FONT("defaultFont");
 }
 
 #endif // COMMON_H
