@@ -30,5 +30,19 @@
         <file alias="plugin">images/plugin.png</file>
         <file alias="indent_less">images/indent_less.png</file>
         <file alias="indent_more">images/indent_more.png</file>
+        <file alias="add_col_left">images/add_col_left.png</file>
+        <file alias="add_col_right">images/add_col_right.png</file>
+        <file alias="add_row_down">images/add_row_down.png</file>
+        <file alias="add_row_up">images/add_row_up.png</file>
+        <file alias="col_left">images/col_left.png</file>
+        <file alias="col_right">images/col_right.png</file>
+        <file alias="del_col">images/del_col.png</file>
+        <file alias="del_row">images/del_row.png</file>
+        <file alias="del_table">images/del_table.png</file>
+        <file alias="link">images/link.png</file>
+        <file alias="row_down">images/row_down.png</file>
+        <file alias="row_up">images/row_up.png</file>
+        <file alias="table_prop">images/table_prop.png</file>
+        <file alias="clear_cell">images/clear_cell.png</file>
     </qresource>
 </RCC>

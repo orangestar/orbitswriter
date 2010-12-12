@@ -36,6 +36,7 @@
 #include <QDockWidget>
 #include <QTextList>
 #include <QTextListFormat>
+#include <QComboBox>
 
 #include "common.h"
 #include "mainwindow.h"
@@ -201,9 +202,73 @@ void MainWindow::createActions()
     indentLessAct->setShortcut(Qt::CTRL + Qt::Key_Backspace);
     eleGroup->addAction(indentLessAct);
 
-    tableAct = new QAction(QIcon(":/img/table"), tr("Table"), this);
-    tableAct->setStatusTip(tr("Add table."));
-    eleGroup->addAction(tableAct);
+    tableInsertAct = new QAction(QIcon(":/img/table"), tr("Add Table..."), this);
+    tableInsertAct->setStatusTip(tr("Add table."));
+    eleGroup->addAction(tableInsertAct);
+
+    tablePropAct = new QAction(QIcon(":/img/table_prop"), tr("Table properties..."), this);
+    tablePropAct->setStatusTip(tr("Table properties."));
+    eleGroup->addAction(tablePropAct);
+
+    tableRowPropAct = new QAction(tr("Row properties..."), this);
+    tableRowPropAct->setStatusTip(tr("Table row properties."));
+    eleGroup->addAction(tableRowPropAct);
+
+    tableColPropAct = new QAction(tr("Column properties..."), this);
+    tableColPropAct->setStatusTip(tr("Table column properties."));
+    eleGroup->addAction(tableColPropAct);
+
+    tableCellPropAct = new QAction(tr("Cell properties..."), this);
+    tableCellPropAct->setStatusTip(tr("Table cell properties."));
+    eleGroup->addAction(tableCellPropAct);
+
+    tableInsertRowUpAct = new QAction(QIcon(":/img/add_row_up"), tr("Insert Row Upside"), this);
+    tableInsertRowUpAct->setStatusTip(tr("Insert a row at upside of selected."));
+    eleGroup->addAction(tableInsertRowUpAct);
+
+    tableInsertRowDownAct = new QAction(QIcon(":/img/add_row_down"), tr("Insert Row Downside"), this);
+    tableInsertRowDownAct->setStatusTip(tr("Insert a row at downside of selected."));
+    eleGroup->addAction(tableInsertRowDownAct);
+
+    tableInsertColLeftAct = new QAction(QIcon(":/img/add_col_left"), tr("Insert Column Leftside"), this);
+    tableInsertColLeftAct->setStatusTip(tr("Insert a column at leftside of selected."));
+    eleGroup->addAction(tableInsertColLeftAct);
+
+    tableInsertColRightAct = new QAction(QIcon(":/img/add_col_right"), tr("Insert Column Rightside"), this);
+    tableInsertColRightAct->setStatusTip(tr("Insert a column at rightside of selected."));
+    eleGroup->addAction(tableInsertColRightAct);
+
+    tableRowUpAct = new QAction(QIcon(":/img/row_up"), tr("Move Row Upside"), this);
+    tableRowUpAct->setStatusTip(tr("Move selected row upside."));
+    eleGroup->addAction(tableRowUpAct);
+
+    tableRowDownAct = new QAction(QIcon(":/img/row_down"), tr("Move Row Downside"), this);
+    tableRowDownAct->setStatusTip(tr("Move selected row downside."));
+    eleGroup->addAction(tableRowDownAct);
+
+    tableColLeftAct = new QAction(QIcon(":/img/col_left"), tr("Move Column Leftside"), this);
+    tableColLeftAct->setStatusTip(tr("Move selected column leftside."));
+    eleGroup->addAction(tableColLeftAct);
+
+    tableColRightAct = new QAction(QIcon(":/img/col_right"), tr("Move Column Rightside"), this);
+    tableColRightAct->setStatusTip(tr("Move selected column rightside."));
+    eleGroup->addAction(tableColRightAct);
+
+    tableDelAct = new QAction(QIcon(":/img/del_table"), tr("Delete Table"), this);
+    tableDelAct->setStatusTip(tr("Delete table."));
+    eleGroup->addAction(tableDelAct);
+
+    tableDelRowAct = new QAction(QIcon(":/img/del_row"), tr("Delete Row"), this);
+    tableDelRowAct->setStatusTip(tr("Delete row."));
+    eleGroup->addAction(tableDelRowAct);
+
+    tableDelColAct = new QAction(QIcon(":/img/del_col"), tr("Delete Column"), this);
+    tableDelColAct->setStatusTip(tr("Delete column."));
+    eleGroup->addAction(tableDelColAct);
+
+    tableCellClearAct = new QAction(QIcon(":/img/clear_cell"), tr("Clear Cell"), this);
+    tableCellClearAct->setStatusTip(tr("Clear cell."));
+    eleGroup->addAction(tableCellClearAct);
 
     alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
     alignCenterAct->setStatusTip(tr("Justify center."));
@@ -282,6 +347,8 @@ void MainWindow::createMenus()
     listMenu->addAction(indentMoreAct);
     listMenu->addAction(indentLessAct);
     insertMenu->addMenu(listMenu);
+    QMenu *tableMenu = createTableMenu(insertMenu);
+    insertMenu->addMenu(tableMenu);
     bar->addMenu(insertMenu);
 
     QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
@@ -298,10 +365,12 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolBars()
 {
-    QToolBar *webToolBar = addToolBar(tr("Web Tool Bar"));
+    webToolBar = addToolBar(tr("Web Tool Bar"));
     webToolBar->addAction(publishAct);
 
-    QToolBar *editToolBar = addToolBar(tr("Edit Tool Bar"));
+    editToolBar = addToolBar(tr("Edit Tool Bar"));
+    editToolBar->addAction(undoAct);
+    editToolBar->addAction(redoAct);
     QToolButton *editButton = new QToolButton(editToolBar);
     QMenu *editList = new QMenu(editButton);
     editList->addAction(cutAct);
@@ -312,7 +381,16 @@ void MainWindow::createToolBars()
     editButton->setMenu(editList);
     editToolBar->addWidget(editButton);
 
-    QToolBar *textToolBar = addToolBar(tr("Text Tool Bar"));
+    textToolBar = addToolBar(tr("Text Tool Bar"));
+    QComboBox *secList = new QComboBox(this);
+    secList->addItem(tr("p"));
+    secList->addItem(tr("h1"));
+    secList->addItem(tr("h2"));
+    secList->addItem(tr("h3"));
+    secList->addItem(tr("h4"));
+    secList->addItem(tr("h5"));
+    secList->addItem(tr("h6"));
+    textToolBar->addWidget(secList);
     textToolBar->addAction(textBoldAct);
     textToolBar->addAction(textItalicAct);
     textToolBar->addAction(textUnderlineAct);
@@ -334,7 +412,12 @@ void MainWindow::createToolBars()
     textToolBar->addSeparator();
     textToolBar->addAction(bulletListAct);
     textToolBar->addAction(numberedListAct);
-    textToolBar->addAction(tableAct);
+    QToolButton *tableButton = new QToolButton(editToolBar);
+    tableButton->setMenu(createTableMenu(tableButton));
+    tableButton->setPopupMode(QToolButton::InstantPopup);
+    tableButton->setIcon(tableInsertAct->icon());
+    tableButton->setToolTip(tr("Table"));
+    textToolBar->addWidget(tableButton);
 }
 
 void MainWindow::createStatusBar()
@@ -463,17 +546,17 @@ void MainWindow::editorChanged(int idx)
 {
     switch(idx) {
     case 0: // visual editor
-        formatGroup->setDisabled(false);
-        eleGroup->setDisabled(false);
-        alignGroup->setDisabled(false);
+        enabledOnEditorChange(true);
+        editToolBar->setEnabled(true);
         visualEditor->setHtml(sourceEditor->toPlainText());
         break;
     case 1: // previewer
+        enabledOnEditorChange(false);
+        editToolBar->setEnabled(false);
         break;
     case 2: // source editor
-        formatGroup->setDisabled(true);
-        eleGroup->setDisabled(true);
-        alignGroup->setDisabled(true);
+        enabledOnEditorChange(false);
+        editToolBar->setEnabled(true);
         sourceEditor->setPlainText(visualEditor->toHtml());
         break;
     default:
@@ -490,6 +573,43 @@ void MainWindow::closeEvent(QCloseEvent *event)
 //    } else {
 //        event->ignore();
 //    }
+}
+
+void MainWindow::enabledOnEditorChange(bool enable)
+{
+    formatGroup->setEnabled(enable);
+    eleGroup->setEnabled(enable);
+    alignGroup->setEnabled(enable);
+    textToolBar->setEnabled(enable);
+}
+
+QMenu* MainWindow::createTableMenu(QWidget *parent /* = 0 */)
+{
+    QMenu *tableMenu = new QMenu(tr("Table"), parent);
+    tableMenu->addAction(tableInsertAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tablePropAct);
+    tableMenu->addAction(tableRowPropAct);
+    tableMenu->addAction(tableColPropAct);
+    tableMenu->addAction(tableCellPropAct);
+    tableMenu->addAction(tableCellPropAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableInsertRowUpAct);
+    tableMenu->addAction(tableInsertRowDownAct);
+    tableMenu->addAction(tableRowUpAct);
+    tableMenu->addAction(tableRowDownAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableInsertColLeftAct);
+    tableMenu->addAction(tableInsertColRightAct);
+    tableMenu->addAction(tableColLeftAct);
+    tableMenu->addAction(tableColRightAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableDelAct);
+    tableMenu->addAction(tableDelRowAct);
+    tableMenu->addAction(tableDelColAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableCellClearAct);
+    return tableMenu;
 }
 
 void MainWindow::createConnections()

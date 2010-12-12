@@ -138,7 +138,23 @@ private:
     QAction *bulletListAct;
     QAction *indentMoreAct;
     QAction *indentLessAct;
-    QAction *tableAct;
+    QAction *tableInsertAct;
+    QAction *tablePropAct;
+    QAction *tableRowPropAct;
+    QAction *tableColPropAct;
+    QAction *tableCellPropAct;
+    QAction *tableInsertRowUpAct;
+    QAction *tableInsertRowDownAct;
+    QAction *tableInsertColLeftAct;
+    QAction *tableInsertColRightAct;
+    QAction *tableRowUpAct;
+    QAction *tableRowDownAct;
+    QAction *tableColLeftAct;
+    QAction *tableColRightAct;
+    QAction *tableDelAct;
+    QAction *tableDelRowAct;
+    QAction *tableDelColAct;
+    QAction *tableCellClearAct;
 
     QAction *alignCenterAct;
     QAction *alignJustifyAct;
@@ -154,6 +170,10 @@ private:
     QActionGroup *alignGroup;
     QActionGroup *eleGroup;
 
+    QToolBar *webToolBar;
+    QToolBar *editToolBar;
+    QToolBar *textToolBar;
+
     QTabWidget *editorStack;
     VisualEditor *visualEditor;
     QTextEdit *previewEditor;
@@ -164,6 +184,7 @@ private:
 
     void createActions();
     void createMenus();
+    QMenu* createTableMenu(QWidget *parent = 0);
     void createToolBars();
     void createStatusBar();
     void createEditors();
@@ -172,6 +193,7 @@ private:
     void currentFontChanged(const QFont &font);
     void currentTextColorChanged(const QColor &color);
     void currentTextBackgroundColorChanged(const QColor &color);
+    void enabledOnEditorChange(bool enable);
 };
 
 #endif // MAINWINDOW_H
