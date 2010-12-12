@@ -134,8 +134,9 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
     } else if(key == Qt::Key_Backspace) {
         // When the cursor is in a list and there is no block,
         // backspace will decrease the indent.
-        QTextList *list = this->textCursor().currentList();
-        if(list) {
+        QTextCursor cursor = this->textCursor();
+        QTextList *list = cursor.currentList();
+        if(list && cursor.block().length() == 1) {
 
         } else {
             QTextEdit::keyPressEvent(e);

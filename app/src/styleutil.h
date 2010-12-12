@@ -49,6 +49,13 @@ public:
        \return the style of next level item
      */
     static QTextListFormat::Style nextStyle(const QTextListFormat::Style &style);
+
+    /*!
+       \brief Returns the style of previous level item.
+       \param style current list style
+       \return the style of previous level item
+     */
+    static QTextListFormat::Style previousStyle(const QTextListFormat::Style &style);
 };
 
 #endif // STYLEUTIL_H

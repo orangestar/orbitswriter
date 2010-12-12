@@ -59,3 +59,19 @@ QTextListFormat::Style StyleUtil::nextStyle(const QTextListFormat::Style &style)
         return QTextListFormat::ListStyleUndefined;
     }
 }
+
+QTextListFormat::Style StyleUtil::previousStyle(const QTextListFormat::Style &style)
+{
+    switch(style) {
+    case QTextListFormat::ListSquare:
+        return QTextListFormat::ListCircle;
+    case QTextListFormat::ListCircle:
+        return QTextListFormat::ListDisc;
+    case QTextListFormat::ListUpperAlpha:
+        return QTextListFormat::ListUpperRoman;
+    case QTextListFormat::ListUpperRoman:
+        return QTextListFormat::ListDecimal;
+    default:
+        return QTextListFormat::ListStyleUndefined;
+    }
+}
