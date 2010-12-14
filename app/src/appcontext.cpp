@@ -21,13 +21,11 @@
 #include <QApplication>
 #include <QSettings>
 
-#include "common.h"
 #include "appcontext.h"
 
 AppContext::AppContext()
     : _defaultFont(QFont("Verdana", 12))
 {
-
 }
 
 void AppContext::loadData()
@@ -38,7 +36,7 @@ void AppContext::loadData()
 //    }
 }
 
-void AppContext::updateData()
+void AppContext::saveData()
 {
     QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
     settings.beginGroup("DefaultValues");

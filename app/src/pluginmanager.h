@@ -52,8 +52,8 @@ public:
     void loadPlugins();
 
 private:
-    PluginManager() { }
-    ~PluginManager() { }
+    PluginManager() {}
+    ~PluginManager() {}
     PluginManager(const PluginManager &);
     PluginManager& operator=(const PluginManager &);
 

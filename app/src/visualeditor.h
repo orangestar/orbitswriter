@@ -21,9 +21,7 @@
 #ifndef VISUALEDITOR_H
 #define VISUALEDITOR_H
 
-#include <QTextEdit>
-
-class QAction;
+#include <QWebView>
 
 /*!
    \class VisualEditor
@@ -32,7 +30,7 @@ class QAction;
    editor of OrbitsWriter.
  */
 
-class VisualEditor : public QTextEdit
+class VisualEditor : public QWebView
 {
     Q_OBJECT
 public:
@@ -40,83 +38,12 @@ public:
 
 signals:
 
-    /*!
-       \brief Emits when the list removes.
-       \param r false if list removed
-     */
-    void listExists(bool r);
-
 public slots:
-
     /*!
-       \brief Changes text font.
-       \param font new font
+       \brief Initializes a blank page. The blank page can be used
+       when new a page.
      */
-    void fontChanged(const QFont& font);
-
-    /*!
-       \brief Changes text color.
-       \param color text color
-     */
-    void textColorChanged(const QColor& color);
-
-    /*!
-       \brief Changes text background color.
-       \param color text background text
-     */
-    void textBackgroundColorChanged(const QColor& color);
-
-    /*!
-       \brief Changes text alignment.
-       \param align text alignment
-     */
-    void textAlignmentChanged(Qt::Alignment align);
-
-    /*!
-       \brief Sets text bold.
-       \param value \a true if text should be bold
-     */
-    void setTextBold(bool value);
-
-    /*!
-       \brief Sets text italic.
-       \param value \a true if text should be italic
-     */
-    void setTextItalic(bool value);
-
-    /*!
-       \brief Sets text underline.
-       \param value \a true if text should be underlined
-     */
-    void setTextUnderline(bool value);
-
-    /*!
-       \brief Sets text strike out.
-       \param value \a true if text should be striked out
-     */
-    void setTextStrike(bool value);
-
-    /*!
-       \brief Inserts a bullet list at current cursor.
-       \param insert creates and inserts a bullet list into document if is true,
-       remove the exists one if false
-     */
-    void insertBulletList(bool insert);
-
-    /*!
-       \brief Inserts a numbered list at current cursor.
-       \param insert creates and inserts a numbered list into document if is true,
-       remove the exists one if false
-     */
-    void insertNumberedList(bool insert);
-
-protected:
-    void keyPressEvent(QKeyEvent *e);
-
-private:
-    void applyFormat(const QTextCharFormat &format);
-    void removeListItem(const QTextBlock &block);
-    void insertList(QTextListFormat::Style style, bool insert);
+    void initBlankPage();
 
 };
 

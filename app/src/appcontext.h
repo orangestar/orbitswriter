@@ -18,8 +18,8 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef COMMONDATA_H
-#define COMMONDATA_H
+#ifndef APPCONTEXT_H
+#define APPCONTEXT_H
 
 #include <QFont>
 
@@ -53,12 +53,12 @@ public:
     void loadData();
 
     /*!
-       \brief Updates data to local configuration file.
+       \brief Saves data to local configuration file.
        This file is named by "OrbitsWriter.conf" and is always
        in the same folder of the executable file. If the file does
        not exist, a new one will be created.
      */
-    void updateData();
+    void saveData();
 
     void setDefaultFont(QFont &font)
     {
@@ -79,4 +79,4 @@ private:
     QFont _defaultFont;
 };
 
-#endif // COMMONDATA_H
+#endif // APPCONTEXT_H
