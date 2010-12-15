@@ -45,6 +45,24 @@ public slots:
      */
     void initBlankPage();
 
+    /*!
+       \brief Formats text font.
+       \param font selected font
+     */
+    void formatTextFont(const QFont &font);
+
+    /*!
+       \brief Formats text color.
+       \param color selected text color
+     */
+    void formatTextColor(const QColor &color);
+
+    /*!
+       \brief Formats text background color.
+       \param color selected text background color
+     */
+    void formatTextBackgroundColor(const QColor &color);
+
 private:
     /*!
        \brief Executes command.

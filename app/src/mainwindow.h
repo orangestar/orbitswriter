@@ -53,6 +53,9 @@ protected:
 
 private slots:
     void applyFormat();
+    void showFontDialog();
+    void showTextColorDialog();
+    void showTextBackgroundColorDialog();
 
 private:
     /*
@@ -147,7 +150,8 @@ private:
     void createDockWidget();
     void createEditors();
     void createConnections();
-
+    void currentTextColorChanged(const QColor &color);
+    void currentTextBackgroundColorChanged(const QColor &color);
 };
 
 #endif // MAINWINDOW_H

@@ -18,6 +18,9 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QtGui>
+#include <QtWebKit>
+
 #include "visualeditor.h"
 
 VisualEditor::VisualEditor(QWidget *parent) :
@@ -33,14 +36,29 @@ void VisualEditor::initBlankPage()
     page()->setContentEditable(true);
 }
 
+void VisualEditor::formatTextFont(const QFont &font)
+{
+    execCommand("fontName", font.family());
+}
+
+void VisualEditor::formatTextColor(const QColor &color)
+{
+    execCommand("foreColor", color.name());
+}
+
+void VisualEditor::formatTextBackgroundColor(const QColor &color)
+{
+    execCommand("backColor", color.name());
+}
+
 void VisualEditor::execCommand(const QString &cmd)
 {
     QString js = QString("document.execCommand(\"%1\", false, null)").arg(cmd);
-    mainFrame()->evaluateJavaScript(js);
+    page()->mainFrame()->evaluateJavaScript(js);
 }
 
 void VisualEditor::execCommand(const QString &cmd, const QString &arg)
 {
     QString js = QString("document.execCommand(\"%1\", false, \"%2\")").arg(cmd).arg(arg);
-    mainFrame()->evaluateJavaScript(js);
+    page()->mainFrame()->evaluateJavaScript(js);
 }

@@ -28,7 +28,7 @@
 
 #define FORWARD_ACTION(act1, act2) \
     connect(act1, SIGNAL(triggered()), visualEditor->pageAction(act2), SLOT(trigger())); \
-    connect(visualEditor->pageAction(act2), SIGNAL(changed()), this, SLOT(applyFormat()));
+    connect(visualEditor->pageAction(act2), SIGNAL(changed()), SLOT(applyFormat()));
 
 #define APPLY_ENABLED(act1, act2) \
     act1->setEnabled(visualEditor->pageAction(act2)->isEnabled())
@@ -471,4 +471,49 @@ void MainWindow::createConnections()
     FORWARD_ACTION(textItalicAct, QWebPage::ToggleItalic);
     FORWARD_ACTION(textUnderlineAct, QWebPage::ToggleUnderline);
     FORWARD_ACTION(textStrikeoutAct, QWebPage::ToggleStrikethrough);
+    connect(textFontAct, SIGNAL(triggered()), SLOT(showFontDialog()));
+    connect(textColorAct, SIGNAL(triggered()), SLOT(showTextColorDialog()));
+    connect(textBackgroundColorAct, SIGNAL(triggered()), SLOT(showTextBackgroundColorDialog()));
+}
+
+void MainWindow::showFontDialog()
+{
+    bool ok;
+    //TODO default font should be selected text's font
+    QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
+    if(ok) {
+        visualEditor->formatTextFont(font);
+    }
+}
+
+void MainWindow::showTextColorDialog()
+{
+    QColor color = QColorDialog::getColor(Qt::black, this);
+    if(color.isValid()) {
+        visualEditor->formatTextColor(color);
+        currentTextColorChanged(color);
+    }
+}
+
+void MainWindow::showTextBackgroundColorDialog()
+{
+    QColor color = QColorDialog::getColor(Qt::white, this);
+    if(color.isValid()) {
+        visualEditor->formatTextBackgroundColor(color);
+        currentTextBackgroundColorChanged(color);
+    }
+}
+
+void MainWindow::currentTextColorChanged(const QColor &color)
+{
+    QPixmap pix(16, 16);
+    pix.fill(color);
+    textColorAct->setIcon(pix);
+}
+
+void MainWindow::currentTextBackgroundColorChanged(const QColor &color)
+{
+    QPixmap pix(16, 16);
+    pix.fill(color);
+    textBackgroundColorAct->setIcon(pix);
 }
