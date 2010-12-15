@@ -32,3 +32,15 @@ void VisualEditor::initBlankPage()
     setFocus();
     page()->setContentEditable(true);
 }
+
+void VisualEditor::execCommand(const QString &cmd)
+{
+    QString js = QString("document.execCommand(\"%1\", false, null)").arg(cmd);
+    mainFrame()->evaluateJavaScript(js);
+}
+
+void VisualEditor::execCommand(const QString &cmd, const QString &arg)
+{
+    QString js = QString("document.execCommand(\"%1\", false, \"%2\")").arg(cmd).arg(arg);
+    mainFrame()->evaluateJavaScript(js);
+}

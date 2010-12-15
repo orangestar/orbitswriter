@@ -45,6 +45,20 @@ public slots:
      */
     void initBlankPage();
 
+private:
+    /*!
+       \brief Executes command.
+       \param cmd command
+     */
+    void execCommand(const QString &cmd);
+
+    /*!
+       \brief Executes command.
+       \param cmd command
+       \param arg argument for the command
+     */
+    void execCommand(const QString &cmd, const QString &arg);
+
 };
 
 #endif // VISUALEDITOR_H
