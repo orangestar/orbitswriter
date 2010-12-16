@@ -8,6 +8,10 @@ QT += core gui webkit
 
 TARGET = OrbitsWriter
 TEMPLATE = app
+DESTDIR = ../build
+MOC_DIR = $$DESTDIR/moc
+RCC_DIR = $$DESTDIR/rcc
+OBJECTS_DIR = $$DESTDIR/obj
 
 SOURCES += \
     main.cpp \
