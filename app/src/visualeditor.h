@@ -24,6 +24,7 @@
 #include <QTextEdit>
 
 class QAction;
+class FormatState;
 
 /*!
    \class VisualEditor
@@ -46,55 +47,61 @@ signals:
      */
     void listExists(bool r);
 
+    /*!
+       \brief Emits when text format changes.
+       \param fmt format state
+     */
+    void formatStateChanged(const FormatState &fmt);
+
 public slots:
-
-    /*!
-       \brief Changes text font.
-       \param font new font
-     */
-    void fontChanged(const QFont& font);
-
-    /*!
-       \brief Changes text color.
-       \param color text color
-     */
-    void textColorChanged(const QColor& color);
-
-    /*!
-       \brief Changes text background color.
-       \param color text background text
-     */
-    void textBackgroundColorChanged(const QColor& color);
-
-    /*!
-       \brief Changes text alignment.
-       \param align text alignment
-     */
-    void textAlignmentChanged(Qt::Alignment align);
 
     /*!
        \brief Sets text bold.
        \param value \a true if text should be bold
      */
-    void setTextBold(bool value);
+    void toggleTextBold(bool value);
 
     /*!
        \brief Sets text italic.
        \param value \a true if text should be italic
      */
-    void setTextItalic(bool value);
+    void toggleTextItalic(bool value);
 
     /*!
        \brief Sets text underline.
        \param value \a true if text should be underlined
      */
-    void setTextUnderline(bool value);
+    void toggleTextUnderline(bool value);
 
     /*!
        \brief Sets text strike out.
        \param value \a true if text should be striked out
      */
-    void setTextStrike(bool value);
+    void toggleTextStrike(bool value);
+
+    /*!
+       \brief Changes text font.
+       \param font new font
+     */
+    void changeTextFont(const QFont& font);
+
+    /*!
+       \brief Changes text color.
+       \param color text color
+     */
+    void changeTextColor(const QColor& color);
+
+    /*!
+       \brief Changes text background color.
+       \param color text background text
+     */
+    void changeTextBackgroundColor(const QColor& color);
+
+    /*!
+       \brief Changes text alignment.
+       \param align text alignment
+     */
+    void changeTextAlignment(Qt::Alignment align);
 
     /*!
        \brief Inserts a bullet list at current cursor.
@@ -112,6 +119,9 @@ public slots:
 
 protected:
     void keyPressEvent(QKeyEvent *e);
+
+private slots:
+    void onCurrentCharFormatChanged(const QTextCharFormat &format);
 
 private:
     void applyFormat(const QTextCharFormat &format);

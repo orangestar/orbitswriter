@@ -20,7 +20,8 @@ SOURCES += \
     visualeditor.cpp \
     sourceeditor.cpp \
     styleutil.cpp \
-    pluginmanager.cpp
+    pluginmanager.cpp \
+    formatstate.cpp
 
 HEADERS += \
     common.h \
@@ -30,7 +31,8 @@ HEADERS += \
     sourceeditor.h \
     pluginmanager.h \
     styleutil.h \
-    plugins/plugin.h
+    plugins/plugin.h \
+    formatstate.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

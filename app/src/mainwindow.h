@@ -25,12 +25,13 @@
 
 class QActionGroup;
 class QTabWidget;
-class VisualEditor;
-class SourceEditor;
 class QTextEdit;
-class PluginManager;
 class QTextCharFormat;
 class QDockWidget;
+class FormatState;
+class VisualEditor;
+class SourceEditor;
+class PluginManager;
 
 /*!
    \class MainWindow
@@ -42,33 +43,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-signals:
-    /*!
-       \brief Emits when user selected a different font.
-       \param font font user selected
-     */
-    void fontChange(const QFont &font);
-
-    /*!
-       \brief Emits when user selected a different text color.
-       \param color text color user selected
-     */
-    void textColorChange(const QColor &color);
-
-    /*!
-       \brief Emits when user selected a different nackground color.
-       \param color text background color user selected
-     */
-    void textBackgroundColorChange(const QColor &color);
-
-    /*!
-       \brief Emits when text alignment changed.
-       \param align text alignment value
-     */
-    void textAlignmentChange(Qt::Alignment align);
 
 public slots:
 
@@ -90,6 +66,7 @@ private slots:
     void showTextBackgroundColorDialog();
     void editorChanged(int idx);
     void visualEditorCursorPositionChanged();
+    void applyFormatState(const FormatState &fmt);
 
 private:
     /*

@@ -23,6 +23,7 @@
 #include "visualeditor.h"
 #include "appcontext.h"
 #include "styleutil.h"
+#include "formatstate.h"
 
 VisualEditor::VisualEditor(QWidget *parent) :
     QTextEdit(parent)
@@ -31,6 +32,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     setFont(ctx->defaultFont());
     setAlignment(Qt::AlignJustify);
     document()->setModified(false);
+    connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)), SLOT(onCurrentCharFormatChanged(QTextCharFormat)));
     // FIXME Text background color should be set through blog theme.
 //    setTextBackgroundColor(Qt::white);
 //    QPalette p = palette();
@@ -47,56 +49,56 @@ void VisualEditor::applyFormat(const QTextCharFormat &format)
     this->mergeCurrentCharFormat(format);
 }
 
-void VisualEditor::setTextBold(bool value)
+void VisualEditor::toggleTextBold(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(value ? QFont::Bold : QFont::Normal);
     applyFormat(fmt);
 }
 
-void VisualEditor::setTextItalic(bool value)
+void VisualEditor::toggleTextItalic(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(value);
     applyFormat(fmt);
 }
 
-void VisualEditor::setTextStrike(bool value)
+void VisualEditor::toggleTextStrike(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontStrikeOut(value);
     applyFormat(fmt);
 }
 
-void VisualEditor::setTextUnderline(bool value)
+void VisualEditor::toggleTextUnderline(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(value);
     applyFormat(fmt);
 }
 
-void VisualEditor::fontChanged(const QFont &font)
+void VisualEditor::changeTextFont(const QFont &font)
 {
     QTextCharFormat fmt;
     fmt.setFont(font);
     applyFormat(fmt);
 }
 
-void VisualEditor::textColorChanged(const QColor &color)
+void VisualEditor::changeTextColor(const QColor &color)
 {
     QTextCharFormat fmt;
     fmt.setForeground(color);
     applyFormat(fmt);
 }
 
-void VisualEditor::textBackgroundColorChanged(const QColor &color)
+void VisualEditor::changeTextBackgroundColor(const QColor &color)
 {
     QTextCharFormat fmt;
     fmt.setBackground(color);
     applyFormat(fmt);
 }
 
-void VisualEditor::textAlignmentChanged(Qt::Alignment align)
+void VisualEditor::changeTextAlignment(Qt::Alignment align)
 {
     this->setAlignment(align);
 }
@@ -184,4 +186,16 @@ void VisualEditor::insertList(QTextListFormat::Style style, bool insert)
         removeListItem(cursor.block());
     }
     cursor.endEditBlock();
+}
+
+void VisualEditor::onCurrentCharFormatChanged(const QTextCharFormat &format)
+{
+    FormatState fmt;
+    fmt.setTextBold(format.font().bold());
+    fmt.setTextItalic(format.font().italic());
+    fmt.setTextStrikeOut(format.font().strikeOut());
+    fmt.setTextUnderline(format.font().underline());
+    fmt.setTextColor(format.foreground().color());
+    fmt.setTextBackgroundColor(format.background().color());
+    emit formatStateChanged(fmt);
 }

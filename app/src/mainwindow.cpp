@@ -27,6 +27,7 @@
 #include "appcontext.h"
 #include "sourceeditor.h"
 #include "styleutil.h"
+#include "formatstate.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -432,9 +433,9 @@ void MainWindow::createDockWidget()
 
 void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
-    currentFontChanged(format.font());
-    currentTextColorChanged(format.foreground().color());
-    currentTextBackgroundColorChanged(format.background().color());
+//    currentFontChanged(format.font());
+//    currentTextColorChanged(format.foreground().color());
+//    currentTextBackgroundColorChanged(format.background().color());
 }
 
 void MainWindow::visualEditorCursorPositionChanged()
@@ -448,6 +449,20 @@ void MainWindow::visualEditorCursorPositionChanged()
         bulletListAct->setChecked(false);
         numberedListAct->setChecked(false);
     }
+//    switch(visualEditor->alignment()) {
+//    case Qt::AlignLeft | Qt::AlignAbsolute:
+//        alignLeftAct->setChecked(true);
+//        break;
+//    case Qt::AlignHCenter:
+//        alignCenterAct->setChecked(true);
+//        break;
+//    case Qt::AlignRight | Qt::AlignAbsolute:
+//        alignRightAct->setChecked(true);
+//        break;
+//    case Qt::AlignJustify:
+//        alignJustifyAct->setChecked(true);
+//        break;
+//    }
 }
 
 void MainWindow::showPluginDialog()
@@ -461,7 +476,7 @@ void MainWindow::showFontDialog()
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
     if(ok) {
-        emit fontChange(font);
+        visualEditor->changeTextFont(font);
     }
 }
 
@@ -469,7 +484,7 @@ void MainWindow::showTextColorDialog()
 {
     QColor color = QColorDialog::getColor(visualEditor->textColor(), this);
     if(color.isValid()) {
-        emit textColorChange(color);
+        visualEditor->changeTextColor(color);
         currentTextColorChanged(color);
     }
 }
@@ -478,18 +493,18 @@ void MainWindow::showTextBackgroundColorDialog()
 {
     QColor color = QColorDialog::getColor(visualEditor->textBackgroundColor(), this);
     if(color.isValid()) {
-        emit textBackgroundColorChange(color);
+        visualEditor->changeTextBackgroundColor(color);
         currentTextBackgroundColorChanged(color);
     }
 }
 
-void MainWindow::currentFontChanged(const QFont &font)
-{
-    textBoldAct->setChecked(font.bold());
-    textItalicAct->setChecked(font.italic());
-    textUnderlineAct->setChecked(font.underline());
-    textStrikeoutAct->setChecked(font.strikeOut());
-}
+//void MainWindow::currentFontChanged(const QFont &font)
+//{
+//    textBoldAct->setChecked(font.bold());
+//    textItalicAct->setChecked(font.italic());
+//    textUnderlineAct->setChecked(font.underline());
+//    textStrikeoutAct->setChecked(font.strikeOut());
+//}
 
 void MainWindow::currentTextColorChanged(const QColor &color)
 {
@@ -507,15 +522,17 @@ void MainWindow::currentTextBackgroundColorChanged(const QColor &color)
 
 void MainWindow::textAlignmentChanged(QAction *act)
 {
+    Qt::Alignment align;
     if(act == alignCenterAct) {
-        emit textAlignmentChange(Qt::AlignHCenter);
+        align = Qt::AlignHCenter;
     } else if(act == alignJustifyAct) {
-        emit textAlignmentChange(Qt::AlignJustify);
+        align = Qt::AlignJustify;
     } else if(act == alignLeftAct) {
-        emit textAlignmentChange(Qt::AlignLeft | Qt::AlignAbsolute);
+        align = Qt::AlignLeft | Qt::AlignAbsolute;
     } else if(act == alignRightAct) {
-        emit textAlignmentChange(Qt::AlignRight | Qt::AlignAbsolute);
+        align = Qt::AlignRight | Qt::AlignAbsolute;
     }
+    visualEditor->changeTextAlignment(align);
 }
 
 void MainWindow::activeWindow(const QString &message)
@@ -596,22 +613,22 @@ QMenu* MainWindow::createTableMenu(QWidget *parent /* = 0 */)
 
 void MainWindow::createConnections()
 {
-    connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
-    connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
-    connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
-    connect(this, SIGNAL(textAlignmentChange(Qt::Alignment)), visualEditor, SLOT(textAlignmentChanged(Qt::Alignment)));
-
     connect(pluginAct, SIGNAL(triggered()), this, SLOT(showPluginDialog()));
-    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextBold(bool)));
-    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextItalic(bool)));
-    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextUnderline(bool)));
-    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
-    connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
-    connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
-    connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
     connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
     connect(numberedListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertNumberedList(bool)));
-    connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
+
+    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextBold(bool)));
+    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextItalic(bool)));
+    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextUnderline(bool)));
+    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextStrike(bool)));
+    connect(textFontAct, SIGNAL(triggered()), SLOT(showFontDialog()));
+    connect(textColorAct, SIGNAL(triggered()), SLOT(showTextColorDialog()));
+    connect(textBackgroundColorAct, SIGNAL(triggered()), SLOT(showTextBackgroundColorDialog()));
+    connect(alignGroup, SIGNAL(triggered(QAction*)), SLOT(textAlignmentChanged(QAction*)));
+
+//    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), SLOT(currentCharFormatChanged(QTextCharFormat)));
+//    connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
+    connect(visualEditor, SIGNAL(formatStateChanged(FormatState)), SLOT(applyFormatState(FormatState)));
 
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
@@ -623,11 +640,19 @@ void MainWindow::createConnections()
     connect(sourceEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
     connect(visualEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
     connect(sourceEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
-    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
-    connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(visualEditor, SIGNAL(listExists(bool)), bulletListAct, SLOT(setChecked(bool)));
     connect(visualEditor, SIGNAL(listExists(bool)), numberedListAct, SLOT(setChecked(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
+}
+
+void MainWindow::applyFormatState(const FormatState &fmt)
+{
+    textBoldAct->setChecked(fmt.isTextBold());
+    textItalicAct->setChecked(fmt.isTextItalic());
+    textStrikeoutAct->setChecked(fmt.isTextStrikeOut());
+    textUnderlineAct->setChecked(fmt.isTextUnderline());
+    currentTextColorChanged(fmt.textColor());
+    currentTextBackgroundColorChanged(fmt.textBackgroundColor());
 }
