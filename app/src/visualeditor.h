@@ -21,7 +21,9 @@
 #ifndef VISUALEDITOR_H
 #define VISUALEDITOR_H
 
-#include <QWebView>
+#include <QTextEdit>
+
+class QAction;
 
 /*!
    \class VisualEditor
@@ -30,7 +32,7 @@
    editor of OrbitsWriter.
  */
 
-class VisualEditor : public QWebView
+class VisualEditor : public QTextEdit
 {
     Q_OBJECT
 public:
@@ -38,44 +40,83 @@ public:
 
 signals:
 
+    /*!
+       \brief Emits when the list removes.
+       \param r false if list removed
+     */
+    void listExists(bool r);
+
 public slots:
-    /*!
-       \brief Initializes a blank page. The blank page can be used
-       when new a page.
-     */
-    void initBlankPage();
 
     /*!
-       \brief Formats text font.
-       \param font selected font
+       \brief Changes text font.
+       \param font new font
      */
-    void formatTextFont(const QFont &font);
+    void fontChanged(const QFont& font);
 
     /*!
-       \brief Formats text color.
-       \param color selected text color
+       \brief Changes text color.
+       \param color text color
      */
-    void formatTextColor(const QColor &color);
+    void textColorChanged(const QColor& color);
 
     /*!
-       \brief Formats text background color.
-       \param color selected text background color
+       \brief Changes text background color.
+       \param color text background text
      */
-    void formatTextBackgroundColor(const QColor &color);
+    void textBackgroundColorChanged(const QColor& color);
+
+    /*!
+       \brief Changes text alignment.
+       \param align text alignment
+     */
+    void textAlignmentChanged(Qt::Alignment align);
+
+    /*!
+       \brief Sets text bold.
+       \param value \a true if text should be bold
+     */
+    void setTextBold(bool value);
+
+    /*!
+       \brief Sets text italic.
+       \param value \a true if text should be italic
+     */
+    void setTextItalic(bool value);
+
+    /*!
+       \brief Sets text underline.
+       \param value \a true if text should be underlined
+     */
+    void setTextUnderline(bool value);
+
+    /*!
+       \brief Sets text strike out.
+       \param value \a true if text should be striked out
+     */
+    void setTextStrike(bool value);
+
+    /*!
+       \brief Inserts a bullet list at current cursor.
+       \param insert creates and inserts a bullet list into document if is true,
+       remove the exists one if false
+     */
+    void insertBulletList(bool insert);
+
+    /*!
+       \brief Inserts a numbered list at current cursor.
+       \param insert creates and inserts a numbered list into document if is true,
+       remove the exists one if false
+     */
+    void insertNumberedList(bool insert);
+
+protected:
+    void keyPressEvent(QKeyEvent *e);
 
 private:
-    /*!
-       \brief Executes command.
-       \param cmd command
-     */
-    void execCommand(const QString &cmd);
-
-    /*!
-       \brief Executes command.
-       \param cmd command
-       \param arg argument for the command
-     */
-    void execCommand(const QString &cmd, const QString &arg);
+    void applyFormat(const QTextCharFormat &format);
+    void removeListItem(const QTextBlock &block);
+    void insertList(QTextListFormat::Style style, bool insert);
 
 };
 

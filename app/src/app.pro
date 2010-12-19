@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui webkit
+QT += core gui
 
 TARGET = OrbitsWriter
 TEMPLATE = app
@@ -19,14 +19,17 @@ SOURCES += \
     appcontext.cpp \
     visualeditor.cpp \
     sourceeditor.cpp \
+    styleutil.cpp \
     pluginmanager.cpp
 
 HEADERS += \
+    common.h \
     mainwindow.h \
     appcontext.h \
     visualeditor.h \
     sourceeditor.h \
     pluginmanager.h \
+    styleutil.h \
     plugins/plugin.h
 
 include(qtsingleapplication/qtsingleapplication.pri)

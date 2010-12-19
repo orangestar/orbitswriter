@@ -18,38 +18,25 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <QString>
-#include <QSettings>
 
-#include "appcontext.h"
-#include "mainwindow.h"
-#include "qtsingleapplication.h"
+/*!
+   \brief Common constants used in application.
+ */
+namespace Constants {
 
-int main(int argc, char *argv[])
-{
-    QtSingleApplication app(argc, argv);
-    app.setOrganizationName("Galaxy");
-    app.setApplicationName("OrbitsWriter");
-    app.setApplicationVersion("0.0.1");
+    /*!
+       \brief List type.
+     */
+    enum ListType {
+        UndefinedListType = -1, /*!< Undefined list type. */
+        BulletList = 1,         /*!< Bullet list. */
+        NumberedList            /*!< Numbered list. */
+    };
 
-    QString message;
-    for(int i = 1; i < argc; ++i) {
-        message += argv[i];
-        if(i < argc - 1) {
-            message += ";";
-        }
-    }
-    if(app.sendMessage(message)) {
-        return 0;
-    }
-
-//    AppContext::instance()->loadData();
-    MainWindow w;
-    w.showMaximized();
-    app.setActivationWindow(&w);
-
-    QObject::connect(&app, SIGNAL(messageReceived(QString)),
-                     &w, SLOT(activeWindow(QString)));
-
-    return app.exec();
 }
+
+#endif // COMMON_H

@@ -1,4 +1,4 @@
 glob:*.user
-glob:*.psd
 glob:*build*
+glob:*.psd
 glob:*.orig

@@ -19,32 +19,27 @@
 //
 
 #include <QtGui>
-#include <QtWebKit>
 
+#include "common.h"
 #include "mainwindow.h"
-#include "appcontext.h"
 #include "visualeditor.h"
+#include "pluginmanager.h"
+#include "appcontext.h"
 #include "sourceeditor.h"
-
-#define FORWARD_ACTION(act1, act2) \
-    connect(act1, SIGNAL(triggered()), visualEditor->pageAction(act2), SLOT(trigger())); \
-    connect(visualEditor->pageAction(act2), SIGNAL(changed()), SLOT(applyFormat()));
-
-#define APPLY_ENABLED(act1, act2) \
-    act1->setEnabled(visualEditor->pageAction(act2)->isEnabled())
-
-#define APPLY_CHECKED(act1, act2) \
-    act1->setChecked(visualEditor->pageAction(act2)->isChecked())
+#include "styleutil.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+      pluginManager(PluginManager::instance())
 {
+    pluginManager->loadPlugins();
+
     createActions();
+    createEditors();
     createMenus();
     createToolBars();
     createStatusBar();
     createDockWidget();
-    createEditors();
     createConnections();
 
     visualEditor->setFocus();
@@ -56,10 +51,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+
 }
 
 void MainWindow::createActions()
 {
+    formatGroup = new QActionGroup(this);
+    formatGroup->setExclusive(false);
+    eleGroup = new QActionGroup(this);
+    eleGroup->setExclusive(false);
     alignGroup = new QActionGroup(this);
 
     newPostAct = new QAction(QIcon(":/img/doc_new"), tr("&New"), this);
@@ -128,101 +128,129 @@ void MainWindow::createActions()
     textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
+    formatGroup->addAction(textBoldAct);
 
     textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
     textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
+    formatGroup->addAction(textItalicAct);
 
     textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
     textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
+    formatGroup->addAction(textUnderlineAct);
 
     textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
     textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
+    formatGroup->addAction(textStrikeoutAct);
 
     textFontAct = new QAction(QIcon(":/img/font"), tr("Font..."), this);
     textFontAct->setStatusTip(tr("Set font."));
+    formatGroup->addAction(textFontAct);
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     textColorAct = new QAction(pix, tr("Text Color..."), this);
     textColorAct->setStatusTip(tr("Text color."));
+    formatGroup->addAction(textColorAct);
 
     QPixmap bpix(16, 16);
     bpix.fill(Qt::white);
     textBackgroundColorAct = new QAction(bpix, tr("Text Background Color..."), this);
     textBackgroundColorAct->setStatusTip(tr("Text background color."));
+    formatGroup->addAction(textBackgroundColorAct);
 
     numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered List"), this);
     numberedListAct->setStatusTip(tr("Add ordered list."));
     numberedListAct->setCheckable(true);
+    eleGroup->addAction(numberedListAct);
 
     bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet List"), this);
     bulletListAct->setStatusTip(tr("Add bullet list."));
     bulletListAct->setCheckable(true);
+    eleGroup->addAction(bulletListAct);
 
     indentMoreAct = new QAction(QIcon(":/img/indent_more"), tr("Indent More"), this);
     indentMoreAct->setStatusTip(tr("Indent list more."));
     indentMoreAct->setShortcut(Qt::Key_Tab);
+    eleGroup->addAction(indentMoreAct);
 
     indentLessAct = new QAction(QIcon(":/img/indent_less"), tr("Indent Less"), this);
     indentLessAct->setStatusTip(tr("Indent list less."));
     indentLessAct->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+    eleGroup->addAction(indentLessAct);
 
     tableInsertAct = new QAction(QIcon(":/img/table"), tr("Add Table..."), this);
     tableInsertAct->setStatusTip(tr("Add table."));
+    eleGroup->addAction(tableInsertAct);
 
     tablePropAct = new QAction(QIcon(":/img/table_prop"), tr("Table properties..."), this);
     tablePropAct->setStatusTip(tr("Table properties."));
+    eleGroup->addAction(tablePropAct);
 
     tableRowPropAct = new QAction(tr("Row properties..."), this);
     tableRowPropAct->setStatusTip(tr("Table row properties."));
+    eleGroup->addAction(tableRowPropAct);
 
     tableColPropAct = new QAction(tr("Column properties..."), this);
     tableColPropAct->setStatusTip(tr("Table column properties."));
+    eleGroup->addAction(tableColPropAct);
 
     tableCellPropAct = new QAction(tr("Cell properties..."), this);
     tableCellPropAct->setStatusTip(tr("Table cell properties."));
+    eleGroup->addAction(tableCellPropAct);
 
     tableInsertRowUpAct = new QAction(QIcon(":/img/add_row_up"), tr("Insert Row Upside"), this);
     tableInsertRowUpAct->setStatusTip(tr("Insert a row at upside of selected."));
+    eleGroup->addAction(tableInsertRowUpAct);
 
     tableInsertRowDownAct = new QAction(QIcon(":/img/add_row_down"), tr("Insert Row Downside"), this);
     tableInsertRowDownAct->setStatusTip(tr("Insert a row at downside of selected."));
+    eleGroup->addAction(tableInsertRowDownAct);
 
     tableInsertColLeftAct = new QAction(QIcon(":/img/add_col_left"), tr("Insert Column Leftside"), this);
     tableInsertColLeftAct->setStatusTip(tr("Insert a column at leftside of selected."));
+    eleGroup->addAction(tableInsertColLeftAct);
 
     tableInsertColRightAct = new QAction(QIcon(":/img/add_col_right"), tr("Insert Column Rightside"), this);
     tableInsertColRightAct->setStatusTip(tr("Insert a column at rightside of selected."));
+    eleGroup->addAction(tableInsertColRightAct);
 
     tableRowUpAct = new QAction(QIcon(":/img/row_up"), tr("Move Row Upside"), this);
     tableRowUpAct->setStatusTip(tr("Move selected row upside."));
+    eleGroup->addAction(tableRowUpAct);
 
     tableRowDownAct = new QAction(QIcon(":/img/row_down"), tr("Move Row Downside"), this);
     tableRowDownAct->setStatusTip(tr("Move selected row downside."));
+    eleGroup->addAction(tableRowDownAct);
 
     tableColLeftAct = new QAction(QIcon(":/img/col_left"), tr("Move Column Leftside"), this);
     tableColLeftAct->setStatusTip(tr("Move selected column leftside."));
+    eleGroup->addAction(tableColLeftAct);
 
     tableColRightAct = new QAction(QIcon(":/img/col_right"), tr("Move Column Rightside"), this);
     tableColRightAct->setStatusTip(tr("Move selected column rightside."));
+    eleGroup->addAction(tableColRightAct);
 
     tableDelAct = new QAction(QIcon(":/img/del_table"), tr("Delete Table"), this);
     tableDelAct->setStatusTip(tr("Delete table."));
+    eleGroup->addAction(tableDelAct);
 
     tableDelRowAct = new QAction(QIcon(":/img/del_row"), tr("Delete Row"), this);
     tableDelRowAct->setStatusTip(tr("Delete row."));
+    eleGroup->addAction(tableDelRowAct);
 
     tableDelColAct = new QAction(QIcon(":/img/del_col"), tr("Delete Column"), this);
     tableDelColAct->setStatusTip(tr("Delete column."));
+    eleGroup->addAction(tableDelColAct);
 
     tableCellClearAct = new QAction(QIcon(":/img/clear_cell"), tr("Clear Cell"), this);
     tableCellClearAct->setStatusTip(tr("Clear cell."));
+    eleGroup->addAction(tableCellClearAct);
 
     alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
     alignCenterAct->setStatusTip(tr("Justify center."));
@@ -248,35 +276,6 @@ void MainWindow::createActions()
     alignRightAct->setShortcut(Qt::CTRL + Qt::Key_R);
     alignRightAct->setCheckable(true);
     alignGroup->addAction(alignRightAct);
-}
-
-QMenu* MainWindow::createTableMenu(QWidget *parent /* = 0 */)
-{
-    QMenu *tableMenu = new QMenu(tr("Table"), parent);
-    tableMenu->addAction(tableInsertAct);
-    tableMenu->addSeparator();
-    tableMenu->addAction(tablePropAct);
-    tableMenu->addAction(tableRowPropAct);
-    tableMenu->addAction(tableColPropAct);
-    tableMenu->addAction(tableCellPropAct);
-    tableMenu->addAction(tableCellPropAct);
-    tableMenu->addSeparator();
-    tableMenu->addAction(tableInsertRowUpAct);
-    tableMenu->addAction(tableInsertRowDownAct);
-    tableMenu->addAction(tableRowUpAct);
-    tableMenu->addAction(tableRowDownAct);
-    tableMenu->addSeparator();
-    tableMenu->addAction(tableInsertColLeftAct);
-    tableMenu->addAction(tableInsertColRightAct);
-    tableMenu->addAction(tableColLeftAct);
-    tableMenu->addAction(tableColRightAct);
-    tableMenu->addSeparator();
-    tableMenu->addAction(tableDelAct);
-    tableMenu->addAction(tableDelRowAct);
-    tableMenu->addAction(tableDelColAct);
-    tableMenu->addSeparator();
-    tableMenu->addAction(tableCellClearAct);
-    return tableMenu;
 }
 
 void MainWindow::createMenus()
@@ -340,7 +339,7 @@ void MainWindow::createMenus()
 
     bar->addSeparator();
 
-    QMenu *helpMenu = new QMenu(tr("&Help"), bar);
+    QMenu *helpMenu = new QMenu(tr("Help"), bar);
     helpMenu->addAction(helpAct);
     helpMenu->addAction(aboutAct);
     bar->addMenu(helpMenu);
@@ -409,20 +408,13 @@ void MainWindow::createStatusBar()
     bar->showMessage(tr("Ready."));
 }
 
-void MainWindow::createDockWidget()
-{
-    dockWidget = new QDockWidget(tr("Insert"), this);
-    dockWidget->setMinimumWidth(200);
-    addDockWidget(Qt::RightDockWidgetArea, dockWidget);
-}
-
 void MainWindow::createEditors()
 {
     editorStack = new QTabWidget(this);
     visualEditor = new VisualEditor(editorStack);
     editorStack->addTab(visualEditor, tr("Visual"));
 
-    previewEditor = new QWidget(editorStack);
+    previewEditor = new QTextEdit(editorStack);
     editorStack->addTab(previewEditor, tr("Preview"));
 
     sourceEditor = new SourceEditor(editorStack);
@@ -431,77 +423,72 @@ void MainWindow::createEditors()
     editorStack->setTabPosition(QTabWidget::South);
 }
 
-void MainWindow::activeWindow(const QString &message)
+void MainWindow::createDockWidget()
 {
-    Q_UNUSED(message);
-    QApplication::alert(this);
+    dockWidget = new QDockWidget(tr("Insert"), this);
+    dockWidget->setMinimumWidth(200);
+    addDockWidget(Qt::RightDockWidgetArea, dockWidget);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
-//    if (continueToClose()) {
-        AppContext::instance()->saveData();
-        event->accept();
-//    } else {
-//        event->ignore();
-//    }
+    currentFontChanged(format.font());
+    currentTextColorChanged(format.foreground().color());
+    currentTextBackgroundColorChanged(format.background().color());
 }
 
-void MainWindow::applyFormat()
+void MainWindow::visualEditorCursorPositionChanged()
 {
-    APPLY_ENABLED(undoAct, QWebPage::Undo);
-    APPLY_ENABLED(redoAct, QWebPage::Redo);
-    APPLY_ENABLED(cutAct, QWebPage::Cut);
-    APPLY_ENABLED(copyAct, QWebPage::Copy);
-    APPLY_ENABLED(pasteAct, QWebPage::Paste);
-    APPLY_CHECKED(textBoldAct, QWebPage::ToggleBold);
-    APPLY_CHECKED(textItalicAct, QWebPage::ToggleItalic);
-    APPLY_CHECKED(textUnderlineAct, QWebPage::ToggleUnderline);
-    APPLY_CHECKED(textStrikeoutAct, QWebPage::ToggleStrikethrough);
+    QTextCursor cursor = visualEditor->textCursor();
+    if(cursor.currentList()) {
+        Constants::ListType listType = StyleUtil::isBulletList(cursor.currentList()->format());
+        bulletListAct->setChecked(listType == Constants::BulletList);
+        numberedListAct->setChecked(listType == Constants::NumberedList);
+    } else {
+        bulletListAct->setChecked(false);
+        numberedListAct->setChecked(false);
+    }
 }
 
-void MainWindow::createConnections()
+void MainWindow::showPluginDialog()
 {
-    FORWARD_ACTION(undoAct, QWebPage::Undo);
-    FORWARD_ACTION(redoAct, QWebPage::Redo);
-    FORWARD_ACTION(cutAct, QWebPage::Cut);
-    FORWARD_ACTION(copyAct, QWebPage::Copy);
-    FORWARD_ACTION(pasteAct, QWebPage::Paste);
-    FORWARD_ACTION(textBoldAct, QWebPage::ToggleBold);
-    FORWARD_ACTION(textItalicAct, QWebPage::ToggleItalic);
-    FORWARD_ACTION(textUnderlineAct, QWebPage::ToggleUnderline);
-    FORWARD_ACTION(textStrikeoutAct, QWebPage::ToggleStrikethrough);
-    connect(textFontAct, SIGNAL(triggered()), SLOT(showFontDialog()));
-    connect(textColorAct, SIGNAL(triggered()), SLOT(showTextColorDialog()));
-    connect(textBackgroundColorAct, SIGNAL(triggered()), SLOT(showTextBackgroundColorDialog()));
+    QMessageBox::information(this, tr("Plugins"),
+                             tr("plugins list"));
 }
 
 void MainWindow::showFontDialog()
 {
     bool ok;
-    //TODO default font should be selected text's font
     QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
     if(ok) {
-        visualEditor->formatTextFont(font);
+        emit fontChange(font);
     }
 }
 
 void MainWindow::showTextColorDialog()
 {
-    QColor color = QColorDialog::getColor(Qt::black, this);
+    QColor color = QColorDialog::getColor(visualEditor->textColor(), this);
     if(color.isValid()) {
-        visualEditor->formatTextColor(color);
+        emit textColorChange(color);
         currentTextColorChanged(color);
     }
 }
 
 void MainWindow::showTextBackgroundColorDialog()
 {
-    QColor color = QColorDialog::getColor(Qt::white, this);
+    QColor color = QColorDialog::getColor(visualEditor->textBackgroundColor(), this);
     if(color.isValid()) {
-        visualEditor->formatTextBackgroundColor(color);
+        emit textBackgroundColorChange(color);
         currentTextBackgroundColorChanged(color);
     }
+}
+
+void MainWindow::currentFontChanged(const QFont &font)
+{
+    textBoldAct->setChecked(font.bold());
+    textItalicAct->setChecked(font.italic());
+    textUnderlineAct->setChecked(font.underline());
+    textStrikeoutAct->setChecked(font.strikeOut());
 }
 
 void MainWindow::currentTextColorChanged(const QColor &color)
@@ -516,4 +503,131 @@ void MainWindow::currentTextBackgroundColorChanged(const QColor &color)
     QPixmap pix(16, 16);
     pix.fill(color);
     textBackgroundColorAct->setIcon(pix);
+}
+
+void MainWindow::textAlignmentChanged(QAction *act)
+{
+    if(act == alignCenterAct) {
+        emit textAlignmentChange(Qt::AlignHCenter);
+    } else if(act == alignJustifyAct) {
+        emit textAlignmentChange(Qt::AlignJustify);
+    } else if(act == alignLeftAct) {
+        emit textAlignmentChange(Qt::AlignLeft | Qt::AlignAbsolute);
+    } else if(act == alignRightAct) {
+        emit textAlignmentChange(Qt::AlignRight | Qt::AlignAbsolute);
+    }
+}
+
+void MainWindow::activeWindow(const QString &message)
+{
+    Q_UNUSED(message);
+    QApplication::alert(this);
+}
+
+void MainWindow::editorChanged(int idx)
+{
+    switch(idx) {
+    case 0: // visual editor
+        enabledOnEditorChange(true);
+        editToolBar->setEnabled(true);
+        visualEditor->setHtml(sourceEditor->toPlainText());
+        break;
+    case 1: // previewer
+        enabledOnEditorChange(false);
+        editToolBar->setEnabled(false);
+        break;
+    case 2: // source editor
+        enabledOnEditorChange(false);
+        editToolBar->setEnabled(true);
+        sourceEditor->setPlainText(visualEditor->toHtml());
+        break;
+    default:
+        // no such case
+        break;
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+//    if (continueToClose()) {
+//        AppContext::instance()->saveData();
+        event->accept();
+//    } else {
+//        event->ignore();
+//    }
+}
+
+void MainWindow::enabledOnEditorChange(bool enable)
+{
+    formatGroup->setEnabled(enable);
+    eleGroup->setEnabled(enable);
+    alignGroup->setEnabled(enable);
+    textToolBar->setEnabled(enable);
+}
+
+QMenu* MainWindow::createTableMenu(QWidget *parent /* = 0 */)
+{
+    QMenu *tableMenu = new QMenu(tr("Table"), parent);
+    tableMenu->addAction(tableInsertAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tablePropAct);
+    tableMenu->addAction(tableRowPropAct);
+    tableMenu->addAction(tableColPropAct);
+    tableMenu->addAction(tableCellPropAct);
+    tableMenu->addAction(tableCellPropAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableInsertRowUpAct);
+    tableMenu->addAction(tableInsertRowDownAct);
+    tableMenu->addAction(tableRowUpAct);
+    tableMenu->addAction(tableRowDownAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableInsertColLeftAct);
+    tableMenu->addAction(tableInsertColRightAct);
+    tableMenu->addAction(tableColLeftAct);
+    tableMenu->addAction(tableColRightAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableDelAct);
+    tableMenu->addAction(tableDelRowAct);
+    tableMenu->addAction(tableDelColAct);
+    tableMenu->addSeparator();
+    tableMenu->addAction(tableCellClearAct);
+    return tableMenu;
+}
+
+void MainWindow::createConnections()
+{
+    connect(this, SIGNAL(fontChange(QFont)), visualEditor, SLOT(fontChanged(QFont)));
+    connect(this, SIGNAL(textColorChange(QColor)), visualEditor, SLOT(textColorChanged(QColor)));
+    connect(this, SIGNAL(textBackgroundColorChange(QColor)), visualEditor, SLOT(textBackgroundColorChanged(QColor)));
+    connect(this, SIGNAL(textAlignmentChange(Qt::Alignment)), visualEditor, SLOT(textAlignmentChanged(Qt::Alignment)));
+
+    connect(pluginAct, SIGNAL(triggered()), this, SLOT(showPluginDialog()));
+    connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextBold(bool)));
+    connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextItalic(bool)));
+    connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextUnderline(bool)));
+    connect(textStrikeoutAct, SIGNAL(triggered(bool)), visualEditor, SLOT(setTextStrike(bool)));
+    connect(textFontAct, SIGNAL(triggered()), this, SLOT(showFontDialog()));
+    connect(textColorAct, SIGNAL(triggered()), this, SLOT(showTextColorDialog()));
+    connect(textBackgroundColorAct, SIGNAL(triggered()), this, SLOT(showTextBackgroundColorDialog()));
+    connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
+    connect(numberedListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertNumberedList(bool)));
+    connect(alignGroup, SIGNAL(triggered(QAction*)), this, SLOT(textAlignmentChanged(QAction*)));
+
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(undoAvailable(bool)), undoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(redoAvailable(bool)), redoAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), cutAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+    connect(sourceEditor, SIGNAL(copyAvailable(bool)), copyAct, SLOT(setEnabled(bool)));
+    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), this, SLOT(currentCharFormatChanged(QTextCharFormat)));
+    connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
+    connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+    connect(visualEditor, SIGNAL(listExists(bool)), bulletListAct, SLOT(setChecked(bool)));
+    connect(visualEditor, SIGNAL(listExists(bool)), numberedListAct, SLOT(setChecked(bool)));
+    connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+    connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }

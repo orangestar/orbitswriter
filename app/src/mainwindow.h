@@ -24,8 +24,13 @@
 #include <QMainWindow>
 
 class QActionGroup;
+class QTabWidget;
 class VisualEditor;
 class SourceEditor;
+class QTextEdit;
+class PluginManager;
+class QTextCharFormat;
+class QDockWidget;
 
 /*!
    \class MainWindow
@@ -40,6 +45,31 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    /*!
+       \brief Emits when user selected a different font.
+       \param font font user selected
+     */
+    void fontChange(const QFont &font);
+
+    /*!
+       \brief Emits when user selected a different text color.
+       \param color text color user selected
+     */
+    void textColorChange(const QColor &color);
+
+    /*!
+       \brief Emits when user selected a different nackground color.
+       \param color text background color user selected
+     */
+    void textBackgroundColorChange(const QColor &color);
+
+    /*!
+       \brief Emits when text alignment changed.
+       \param align text alignment value
+     */
+    void textAlignmentChange(Qt::Alignment align);
+
 public slots:
 
     /*!
@@ -52,10 +82,14 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    void applyFormat();
+    void currentCharFormatChanged(const QTextCharFormat &format);
+    void textAlignmentChanged(QAction *act);
+    void showPluginDialog();
     void showFontDialog();
     void showTextColorDialog();
     void showTextBackgroundColorDialog();
+    void editorChanged(int idx);
+    void visualEditorCursorPositionChanged();
 
 private:
     /*
@@ -131,27 +165,34 @@ private:
      */
     QAction *publishAct;
 
+    QActionGroup *formatGroup;
     QActionGroup *alignGroup;
+    QActionGroup *eleGroup;
 
     QToolBar *webToolBar;
     QToolBar *editToolBar;
     QToolBar *textToolBar;
+
     QTabWidget *editorStack;
     VisualEditor *visualEditor;
-    QWidget *previewEditor;
+    QTextEdit *previewEditor;
     SourceEditor *sourceEditor;
     QDockWidget *dockWidget;
+
+    PluginManager *pluginManager;
 
     void createActions();
     void createMenus();
     QMenu* createTableMenu(QWidget *parent = 0);
     void createToolBars();
     void createStatusBar();
-    void createDockWidget();
     void createEditors();
+    void createDockWidget();
     void createConnections();
+    void currentFontChanged(const QFont &font);
     void currentTextColorChanged(const QColor &color);
     void currentTextBackgroundColorChanged(const QColor &color);
+    void enabledOnEditorChange(bool enable);
 };
 
 #endif // MAINWINDOW_H

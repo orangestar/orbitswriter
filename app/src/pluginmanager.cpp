@@ -18,13 +18,15 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <QtCore>
+#include <QApplication>
+#include <QDir>
+#include <QPluginLoader>
 
 #include "pluginmanager.h"
 
 void PluginManager::loadPlugins()
 {
-//    QDir pluginsDir(QCoreApplication::applicationDirPath() + "/plugins");
+//    QDir pluginsDir(QApplication::applicationDirPath() + "/plugins");
 //    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 //        QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
 //        if(TextFormatInterface *plugin = qobject_cast<TextFormatInterface *>(loader.instance())) {

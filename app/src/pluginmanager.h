@@ -25,7 +25,6 @@
 #include <QMap>
 
 class Plugin;
-class TextFormatInterface;
 
 /*!
    \class PluginManager
@@ -52,13 +51,13 @@ public:
     void loadPlugins();
 
 private:
-    PluginManager() {}
-    ~PluginManager() {}
+    PluginManager() { }
+    ~PluginManager() { }
     PluginManager(const PluginManager &);
     PluginManager& operator=(const PluginManager &);
 
-    QList<TextFormatInterface *> _formatPluginList;
-    QMap<QString, Plugin *> _pluginRegTable;
+//    QList<TextFormatInterface *> _formatPluginList;
+//    QMap<QString, Plugin *> _pluginRegTable;
 };
 
 #endif // PLUGINMANAGER_H
