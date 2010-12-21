@@ -26,7 +26,7 @@ StyleUtil::StyleUtil()
 {
 }
 
-Constants::ListType StyleUtil::isBulletList(const QTextListFormat &format)
+Constants::ListType StyleUtil::listType(const QTextListFormat &format)
 {
     switch(format.style()) {
     case QTextListFormat::ListDisc:

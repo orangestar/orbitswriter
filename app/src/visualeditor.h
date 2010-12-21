@@ -24,7 +24,7 @@
 #include <QTextEdit>
 
 class QAction;
-class FormatState;
+class FormatData;
 
 /*!
    \class VisualEditor
@@ -51,7 +51,7 @@ signals:
        \brief Emits when text format changes.
        \param fmt format state
      */
-    void formatStateChanged(const FormatState &fmt);
+    void currentFormatChanged(const FormatData &fmt);
 
 public slots:
 
@@ -122,6 +122,7 @@ protected:
 
 private slots:
     void onCurrentCharFormatChanged(const QTextCharFormat &format);
+    void onCursorPositionChanged();
 
 private:
     void applyFormat(const QTextCharFormat &format);

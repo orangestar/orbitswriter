@@ -23,7 +23,7 @@
 #include "visualeditor.h"
 #include "appcontext.h"
 #include "styleutil.h"
-#include "formatstate.h"
+#include "formatdata.h"
 
 VisualEditor::VisualEditor(QWidget *parent) :
     QTextEdit(parent)
@@ -33,6 +33,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     setAlignment(Qt::AlignJustify);
     document()->setModified(false);
     connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)), SLOT(onCurrentCharFormatChanged(QTextCharFormat)));
+    connect(this, SIGNAL(cursorPositionChanged()), SLOT(onCursorPositionChanged()));
     // FIXME Text background color should be set through blog theme.
 //    setTextBackgroundColor(Qt::white);
 //    QPalette p = palette();
@@ -190,12 +191,44 @@ void VisualEditor::insertList(QTextListFormat::Style style, bool insert)
 
 void VisualEditor::onCurrentCharFormatChanged(const QTextCharFormat &format)
 {
-    FormatState fmt;
+    FormatData fmt;
     fmt.setTextBold(format.font().bold());
     fmt.setTextItalic(format.font().italic());
     fmt.setTextStrikeOut(format.font().strikeOut());
     fmt.setTextUnderline(format.font().underline());
     fmt.setTextColor(format.foreground().color());
     fmt.setTextBackgroundColor(format.background().color());
-    emit formatStateChanged(fmt);
+    emit currentFormatChanged(fmt);
+}
+
+void VisualEditor::onCursorPositionChanged()
+{
+    QTextCursor cursor = textCursor();
+    FormatData fmt;
+    if(cursor.currentList()) {
+        fmt.setListType(StyleUtil::listType(cursor.currentList()->format()));
+//        bulletListAct->setChecked(listType == Constants::BulletList);
+//        numberedListAct->setChecked(listType == Constants::NumberedList);
+    } else {
+        fmt.setListType(Constants::UndefinedListType);
+    }
+    emit currentFormatChanged(fmt);
+//    else {
+//        bulletListAct->setChecked(false);
+//        numberedListAct->setChecked(false);
+//    }
+    //    switch(visualEditor->alignment()) {
+    //    case Qt::AlignLeft | Qt::AlignAbsolute:
+    //        alignLeftAct->setChecked(true);
+    //        break;
+    //    case Qt::AlignHCenter:
+    //        alignCenterAct->setChecked(true);
+    //        break;
+    //    case Qt::AlignRight | Qt::AlignAbsolute:
+    //        alignRightAct->setChecked(true);
+    //        break;
+    //    case Qt::AlignJustify:
+    //        alignJustifyAct->setChecked(true);
+    //        break;
+    //    }
 }

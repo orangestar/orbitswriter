@@ -26,9 +26,8 @@
 class QActionGroup;
 class QTabWidget;
 class QTextEdit;
-class QTextCharFormat;
 class QDockWidget;
-class FormatState;
+class FormatData;
 class VisualEditor;
 class SourceEditor;
 class PluginManager;
@@ -58,15 +57,13 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
-    void currentCharFormatChanged(const QTextCharFormat &format);
     void textAlignmentChanged(QAction *act);
     void showPluginDialog();
     void showFontDialog();
     void showTextColorDialog();
     void showTextBackgroundColorDialog();
     void editorChanged(int idx);
-    void visualEditorCursorPositionChanged();
-    void applyFormatState(const FormatState &fmt);
+    void applyFormatToActions(const FormatData &fmt);
 
 private:
     /*
@@ -143,6 +140,7 @@ private:
     QAction *publishAct;
 
     QActionGroup *formatGroup;
+    QActionGroup *listGroup;
     QActionGroup *alignGroup;
     QActionGroup *eleGroup;
 

@@ -27,7 +27,7 @@
 #include "appcontext.h"
 #include "sourceeditor.h"
 #include "styleutil.h"
-#include "formatstate.h"
+#include "formatdata.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -62,6 +62,7 @@ void MainWindow::createActions()
     eleGroup = new QActionGroup(this);
     eleGroup->setExclusive(false);
     alignGroup = new QActionGroup(this);
+    listGroup = new QActionGroup(this);
 
     newPostAct = new QAction(QIcon(":/img/doc_new"), tr("&New"), this);
     newPostAct->setShortcut(QKeySequence::New);
@@ -168,12 +169,12 @@ void MainWindow::createActions()
     numberedListAct = new QAction(QIcon(":/img/ol"), tr("Ordered List"), this);
     numberedListAct->setStatusTip(tr("Add ordered list."));
     numberedListAct->setCheckable(true);
-    eleGroup->addAction(numberedListAct);
+    listGroup->addAction(numberedListAct);
 
     bulletListAct = new QAction(QIcon(":/img/ul"), tr("Bullet List"), this);
     bulletListAct->setStatusTip(tr("Add bullet list."));
     bulletListAct->setCheckable(true);
-    eleGroup->addAction(bulletListAct);
+    listGroup->addAction(bulletListAct);
 
     indentMoreAct = new QAction(QIcon(":/img/indent_more"), tr("Indent More"), this);
     indentMoreAct->setStatusTip(tr("Indent list more."));
@@ -431,40 +432,6 @@ void MainWindow::createDockWidget()
     addDockWidget(Qt::RightDockWidgetArea, dockWidget);
 }
 
-void MainWindow::currentCharFormatChanged(const QTextCharFormat &format)
-{
-//    currentFontChanged(format.font());
-//    currentTextColorChanged(format.foreground().color());
-//    currentTextBackgroundColorChanged(format.background().color());
-}
-
-void MainWindow::visualEditorCursorPositionChanged()
-{
-    QTextCursor cursor = visualEditor->textCursor();
-    if(cursor.currentList()) {
-        Constants::ListType listType = StyleUtil::isBulletList(cursor.currentList()->format());
-        bulletListAct->setChecked(listType == Constants::BulletList);
-        numberedListAct->setChecked(listType == Constants::NumberedList);
-    } else {
-        bulletListAct->setChecked(false);
-        numberedListAct->setChecked(false);
-    }
-//    switch(visualEditor->alignment()) {
-//    case Qt::AlignLeft | Qt::AlignAbsolute:
-//        alignLeftAct->setChecked(true);
-//        break;
-//    case Qt::AlignHCenter:
-//        alignCenterAct->setChecked(true);
-//        break;
-//    case Qt::AlignRight | Qt::AlignAbsolute:
-//        alignRightAct->setChecked(true);
-//        break;
-//    case Qt::AlignJustify:
-//        alignJustifyAct->setChecked(true);
-//        break;
-//    }
-}
-
 void MainWindow::showPluginDialog()
 {
     QMessageBox::information(this, tr("Plugins"),
@@ -626,9 +593,7 @@ void MainWindow::createConnections()
     connect(textBackgroundColorAct, SIGNAL(triggered()), SLOT(showTextBackgroundColorDialog()));
     connect(alignGroup, SIGNAL(triggered(QAction*)), SLOT(textAlignmentChanged(QAction*)));
 
-//    connect(visualEditor, SIGNAL(currentCharFormatChanged(QTextCharFormat)), SLOT(currentCharFormatChanged(QTextCharFormat)));
-//    connect(visualEditor, SIGNAL(cursorPositionChanged()), this, SLOT(visualEditorCursorPositionChanged()));
-    connect(visualEditor, SIGNAL(formatStateChanged(FormatState)), SLOT(applyFormatState(FormatState)));
+    connect(visualEditor, SIGNAL(currentFormatChanged(FormatData)), SLOT(applyFormatToActions(FormatData)));
 
     connect(visualEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), savePostAct, SLOT(setEnabled(bool)));
@@ -647,7 +612,7 @@ void MainWindow::createConnections()
     connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
 }
 
-void MainWindow::applyFormatState(const FormatState &fmt)
+void MainWindow::applyFormatToActions(const FormatData &fmt)
 {
     textBoldAct->setChecked(fmt.isTextBold());
     textItalicAct->setChecked(fmt.isTextItalic());
@@ -655,4 +620,15 @@ void MainWindow::applyFormatState(const FormatState &fmt)
     textUnderlineAct->setChecked(fmt.isTextUnderline());
     currentTextColorChanged(fmt.textColor());
     currentTextBackgroundColorChanged(fmt.textBackgroundColor());
+    switch(fmt.listType()) {
+    case Constants::BulletList:
+        bulletListAct->setChecked(true);
+        break;
+    case Constants::NumberedList:
+        numberedListAct->setChecked(true);
+        break;
+    default:
+        bulletListAct->setChecked(false);
+        numberedListAct->setChecked(false);
+    }
 }

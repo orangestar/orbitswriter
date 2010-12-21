@@ -41,7 +41,7 @@ public:
        \param format current list format
        \return list type of this format
      */
-    static Constants::ListType isBulletList(const QTextListFormat &format);
+    static Constants::ListType listType(const QTextListFormat &format);
 
     /*!
        \brief Returns the style of next level item.
