@@ -18,34 +18,36 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef COMPONENTS_H
+#define COMPONENTS_H
 
-#include <QString>
+#include <QComboBox>
+#include <QStyledItemDelegate>
 
 /*!
-   \brief Common constants used in application.
+   \class HeadingItemDelegate
+   \brief The item renderer for the combo box of heading tags.
  */
-namespace Constants {
 
-    /*!
-       \brief List type.
-     */
-    enum ListType {
-        UndefinedListType = -1, /*!< Undefined list type. */
-        BulletList = 1,         /*!< Bullet list. */
-        NumberedList            /*!< Numbered list. */
-    };
+/*!
+   \class HeadingComboBox
+   \brief Combo box of heading tags.
+ */
 
-    namespace HtmlTag {
-        const QString h1 = QString("h1");
-        const QString h2 = QString("h2");
-        const QString h3 = QString("h3");
-        const QString h4 = QString("h4");
-        const QString h5 = QString("h5");
-        const QString h6 = QString("h6");
-    }
+class HeadingItemDelegate : public QStyledItemDelegate
+{
+public:
+    HeadingItemDelegate(QObject *parent = 0);
 
-}
+protected:
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-#endif // COMMON_H
+};
+
+class HeadingComboBox : public QComboBox
+{
+public:
+    HeadingComboBox(QWidget *parent = 0);
+};
+
+#endif // COMPONENTS_H

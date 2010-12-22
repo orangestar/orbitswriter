@@ -28,6 +28,7 @@
 #include "sourceeditor.h"
 #include "styleutil.h"
 #include "formatdata.h"
+#include "headingcombobox.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -366,14 +367,7 @@ void MainWindow::createToolBars()
     editToolBar->addWidget(editButton);
 
     textToolBar = addToolBar(tr("Text Tool Bar"));
-    QComboBox *secList = new QComboBox(this);
-    secList->addItem(tr("p"));
-    secList->addItem(tr("h1"));
-    secList->addItem(tr("h2"));
-    secList->addItem(tr("h3"));
-    secList->addItem(tr("h4"));
-    secList->addItem(tr("h5"));
-    secList->addItem(tr("h6"));
+    HeadingComboBox *secList = new HeadingComboBox(this);
     textToolBar->addWidget(secList);
     textToolBar->addAction(textBoldAct);
     textToolBar->addAction(textItalicAct);
@@ -464,14 +458,6 @@ void MainWindow::showTextBackgroundColorDialog()
         currentTextBackgroundColorChanged(color);
     }
 }
-
-//void MainWindow::currentFontChanged(const QFont &font)
-//{
-//    textBoldAct->setChecked(font.bold());
-//    textItalicAct->setChecked(font.italic());
-//    textUnderlineAct->setChecked(font.underline());
-//    textStrikeoutAct->setChecked(font.strikeOut());
-//}
 
 void MainWindow::currentTextColorChanged(const QColor &color)
 {
