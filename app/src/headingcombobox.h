@@ -42,12 +42,20 @@ public:
 protected:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private:
+
+    const QFont & getFont(const QString & val) const;
+
 };
 
 class HeadingComboBox : public QComboBox
 {
 public:
     HeadingComboBox(QWidget *parent = 0);
+
+    void showPopup();
 };
 
 #endif // COMPONENTS_H

@@ -37,15 +37,6 @@ namespace Constants {
         NumberedList            /*!< Numbered list. */
     };
 
-    namespace HtmlTag {
-        const QString h1 = QString("h1");
-        const QString h2 = QString("h2");
-        const QString h3 = QString("h3");
-        const QString h4 = QString("h4");
-        const QString h5 = QString("h5");
-        const QString h6 = QString("h6");
-    }
-
 }
 
 #endif // COMMON_H
