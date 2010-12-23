@@ -35,10 +35,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     connect(this, SIGNAL(currentCharFormatChanged(QTextCharFormat)), SLOT(onCurrentCharFormatChanged(QTextCharFormat)));
     connect(this, SIGNAL(cursorPositionChanged()), SLOT(onCursorPositionChanged()));
     // FIXME Text background color should be set through blog theme.
-//    setTextBackgroundColor(Qt::white);
-//    QPalette p = palette();
-//    p.setColor(QPalette::Base, QColor(255, 255, 255));
-//    setPalette(p);
+    setTextBackgroundColor(QColor(255, 255, 255, 0));
 }
 
 void VisualEditor::applyFormat(const QTextCharFormat &format)
@@ -119,7 +116,7 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
     int key = e->key();
     if(key == Qt::Key_Tab) {
         // Because there is no TAB in HTML, so we can ignore tab safely.
-        // Only cursor is in a list, tab is enabled.
+        // Only when the cursor is in a list, tab is enabled.
         QTextCursor cursor = this->textCursor();
         QTextList *currList = cursor.currentList();
         if(currList) {
@@ -137,7 +134,10 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
         QTextCursor cursor = this->textCursor();
         QTextList *currList = cursor.currentList();
         if(currList) {
-            if(cursor.block().length() == 1) {
+            if(cursor.block().length() != 1) {
+                // the most common suituation
+                QTextEdit::keyPressEvent(e);
+            } else {
                 // only bullet point left
                 QTextListFormat listFmt = currList->format();
                 QTextListFormat::Style style = StyleUtil::previousLevelStyle(listFmt.style());
@@ -149,8 +149,6 @@ void VisualEditor::keyPressEvent(QKeyEvent *e)
                     removeListItem(cursor.block());
                     emit listExists(false);
                 }
-            } else {
-                QTextEdit::keyPressEvent(e);
             }
         } else {
             QTextEdit::keyPressEvent(e);
@@ -207,28 +205,18 @@ void VisualEditor::onCursorPositionChanged()
     FormatData fmt;
     if(cursor.currentList()) {
         fmt.setListType(StyleUtil::listType(cursor.currentList()->format()));
-//        bulletListAct->setChecked(listType == Constants::BulletList);
-//        numberedListAct->setChecked(listType == Constants::NumberedList);
     } else {
         fmt.setListType(Constants::UndefinedListType);
     }
+    Qt::Alignment align = this->alignment();
+    if(align.testFlag(Qt::AlignJustify)) {
+        fmt.setAlignment(Constants::AlignJustify);
+    } else if(align.testFlag(Qt::AlignLeft)) {
+        fmt.setAlignment(Constants::AlignLeft);
+    } else if(align.testFlag(Qt::AlignHCenter)) {
+        fmt.setAlignment(Constants::AlignCenter);
+    } else if(align.testFlag(Qt::AlignRight)) {
+        fmt.setAlignment(Constants::AlignRight);
+    }
     emit currentFormatChanged(fmt);
-//    else {
-//        bulletListAct->setChecked(false);
-//        numberedListAct->setChecked(false);
-//    }
-    //    switch(visualEditor->alignment()) {
-    //    case Qt::AlignLeft | Qt::AlignAbsolute:
-    //        alignLeftAct->setChecked(true);
-    //        break;
-    //    case Qt::AlignHCenter:
-    //        alignCenterAct->setChecked(true);
-    //        break;
-    //    case Qt::AlignRight | Qt::AlignAbsolute:
-    //        alignRightAct->setChecked(true);
-    //        break;
-    //    case Qt::AlignJustify:
-    //        alignJustifyAct->setChecked(true);
-    //        break;
-    //    }
 }

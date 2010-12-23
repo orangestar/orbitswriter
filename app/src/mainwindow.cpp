@@ -435,7 +435,7 @@ void MainWindow::showPluginDialog()
 void MainWindow::showFontDialog()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont("Verdana", 12), this);
+    QFont font = QFontDialog::getFont(&ok, AppContext::instance()->defaultFont(), this);
     if(ok) {
         visualEditor->changeTextFont(font);
     }
@@ -452,7 +452,7 @@ void MainWindow::showTextColorDialog()
 
 void MainWindow::showTextBackgroundColorDialog()
 {
-    QColor color = QColorDialog::getColor(visualEditor->textBackgroundColor(), this);
+    QColor color = QColorDialog::getColor(Qt::white, this);
     if(color.isValid()) {
         visualEditor->changeTextBackgroundColor(color);
         currentTextBackgroundColorChanged(color);
@@ -616,5 +616,19 @@ void MainWindow::applyFormatToActions(const FormatData &fmt)
     default:
         bulletListAct->setChecked(false);
         numberedListAct->setChecked(false);
+    }
+    switch(fmt.alignment()) {
+    case Constants::AlignJustify:
+        alignJustifyAct->setChecked(true);
+        break;
+    case Constants::AlignLeft:
+        alignLeftAct->setChecked(true);
+        break;
+    case Constants::AlignCenter:
+        alignCenterAct->setChecked(true);
+        break;
+    case Constants::AlignRight:
+        alignRightAct->setChecked(true);
+        break;
     }
 }

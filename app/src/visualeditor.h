@@ -125,8 +125,24 @@ private slots:
     void onCursorPositionChanged();
 
 private:
+
+    /*!
+       \brief Applies the given format to selected text.
+       \param format format to apply
+     */
     void applyFormat(const QTextCharFormat &format);
+
+    /*!
+       \brief Removes existing list item.
+       \param block block to be removed
+     */
     void removeListItem(const QTextBlock &block);
+
+    /*!
+       \brief Inserts list.
+       \param style list style
+       \param insert true if a new list should be inserted; false if wants to remove existing one
+     */
     void insertList(QTextListFormat::Style style, bool insert);
 
 };

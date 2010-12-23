@@ -37,6 +37,13 @@ namespace Constants {
         NumberedList            /*!< Numbered list. */
     };
 
+    enum Alignment {
+        AlignLeft,
+        AlignRight,
+        AlignCenter,
+        AlignJustify
+    };
+
 }
 
 #endif // COMMON_H

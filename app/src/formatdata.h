@@ -159,6 +159,16 @@ public:
         return lt;
     }
 
+    void setAlignment(Constants::Alignment align)
+    {
+        a = align;
+    }
+
+    Constants::Alignment alignment() const
+    {
+        return a;
+    }
+
 private:
     bool tb;
     bool ti;
@@ -167,6 +177,7 @@ private:
     QColor tc;
     QColor tbc;
     Constants::ListType lt;
+    Constants::Alignment a;
 };
 
 #endif // FORMATDATA_H
