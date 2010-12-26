@@ -23,34 +23,29 @@
 #include "htmlutil.h"
 #include "appcontext.h"
 
-QFont HtmlUtil::getVisualFont(HtmlTag heading)
+QFont HtmlUtil::getVisualFont(const QString & heading)
 {
     QFont font;
-    switch(heading) {
-    case HtmlUtil::h1:
+    if(heading == HtmlTag::h1) {
         font.setPointSize(24);
-        break;
-    case HtmlUtil::h2:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::h2) {
         font.setPointSize(18);
-        break;
-    case HtmlUtil::h3:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::h3) {
         font.setPointSize(14);
-        break;
-    case HtmlUtil::h4:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::h4) {
         font.setPointSize(12);
-        break;
-    case HtmlUtil::h5:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::h5) {
         font.setPointSize(10);
-        break;
-    case HtmlUtil::h6:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::h6) {
         font.setPointSize(8);
-        break;
-    case HtmlUtil::p:
+        font.setWeight(QFont::Bold);
+    } else if(heading == HtmlTag::p) {
         font.setPointSize(AppContext::instance()->defaultFont().pointSize());
-        break;
-    default:
-        // do nothing
-        break;
     }
     return font;
 }

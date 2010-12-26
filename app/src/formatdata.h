@@ -39,7 +39,7 @@ public:
      */
     void setTextBold(bool b)
     {
-        tb = b;
+        _textBold = b;
     }
 
     /*!
@@ -48,7 +48,7 @@ public:
      */
     bool isTextBold() const
     {
-        return tb;
+        return _textBold;
     }
 
     /*!
@@ -57,7 +57,7 @@ public:
      */
     void setTextItalic(bool i)
     {
-        ti = i;
+        _textItalic = i;
     }
 
     /*!
@@ -66,7 +66,7 @@ public:
      */
     bool isTextItalic() const
     {
-        return ti;
+        return _textItalic;
     }
 
     /*!
@@ -75,7 +75,7 @@ public:
      */
     void setTextUnderline(bool u)
     {
-        tu = u;
+        _textUnderline = u;
     }
 
     /*!
@@ -84,7 +84,7 @@ public:
      */
     bool isTextUnderline() const
     {
-        return tu;
+        return _textUnderline;
     }
 
     /*!
@@ -93,7 +93,7 @@ public:
      */
     void setTextStrikeOut(bool s)
     {
-        ts = s;
+        _textStrikeOut = s;
     }
 
     /*!
@@ -102,7 +102,7 @@ public:
      */
     bool isTextStrikeOut() const
     {
-        return ts;
+        return _textStrikeOut;
     }
 
     /*!
@@ -111,7 +111,7 @@ public:
      */
     void setTextColor(const QColor &c)
     {
-        tc = c;
+        _textColor = c;
     }
 
     /*!
@@ -120,7 +120,7 @@ public:
      */
     QColor textColor() const
     {
-        return tc;
+        return _textColor;
     }
 
     /*!
@@ -129,7 +129,7 @@ public:
      */
     void setTextBackgroundColor(const QColor &c)
     {
-        tbc = c;
+        _textBackgroundColor = c;
     }
 
     /*!
@@ -138,7 +138,7 @@ public:
      */
     QColor textBackgroundColor() const
     {
-        return tbc;
+        return _textBackgroundColor;
     }
 
     /*!
@@ -147,7 +147,7 @@ public:
      */
     void setListType(Constants::ListType t)
     {
-        lt = t;
+        _listType = t;
     }
 
     /*!
@@ -156,28 +156,28 @@ public:
      */
     Constants::ListType listType() const
     {
-        return lt;
+        return _listType;
     }
 
     void setAlignment(Constants::Alignment align)
     {
-        a = align;
+        _align = align;
     }
 
     Constants::Alignment alignment() const
     {
-        return a;
+        return _align;
     }
 
 private:
-    bool tb;
-    bool ti;
-    bool tu;
-    bool ts;
-    QColor tc;
-    QColor tbc;
-    Constants::ListType lt;
-    Constants::Alignment a;
+    bool _textBold;
+    bool _textItalic;
+    bool _textUnderline;
+    bool _textStrikeOut;
+    QColor _textColor;
+    QColor _textBackgroundColor;
+    Constants::ListType _listType;
+    Constants::Alignment _align;
 };
 
 #endif // FORMATDATA_H

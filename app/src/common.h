@@ -26,7 +26,8 @@
 /*!
    \brief Common constants used in application.
  */
-namespace Constants {
+namespace Constants
+{
 
     /*!
        \brief List type.
@@ -37,12 +38,64 @@ namespace Constants {
         NumberedList            /*!< Numbered list. */
     };
 
+    /*!
+       \brief Alignment.
+     */
     enum Alignment {
-        AlignLeft,
-        AlignRight,
-        AlignCenter,
-        AlignJustify
+        AlignLeft,     /*!< Alignment left. */
+        AlignRight,    /*!< Alignment right. */
+        AlignCenter,   /*!< Alignment center. */
+        AlignJustify   /*!< Alignment justify. */
     };
+
+}
+
+/*!
+   \brief Html tags used in application.
+ */
+namespace HtmlTag
+{
+    /*!
+       \brief Heading 1(&lt;h1 /&gt;).
+     */
+    const QString h1 = QString("h1");
+
+    /*!
+       \brief Heading 2(&lt;h2 /&gt;).
+     */
+    const QString h2 = QString("h2");
+
+    /*!
+       \brief Heading 3(&lt;h3 /&gt;).
+     */
+    const QString h3 = QString("h3");
+
+    /*!
+       \brief Heading 4(&lt;h4 /&gt;).
+     */
+    const QString h4 = QString("h4");
+
+    /*!
+       \brief Heading 5(&lt;h5 /&gt;).
+     */
+    const QString h5 = QString("h5");
+
+    /*!
+       \brief Heading 6(&lt;h6 /&gt;).
+     */
+    const QString h6 = QString("h6");
+
+    /*!
+       \brief Paragraph(&lt;p /&gt;).
+     */
+    const QString p = QString("p");
+}
+
+/*!
+   \brief CSS names used in application.
+ */
+namespace Css
+{
 
 }
 

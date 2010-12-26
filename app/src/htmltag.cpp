@@ -18,35 +18,25 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef HTMLUTIL_H
-#define HTMLUTIL_H
-
 #include "htmltag.h"
 
-class QFont;
-
-/*!
-   \class HtmlUtil
-   \brief Utilities for html processing.
- */
-
-class HtmlUtil
+HtmlTagData::HtmlTagData(const QString & tag)
+    : _tagName(tag)
 {
-public:
+}
 
-    /*!
-       \brief Gets the display font for heading tags.
-       \param heading heading tags, valid values are HtmlTag::h1,
-       HtmlTag::h2, HtmlTag::h3, HtmlTag::h4, HtmlTag::h5, HtmlTag::h6.
-       \return font used for rendering heading tags
-     */
-    static QFont getVisualFont(const QString & heading);
+HtmlTagData::~HtmlTagData()
+{
 
-private:
-    HtmlUtil();
-    ~HtmlUtil();
-    HtmlUtil(const HtmlUtil &);
-    HtmlUtil& operator=(const HtmlUtil &);
-};
+}
 
-#endif // HTMLUTIL_H
+HtmlHeadingTagData::HtmlHeadingTagData(const QString &tag)
+    : HtmlTagData(tag)
+{
+
+}
+
+HtmlHeadingTagData::~HtmlHeadingTagData()
+{
+
+}

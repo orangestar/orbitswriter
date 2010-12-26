@@ -23,7 +23,8 @@ SOURCES += \
     pluginmanager.cpp \
     formatdata.cpp \
     headingcombobox.cpp \
-    htmlutil.cpp
+    htmlutil.cpp \
+    htmltag.cpp
 
 HEADERS += \
     common.h \
@@ -36,7 +37,8 @@ HEADERS += \
     plugins/plugin.h \
     formatdata.h \
     headingcombobox.h \
-    htmlutil.h
+    htmlutil.h \
+    htmltag.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 
