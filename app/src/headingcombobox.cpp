@@ -21,7 +21,7 @@
 #include <QtGui>
 
 #include "headingcombobox.h"
-#include "htmltag.h"
+#include "htmlutil.h"
 
 HeadingItemDelegate::HeadingItemDelegate(QObject *parent /* = 0 */)
     : QStyledItemDelegate(parent)
@@ -38,15 +38,16 @@ void HeadingItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->fillRect(option.rect, palette.highlight());
         painter->setPen(palette.highlightedText().color());
     }
-    painter->setFont(HtmlTag::getVisualFont(model->data(index, Qt::UserRole).toString()));
+    painter->setFont(HtmlUtil::getVisualFont((HtmlUtil::HtmlTag)model->data(index, Qt::UserRole).toInt()));
     painter->drawText(option.rect, display);
     painter->restore();
 }
 
 QSize HeadingItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(option);
     QSize size;
-    QFontMetrics m(HtmlTag::getVisualFont(index.model()->data(index, Qt::UserRole).toString()));
+    QFontMetrics m(HtmlUtil::getVisualFont((HtmlUtil::HtmlTag)index.model()->data(index, Qt::UserRole).toInt()));
     size.setWidth(m.width(index.model()->data(index).toString()));
     size.setHeight(m.height() + 10);
     return size;
@@ -55,13 +56,13 @@ QSize HeadingItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 HeadingComboBox::HeadingComboBox(QWidget *parent /* = 0 */)
     : QComboBox(parent)
 {
-    addItem(tr("paragraph"));
-    addItem(tr("Heading 1"), HtmlTag::h1);
-    addItem(tr("Heading 2"), HtmlTag::h2);
-    addItem(tr("Heading 3"), HtmlTag::h3);
-    addItem(tr("Heading 4"), HtmlTag::h4);
-    addItem(tr("Heading 5"), HtmlTag::h5);
-    addItem(tr("Heading 6"), HtmlTag::h6);
+    addItem(tr("paragraph"), HtmlUtil::p);
+    addItem(tr("Heading 1"), HtmlUtil::h1);
+    addItem(tr("Heading 2"), HtmlUtil::h2);
+    addItem(tr("Heading 3"), HtmlUtil::h3);
+    addItem(tr("Heading 4"), HtmlUtil::h4);
+    addItem(tr("Heading 5"), HtmlUtil::h5);
+    addItem(tr("Heading 6"), HtmlUtil::h6);
 
     setItemDelegate(new HeadingItemDelegate(this));
 }

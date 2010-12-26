@@ -117,6 +117,12 @@ public slots:
      */
     void insertNumberedList(bool insert);
 
+    /*!
+       \brief Inserts heading tags, such <h1 /> and so on.
+       \param heading heading tag string
+     */
+    void insertHeadingTag(const QString &heading);
+
 protected:
     void keyPressEvent(QKeyEvent *e);
 

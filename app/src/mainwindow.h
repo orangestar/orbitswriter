@@ -31,6 +31,7 @@ class FormatData;
 class VisualEditor;
 class SourceEditor;
 class PluginManager;
+class HeadingComboBox;
 
 /*!
    \class MainWindow
@@ -144,6 +145,7 @@ private:
     QActionGroup *alignGroup;
     QActionGroup *eleGroup;
 
+    HeadingComboBox *secList;
     QToolBar *webToolBar;
     QToolBar *editToolBar;
     QToolBar *textToolBar;

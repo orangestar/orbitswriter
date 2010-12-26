@@ -220,3 +220,7 @@ void VisualEditor::onCursorPositionChanged()
     }
     emit currentFormatChanged(fmt);
 }
+
+void VisualEditor::insertHeadingTag(const QString &heading)
+{
+}

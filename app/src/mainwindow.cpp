@@ -87,6 +87,7 @@ void MainWindow::createActions()
     saveAsPostAct->setStatusTip(tr("Save the post as another one."));
 
     exitAct = new QAction(QIcon(":/img/exit"), tr("E&xit..."), this);
+    exitAct->setMenuRole(QAction::QuitRole);
     exitAct->setShortcut(tr("Ctrl+Q"));
     exitAct->setStatusTip(tr("Exit OrbitsWriter."));
 
@@ -122,6 +123,7 @@ void MainWindow::createActions()
     helpAct->setStatusTip(tr("Open help contents."));
 
     aboutAct = new QAction(QIcon(":/img/about"), tr("About"), this);
+    aboutAct->setMenuRole(QAction::AboutRole);
     aboutAct->setStatusTip(tr("About OrbitsWriter."));
 
     publishAct = new QAction(QIcon(":/img/publish"), tr("Publish"), this);
@@ -367,7 +369,7 @@ void MainWindow::createToolBars()
     editToolBar->addWidget(editButton);
 
     textToolBar = addToolBar(tr("Text Tool Bar"));
-    HeadingComboBox *secList = new HeadingComboBox(this);
+    secList = new HeadingComboBox(this);
     textToolBar->addWidget(secList);
     textToolBar->addAction(textBoldAct);
     textToolBar->addAction(textItalicAct);
@@ -570,6 +572,7 @@ void MainWindow::createConnections()
     connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
     connect(numberedListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertNumberedList(bool)));
 
+//    connect(secList, SIGNAL(currentIndexChanged(int)), visualEditor, SLOT(fff));
     connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextBold(bool)));
     connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextItalic(bool)));
     connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextUnderline(bool)));

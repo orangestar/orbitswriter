@@ -20,39 +20,37 @@
 
 #include <QtGui>
 
-#include "htmltag.h"
+#include "htmlutil.h"
+#include "appcontext.h"
 
-HtmlTag::HtmlTag()
-{
-}
-
-const QString HtmlTag::h1 = QString("h1");
-
-const QString HtmlTag::h2 = QString("h2");
-
-const QString HtmlTag::h3 = QString("h3");
-
-const QString HtmlTag::h4 = QString("h4");
-
-const QString HtmlTag::h5 = QString("h5");
-
-const QString HtmlTag::h6 = QString("h6");
-
-QFont HtmlTag::getVisualFont(const QString &heading)
+QFont HtmlUtil::getVisualFont(HtmlTag heading)
 {
     QFont font;
-    if(heading == HtmlTag::h1) {
+    switch(heading) {
+    case HtmlUtil::h1:
         font.setPointSize(24);
-    } else if(heading == HtmlTag::h2) {
+        break;
+    case HtmlUtil::h2:
         font.setPointSize(18);
-    } else if(heading == HtmlTag::h3) {
+        break;
+    case HtmlUtil::h3:
         font.setPointSize(14);
-    } else if(heading == HtmlTag::h4) {
+        break;
+    case HtmlUtil::h4:
         font.setPointSize(12);
-    } else if(heading == HtmlTag::h5) {
+        break;
+    case HtmlUtil::h5:
         font.setPointSize(10);
-    } else if(heading == HtmlTag::h6) {
+        break;
+    case HtmlUtil::h6:
         font.setPointSize(8);
+        break;
+    case HtmlUtil::p:
+        font.setPointSize(AppContext::instance()->defaultFont().pointSize());
+        break;
+    default:
+        // do nothing
+        break;
     }
     return font;
 }

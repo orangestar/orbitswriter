@@ -18,59 +18,38 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef HTMLTAG_H
-#define HTMLTAG_H
+#ifndef HTMLUTIL_H
+#define HTMLUTIL_H
 
-class QString;
 class QFont;
 
-/*!
-   \class HtmlTag
-   \brief Tags that the application can process.
- */
-
-class HtmlTag
+class HtmlUtil
 {
 public:
-    HtmlTag();
 
-    /*!
-       \brief HTML tag <h1 />.
-     */
-    static const QString h1;
-
-    /*!
-       \brief HTML tag <h2 />.
-     */
-    static const QString h2;
-
-    /*!
-       \brief HTML tag <h3 />.
-     */
-    static const QString h3;
-
-    /*!
-       \brief HTML tag <h4 />.
-     */
-    static const QString h4;
-
-    /*!
-       \brief HTML tag <h5 />.
-     */
-    static const QString h5;
-
-    /*!
-       \brief HTML tag <h6 />.
-     */
-    static const QString h6;
+    enum HtmlTag {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p
+    };
 
     /*!
        \brief Gets the display font for heading tags.
-       \param heading heading tags, valid values are HtmlTag::h1,
-       HtmlTag::h2, HtmlTag::h3, HtmlTag::h4, HtmlTag::h5, HtmlTag::h6.
+       \param heading heading tags, valid values are HtmlUtil::h1,
+       HtmlUtil::h2, HtmlUtil::h3, HtmlUtil::h4, HtmlUtil::h5, HtmlUtil::h6.
        \return font used for rendering heading tags
      */
-    static QFont getVisualFont(const QString & heading);
+    static QFont getVisualFont(HtmlTag heading);
+
+private:
+    HtmlUtil();
+    ~HtmlUtil();
+    HtmlUtil(const HtmlUtil &);
+    HtmlUtil& operator=(const HtmlUtil &);
 };
 
-#endif // HTMLTAG_H
+#endif // HTMLUTIL_H
