@@ -572,7 +572,7 @@ void MainWindow::createConnections()
     connect(bulletListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertBulletList(bool)));
     connect(numberedListAct, SIGNAL(triggered(bool)), visualEditor, SLOT(insertNumberedList(bool)));
 
-//    connect(secList, SIGNAL(currentIndexChanged(int)), visualEditor, SLOT(fff));
+    connect(secList, SIGNAL(headingTagSelected(HtmlHeadingTagData*)), visualEditor, SLOT(insertHeadingTag(HtmlHeadingTagData*)));
     connect(textBoldAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextBold(bool)));
     connect(textItalicAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextItalic(bool)));
     connect(textUnderlineAct, SIGNAL(triggered(bool)), visualEditor, SLOT(toggleTextUnderline(bool)));

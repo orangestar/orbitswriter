@@ -26,6 +26,7 @@
 /*!
    \class AppContext
    \brief Application context.
+
    Application context is usually global data. When application exits,
    context data may need be written into local files.
    This is a singleton class.
@@ -45,6 +46,7 @@ public:
 
     /*!
        \brief Loads data from local configuration file.
+
        This file is named by "OrbitsWriter.conf" and is always
        in the same folder of the executable file. If the file does
        not exist or the value is not set, a default value will
@@ -54,6 +56,7 @@ public:
 
     /*!
        \brief Saves data to local configuration file.
+
        This file is named by "OrbitsWriter.conf" and is always
        in the same folder of the executable file. If the file does
        not exist, a new one will be created.

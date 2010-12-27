@@ -66,6 +66,7 @@ signals:
 private slots:
     /*!
        \brief Item selected.
+
        Whether index changes or not, a \a headingTagSelected(HtmlHeadingTagData *)
        will be emitted.
        \param index selected item index

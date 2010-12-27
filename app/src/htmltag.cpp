@@ -18,6 +18,8 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QtGui>
+
 #include "htmltag.h"
 #include "htmlutil.h"
 
@@ -40,7 +42,12 @@ HtmlTagData::~HtmlTagData()
 
 void HtmlTagData::setVisualFont(const QFont &font)
 {
-    _visualData.insert(VisualFormat::font, QVariant::fromValue(font));
+    _visualData.insert(VisualFormat::font, QVariant(font));
+}
+
+QFont HtmlTagData::visualFont() const
+{
+    return _visualData.value(VisualFormat::font).value<QFont>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +59,7 @@ void HtmlTagData::setVisualFont(const QFont &font)
 HtmlHeadingTagData::HtmlHeadingTagData(const QString &tag)
     : HtmlTagData(tag)
 {
+    setVisualData();
 }
 
 HtmlHeadingTagData::~HtmlHeadingTagData()

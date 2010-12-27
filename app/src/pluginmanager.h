@@ -29,6 +29,7 @@ class Plugin;
 /*!
    \class PluginManager
    \brief Plugin manager.
+
    This is a singleton manager class. Gets instance using PluginManager::instance().
  */
 

@@ -27,7 +27,9 @@ class QTextListFormat;
 
 /*!
    \class StyleUtil
-   \brief A helper class of styles. This class supplies useful functions about text styles.
+   \brief A helper class of styles.
+
+   This class supplies useful functions about text styles.
    All functions in this class are static so there is no need to instance this class.
  */
 

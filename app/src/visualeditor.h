@@ -25,10 +25,12 @@
 
 class QAction;
 class FormatData;
+class HtmlHeadingTagData;
 
 /*!
    \class VisualEditor
    \brief The visual editor.
+
    Visual editor is the WYSIWYG editor. It is the default
    editor of OrbitsWriter.
  */
@@ -119,15 +121,14 @@ public slots:
 
     /*!
        \brief Inserts heading tags, such <h1 /> and so on.
-       \param heading heading tag string
+       \param data heading tag data
      */
-    void insertHeadingTag(const QString &heading);
+    void insertHeadingTag(HtmlHeadingTagData *data);
 
 protected:
     void keyPressEvent(QKeyEvent *e);
 
 private slots:
-    void onCurrentCharFormatChanged(const QTextCharFormat &format);
     void onCursorPositionChanged();
 
 private:
