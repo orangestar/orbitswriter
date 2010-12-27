@@ -23,11 +23,18 @@
 #include "headingcombobox.h"
 #include "htmlutil.h"
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// HeadingItemDelegate
+//
+////////////////////////////////////////////////////////////////////////////////
+
 HeadingItemDelegate::HeadingItemDelegate(QObject *parent /* = 0 */)
     : QStyledItemDelegate(parent)
 {
 }
 
+// overwrite
 void HeadingItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QPalette palette = qobject_cast<QComboBox *>(this->parent())->palette();
@@ -43,6 +50,7 @@ void HeadingItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->restore();
 }
 
+// overwrite
 QSize HeadingItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option);
@@ -52,6 +60,12 @@ QSize HeadingItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
     size.setHeight(m.height() + 10);
     return size;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// HeadingComboBox
+//
+////////////////////////////////////////////////////////////////////////////////
 
 HeadingComboBox::HeadingComboBox(QWidget *parent /* = 0 */)
     : QComboBox(parent)
@@ -65,10 +79,18 @@ HeadingComboBox::HeadingComboBox(QWidget *parent /* = 0 */)
     addItem(tr("Heading 6"), HtmlTag::h6);
 
     setItemDelegate(new HeadingItemDelegate(this));
+    connect(this, SIGNAL(activated(int)), SLOT(itemSelected(int)));
 }
 
+// overwrite
 void HeadingComboBox::showPopup()
 {
     view()->setFixedWidth(180);
     QComboBox::showPopup();
+}
+
+void HeadingComboBox::itemSelected(int index)
+{
+    HtmlHeadingTagData *tagData = new HtmlHeadingTagData(itemData(index).toString());
+    emit headingTagSelected(tagData);
 }

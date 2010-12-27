@@ -24,14 +24,11 @@
 #include <QComboBox>
 #include <QStyledItemDelegate>
 
+class HtmlHeadingTagData;
+
 /*!
    \class HeadingItemDelegate
    \brief The item renderer for the combo box of heading tags.
- */
-
-/*!
-   \class HeadingComboBox
-   \brief Combo box of heading tags.
  */
 
 class HeadingItemDelegate : public QStyledItemDelegate
@@ -45,12 +42,35 @@ protected:
 
 };
 
+/*!
+   \class HeadingComboBox
+   \brief Combo box of heading tags.
+ */
+
 class HeadingComboBox : public QComboBox
 {
+    Q_OBJECT
 public:
     HeadingComboBox(QWidget *parent = 0);
 
     void showPopup();
+
+signals:
+
+    /*!
+       \brief Emits when popup list item selected.
+       \param data new heading tag data
+     */
+    void headingTagSelected(HtmlHeadingTagData *data);
+
+private slots:
+    /*!
+       \brief Item selected.
+       Whether index changes or not, a \a headingTagSelected(HtmlHeadingTagData *)
+       will be emitted.
+       \param index selected item index
+     */
+    void itemSelected(int index);
 };
 
 #endif // COMPONENTS_H

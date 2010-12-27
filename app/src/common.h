@@ -99,4 +99,12 @@ namespace Css
 
 }
 
+/*!
+   \brief Visual format used for displaying on visual editor.
+ */
+namespace VisualFormat
+{
+    const QString font = QString("font");
+}
+
 #endif // COMMON_H

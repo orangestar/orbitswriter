@@ -19,24 +19,46 @@
 //
 
 #include "htmltag.h"
+#include "htmlutil.h"
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// HtmlTagData
+//
+////////////////////////////////////////////////////////////////////////////////
 
 HtmlTagData::HtmlTagData(const QString & tag)
     : _tagName(tag)
 {
+    setVisualData();
+    setCssData();
 }
 
 HtmlTagData::~HtmlTagData()
 {
-
 }
+
+void HtmlTagData::setVisualFont(const QFont &font)
+{
+    _visualData.insert(VisualFormat::font, QVariant::fromValue(font));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// HtmlHeadingTagData
+//
+////////////////////////////////////////////////////////////////////////////////
 
 HtmlHeadingTagData::HtmlHeadingTagData(const QString &tag)
     : HtmlTagData(tag)
 {
-
 }
 
 HtmlHeadingTagData::~HtmlHeadingTagData()
 {
+}
 
+void HtmlHeadingTagData::setVisualData()
+{
+    setVisualFont(HtmlUtil::getVisualFont(_tagName));
 }

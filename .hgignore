@@ -2,3 +2,7 @@ glob:*.user
 glob:*build*
 glob:*.psd
 glob:*.orig
+glob:Makefile
+glob:*Debug
+glob:*Release
+glob:docs*

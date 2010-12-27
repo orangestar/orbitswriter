@@ -38,25 +38,64 @@
    <p>You should not use this class as the actual data for text block. Instead,
    each HTML tag have a related class used for this purporse. That is, the actual
    data should be the sub-classes.</p>
+   \see QTextBlockUserData
+   \see QTextBlock
  */
 
 class HtmlTagData : public QTextBlockUserData
 {
 public:
-    ~HtmlTagData();
+    virtual ~HtmlTagData();
 
+    /*!
+       \brief HTML tag name.
+       The value will be one of items defined in namespace \a HtmlTag.
+       \see HtmlTag
+     */
     const QString & tagName() const
     {
         return _tagName;
     }
 
+    /*!
+       \brief Set visual font which is used for visual editor.
+       \param font font value
+     */
+    void setVisualFont(const QFont & font);
+
+    const QMap<QString, QVariant> & visualData() const
+    {
+        return _visualData;
+    }
+
 protected:
+
+    /*!
+       \brief Constructs an instance of HtmlTagData.
+       This function will call \a setVisualData() and \a setCssData() functions.
+       \param tag tag name to construct
+       \see setVisualData()
+       \see setCssData()
+     */
     explicit HtmlTagData(const QString & tag);
 
-    QString _tagName;
-    QMap<QString, QVariant *> _visualData;
-    QMap<QString, QString> _cssData;
+    /*!
+       \brief Sets visual data.
+       Visual data is used for displaying on visual editor. This default impletation
+       does nothing. Subclasses should overwrite this function in order to set actual data.
+     */
+    virtual void setVisualData() {}
 
+    /*!
+       \brief Sets CSS data.
+       CSS data is used for HTML tag css properties when HTML text generated. This default impletation
+       does nothing. Subclasses should overwrite this function in order to set actual data.
+     */
+    virtual void setCssData() {}
+
+    QString _tagName;
+    QMap<QString, QVariant> _visualData;
+    QMap<QString, QString> _cssData;
 };
 
 /*!
@@ -69,6 +108,8 @@ class HtmlHeadingTagData : public HtmlTagData
 public:
     explicit HtmlHeadingTagData(const QString & tag);
     ~HtmlHeadingTagData();
+
+    void setVisualData();
 };
 
 #endif // HTMLTAG_H
