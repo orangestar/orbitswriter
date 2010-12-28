@@ -227,6 +227,14 @@ void VisualEditor::insertHeadingTag(HtmlHeadingTagData *data)
     blockFmt.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
     QTextCharFormat charFmt;
     charFmt.setFont(data->visualFont());
-    cursor.insertBlock(blockFmt, charFmt);
+    if(cursor.atBlockStart()) {
+        cursor.mergeBlockFormat(blockFmt);
+        cursor.mergeBlockCharFormat(charFmt);
+    } else {
+        cursor.insertBlock(blockFmt, charFmt);
+    }
+    QTextBlock block = cursor.block();
+    block.setUserData(data);
     cursor.endEditBlock();
+    this->setFocus();
 }
