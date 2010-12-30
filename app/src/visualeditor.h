@@ -137,7 +137,7 @@ private:
        \brief Applies the given format to selected text.
        \param format format to apply
      */
-    void applyFormat(const QTextCharFormat &format);
+    void applyCharFormat(const QTextCharFormat &format);
 
     /*!
        \brief Removes existing list item.

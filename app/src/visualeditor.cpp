@@ -38,7 +38,7 @@ VisualEditor::VisualEditor(QWidget *parent) :
     setTextBackgroundColor(QColor(255, 255, 255, 0));
 }
 
-void VisualEditor::applyFormat(const QTextCharFormat &format)
+void VisualEditor::applyCharFormat(const QTextCharFormat &format)
 {
     QTextCursor cursor = textCursor();
     if(cursor.hasSelection()) {
@@ -51,49 +51,49 @@ void VisualEditor::toggleTextBold(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(value ? QFont::Bold : QFont::Normal);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::toggleTextItalic(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(value);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::toggleTextStrike(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontStrikeOut(value);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::toggleTextUnderline(bool value)
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(value);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::changeTextFont(const QFont &font)
 {
     QTextCharFormat fmt;
     fmt.setFont(font);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::changeTextColor(const QColor &color)
 {
     QTextCharFormat fmt;
     fmt.setForeground(color);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::changeTextBackgroundColor(const QColor &color)
 {
     QTextCharFormat fmt;
     fmt.setBackground(color);
-    applyFormat(fmt);
+    applyCharFormat(fmt);
 }
 
 void VisualEditor::changeTextAlignment(Qt::Alignment align)
@@ -192,7 +192,7 @@ void VisualEditor::onCursorPositionChanged()
     QTextCursor cursor = textCursor();
     FormatData fmt;
     // char format
-    QTextCharFormat charFmt = cursor.blockCharFormat();
+    QTextCharFormat charFmt = cursor.charFormat();
     fmt.setTextBold(charFmt.font().bold());
     fmt.setTextItalic(charFmt.font().italic());
     fmt.setTextStrikeOut(charFmt.font().strikeOut());
@@ -228,8 +228,7 @@ void VisualEditor::insertHeadingTag(HtmlHeadingTagData *data)
     QTextCharFormat charFmt;
     charFmt.setFont(data->visualFont());
     if(cursor.atBlockStart()) {
-        cursor.mergeBlockFormat(blockFmt);
-        cursor.mergeBlockCharFormat(charFmt);
+        mergeCurrentCharFormat(charFmt);
     } else {
         cursor.insertBlock(blockFmt, charFmt);
     }
