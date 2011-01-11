@@ -1,0 +1,57 @@
+TODO LIST
+  2010-12-2 Create.
+   ___       _     _ _     __        __    _ _
+  / _ \ _ __| |__ (_) |_ __\ \      / / __(_) |_ ___ _ __
+ | | | | '__| '_ \| | __/ __\ \ /\ / / '__| | __/ _ \ '__|
+ | |_| | |  | |_) | | |_\__ \\ V  V /| |  | | ||  __/ |
+  \___/|_|  |_.__/|_|\__|___/ \_/\_/ |_|  |_|\__\___|_|
+
+This document is OrbitsWriter's TODO-LIST.
+
+DO NOT MODIFY THIS FILE UNLESS YOU ARE DISCUSSED WITH OTHER DEVELOPERS.
+
+NOTE the asterisk(*) means this feature may be added in the next version.
+
+version 0.0.1
+The main goal of this version is a complete rich text editor. Blog parts
+of OrbitsWriter is not so important. It should become a plugin system
+while blog parts and more HTML elements can be added dynamically.
+A more complete blog module should be added in the next version.
+
+Part 1. Rich text edit
+    1.1 Text format: bold, italic, underline, strike out;
+    1.2 Text alignment: center, left, right, justify;
+    1.3 Colors: text color, background color;
+    1.4 Fonts: text font.
+Part 2. HTML elements
+    2.1 ordered list, list level;
+    2.2 bullet list, list level;
+    2.3 table;
+    2.4 image;
+    2.5 hyperlink;
+    2.6 quot;
+    2.7 h1, h2, h3, h4, h5, h6, p.
+Part 3. File operations
+    3.1 create;
+    3.2 open;
+    3.3 save, save as;
+    3.4 print, print preview;
+    3.5 delete draft.
+Part 4. Edit operations
+    4.1 undo, redo;
+    4.2 cut, copy, paste;
+    4.3 clear all;
+    4.4 select all;
+    4.5 find;
+    4.6 type, tags.
+Part 5. Views
+    5.1 visual editor;
+    5.2 previewer;
+    5.3 source editor;
+    5.4* theme editor;
+    5.5* refresh theme.
+Part 6. Tools
+    6.1 words count.
+Part 7. Blog
+    7.1 account management;
+    7.2 publish.

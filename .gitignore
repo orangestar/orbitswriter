@@ -1,0 +1,9 @@
+*.user
+*build*
+*.psd
+*.orig
+Makefile
+*Debug
+*Release
+docs*
+plugins/src*
