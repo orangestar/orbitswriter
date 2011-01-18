@@ -27,7 +27,7 @@ using namespace orbitswriter;
 
 QFont HtmlUtil::getVisualFont(const QString & heading)
 {
-    QFont font;
+    QFont font = AppContext::instance()->defaultFont();
     if(heading == HtmlTag::h1) {
         font.setPointSize(24);
         font.setWeight(QFont::Bold);
@@ -47,7 +47,7 @@ QFont HtmlUtil::getVisualFont(const QString & heading)
         font.setPointSize(8);
         font.setWeight(QFont::Bold);
     } else if(heading == HtmlTag::p) {
-        font.setPointSize(AppContext::instance()->defaultFont().pointSize());
+        // use default font
     }
     return font;
 }

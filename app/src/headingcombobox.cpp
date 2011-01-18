@@ -87,7 +87,7 @@ HeadingComboBox::HeadingComboBox(QWidget *parent /* = 0 */)
 // overwrite
 void HeadingComboBox::showPopup()
 {
-    view()->setFixedWidth(180);
+    view()->setFixedWidth(200);
     QComboBox::showPopup();
 }
 

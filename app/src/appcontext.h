@@ -71,7 +71,7 @@ public:
         _defaultFont = font;
     }
 
-    const QFont& defaultFont() const
+    const QFont & defaultFont() const
     {
         return _defaultFont;
     }
