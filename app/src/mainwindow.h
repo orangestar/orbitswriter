@@ -67,6 +67,7 @@ private slots:
     void showFontDialog();
     void showTextColorDialog();
     void showTextBackgroundColorDialog();
+    void showBlogProfileDialog();
     void editorChanged(int idx);
     void applyFormatToActions(const FormatData &fmt);
 
@@ -143,6 +144,8 @@ private:
      * web actions
      */
     QAction *publishAct;
+
+    QAction *blogProfileAct;
 
     QActionGroup *formatGroup;
     QActionGroup *listGroup;

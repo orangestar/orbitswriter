@@ -29,6 +29,7 @@
 #include "styleutil.h"
 #include "formatdata.h"
 #include "headingcombobox.h"
+#include "blogprofileconfigwizard.h"
 
 using namespace orbitswriter;
 
@@ -283,6 +284,8 @@ void MainWindow::createActions()
     alignRightAct->setShortcut(Qt::CTRL + Qt::Key_R);
     alignRightAct->setCheckable(true);
     alignGroup->addAction(alignRightAct);
+
+    blogProfileAct = new QAction(QIcon(":/img/blog_profile"), tr("Add Blog Profile..."), this);
 }
 
 void MainWindow::createMenus()
@@ -343,6 +346,10 @@ void MainWindow::createMenus()
     QMenu *toolMenu = new QMenu(tr("&Tools"), bar);
     toolMenu->addAction(pluginAct);
     bar->addMenu(toolMenu);
+
+    QMenu *blogMenu = new QMenu(tr("&Blog"), bar);
+    blogMenu->addAction(blogProfileAct);
+    bar->addMenu(blogMenu);
 
     bar->addSeparator();
 
@@ -455,6 +462,12 @@ void MainWindow::showTextBackgroundColorDialog()
         visualEditor->changeTextBackgroundColor(color);
         currentTextBackgroundColorChanged(color);
     }
+}
+
+void MainWindow::showBlogProfileDialog()
+{
+    BlogProfileConfigWizard w(this);
+    w.exec();
 }
 
 void MainWindow::currentTextColorChanged(const QColor &color)
@@ -577,6 +590,8 @@ void MainWindow::createConnections()
     connect(textColorAct, SIGNAL(triggered()), SLOT(showTextColorDialog()));
     connect(textBackgroundColorAct, SIGNAL(triggered()), SLOT(showTextBackgroundColorDialog()));
     connect(alignGroup, SIGNAL(triggered(QAction*)), SLOT(textAlignmentChanged(QAction*)));
+
+    connect(blogProfileAct, SIGNAL(triggered()), SLOT(showBlogProfileDialog()));
 
     connect(visualEditor, SIGNAL(currentFormatChanged(FormatData)), SLOT(applyFormatToActions(FormatData)));
 

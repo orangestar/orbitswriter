@@ -24,7 +24,8 @@ SOURCES += \
     formatdata.cpp \
     headingcombobox.cpp \
     htmlutil.cpp \
-    htmltag.cpp
+    htmltag.cpp \
+    blogprofileconfigwizard.cpp
 
 HEADERS += \
     common.h \
@@ -38,7 +39,8 @@ HEADERS += \
     formatdata.h \
     headingcombobox.h \
     htmlutil.h \
-    htmltag.h
+    htmltag.h \
+    blogprofileconfigwizard.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

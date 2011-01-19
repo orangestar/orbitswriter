@@ -44,5 +44,6 @@
         <file alias="row_up">images/row_up.png</file>
         <file alias="table_prop">images/table_prop.png</file>
         <file alias="clear_cell">images/clear_cell.png</file>
+        <file alias="blog_profile">images/blog_profile.png</file>
     </qresource>
 </RCC>
