@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui
+QT += core gui sql
 
 TARGET = OrbitsWriter
 TEMPLATE = app
@@ -25,7 +25,8 @@ SOURCES += \
     headingcombobox.cpp \
     htmlutil.cpp \
     htmltag.cpp \
-    blogprofileconfigwizard.cpp
+    blogprofileconfigwizard.cpp \
+    profilemanager.cpp
 
 HEADERS += \
     common.h \
@@ -40,7 +41,8 @@ HEADERS += \
     headingcombobox.h \
     htmlutil.h \
     htmltag.h \
-    blogprofileconfigwizard.h
+    blogprofileconfigwizard.h \
+    profilemanager.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

@@ -47,7 +47,7 @@ void HeadingItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         painter->fillRect(option.rect, palette.highlight());
         painter->setPen(palette.highlightedText().color());
     }
-    painter->setFont(HtmlUtil::getVisualFont(model->data(index, Qt::UserRole).toString()));
+    painter->setFont(HtmlUtil::getHeadingVisualFont(model->data(index, Qt::UserRole).toString()));
     painter->drawText(option.rect, display);
     painter->restore();
 }
@@ -57,7 +57,7 @@ QSize HeadingItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 {
     Q_UNUSED(option);
     QSize size;
-    QFontMetrics m(HtmlUtil::getVisualFont(index.model()->data(index, Qt::UserRole).toString()));
+    QFontMetrics m(HtmlUtil::getHeadingVisualFont(index.model()->data(index, Qt::UserRole).toString()));
     size.setWidth(m.width(index.model()->data(index).toString()));
     size.setHeight(m.height() + 10);
     return size;

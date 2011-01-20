@@ -30,10 +30,15 @@ namespace orbitswriter
 /*!
    \class FormatData
    \brief A data class used for store format data on current cursor.
+
+   This data class contains whether text is bold, whether text is italic and other formats.
  */
 class FormatData
 {
 public:
+    /*!
+       \brief Constructs an empty format data.
+     */
     FormatData();
 
     /*!
@@ -162,11 +167,19 @@ public:
         return _listType;
     }
 
+    /*!
+       \brief Sets text alignment.
+       \param align alignment type
+     */
     void setAlignment(Constants::Alignment align)
     {
         _align = align;
     }
 
+    /*!
+       \brief Gets text alignment.
+       \return current text alignment
+     */
     Constants::Alignment alignment() const
     {
         return _align;

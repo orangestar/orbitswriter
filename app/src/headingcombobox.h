@@ -37,6 +37,10 @@ class HtmlHeadingTagData;
 class HeadingItemDelegate : public QStyledItemDelegate
 {
 public:
+    /*!
+       \brief Constructs a heading item delegate with the given parent.
+       \param parent item delegate parent
+     */
     HeadingItemDelegate(QObject *parent = 0);
 
 protected:
@@ -47,13 +51,16 @@ protected:
 
 /*!
    \class HeadingComboBox
-   \brief Combo box of heading tags.
+   \brief Combo box of heading tags select.
  */
 
 class HeadingComboBox : public QComboBox
 {
     Q_OBJECT
 public:
+    /*!
+       \brief Constructs a heading combo box.
+     */
     HeadingComboBox(QWidget *parent = 0);
 
     void showPopup();

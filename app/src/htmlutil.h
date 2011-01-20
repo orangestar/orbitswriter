@@ -43,7 +43,7 @@ public:
        HtmlTag::h2, HtmlTag::h3, HtmlTag::h4, HtmlTag::h5, HtmlTag::h6.
        \return font used for rendering heading tags
      */
-    static QFont getVisualFont(const QString & heading);
+    static QFont getHeadingVisualFont(const QString & heading);
 
 private:
     HtmlUtil();

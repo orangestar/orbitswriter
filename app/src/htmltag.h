@@ -81,16 +81,11 @@ public:
      */
     QFont visualFont() const;
 
-    const QMap<QString, QVariant> & visualData() const
-    {
-        return _visualData;
-    }
-
 protected:
 
     /*!
-       \brief Constructs an instance of HtmlTagData.
-       \param tag tag name to construct
+       \brief Constructs an HTML tag data.
+       \param tag HTML tag name
      */
     explicit HtmlTagData(const QString & tag);
 
@@ -123,6 +118,10 @@ protected:
 class HtmlHeadingTagData : public HtmlTagData
 {
 public:
+    /*!
+       \brief Constructs a heading tag data.
+       \param tag heading tag name
+     */
     explicit HtmlHeadingTagData(const QString & tag);
     ~HtmlHeadingTagData();
 

@@ -70,5 +70,5 @@ HtmlHeadingTagData::~HtmlHeadingTagData()
 
 void HtmlHeadingTagData::setVisualData()
 {
-    setVisualFont(HtmlUtil::getVisualFont(_tagName));
+    setVisualFont(HtmlUtil::getHeadingVisualFont(_tagName));
 }

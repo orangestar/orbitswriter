@@ -22,8 +22,7 @@
 #define BLOGPROFILECONFIGWIZARD_H
 
 #include <QWizard>
-
-class QWizardPage;
+#include <QWizardPage>
 
 namespace orbitswriter
 {
@@ -32,23 +31,83 @@ namespace orbitswriter
    \class BlogProfileConfigWizard
    \brief Blog profile configuration wizard.
  */
+
 class BlogProfileConfigWizard : public QWizard
 {
     Q_OBJECT
 public:
+    /*!
+       \brief Constructs a blog profile configuration wizard with the given parent.
+       \param parent parent of this wizard
+     */
     explicit BlogProfileConfigWizard(QWidget *parent = 0);
 
-signals:
-
-public slots:
-
-private:
-    QWizardPage *createIntroPage();
-    QWizardPage *createBlogAccountPage();
-    QWizardPage *createApiTypePage();
-    QWizardPage *createProfileNamePage();
-
+    void accept();
 }; // end of class ProfileConfigWizard
+
+/*!
+   \class BlogProfileConfigWizardIntroPage
+   \brief Introduction page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardIntroPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard introduction page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardIntroPage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardIntroPage
+
+/*!
+   \class BlogProfileConfigWizardBlogAccountPage
+   \brief Blog account page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardBlogAccountPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard blog account page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardBlogAccountPage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardBlogAccountPage
+
+/*!
+   \class BlogProfileConfigWizardApiTypePage
+   \brief API type page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardApiTypePage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard API type page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardApiTypePage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardApiTypePage
+
+/*!
+   \class BlogProfileConfigWizardProfileNamePage
+   \brief Introduction page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardProfileNamePage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard profile name page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardProfileNamePage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardProfileNamePage
 
 } // end of namespace orbitswriter
 

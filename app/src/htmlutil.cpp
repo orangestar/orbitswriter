@@ -25,7 +25,7 @@
 
 using namespace orbitswriter;
 
-QFont HtmlUtil::getVisualFont(const QString & heading)
+QFont HtmlUtil::getHeadingVisualFont(const QString & heading)
 {
     QFont font = AppContext::instance()->defaultFont();
     if(heading == HtmlTag::h1) {
