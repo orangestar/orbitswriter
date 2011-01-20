@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     app.setOrganizationName("Galaxy");
     app.setApplicationName("OrbitsWriter");
     app.setApplicationVersion("0.0.1");
+    app.addLibraryPath("./plugins");
 
     QString message;
     for(int i = 1; i < argc; ++i) {
