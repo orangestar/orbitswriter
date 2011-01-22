@@ -29,31 +29,85 @@ ProfileManager::ProfileManager()
 {
 }
 
-void ProfileManager::saveBlogProfile(const BlogProfile & profile) const
+ProfileManager::~ProfileManager()
+{
+    qDeleteAll(_blogProfileList.begin(), _blogProfileList.end());
+    _blogProfileList.clear();
+}
+
+void ProfileManager::saveBlogProfile(const BlogProfile & profile)
+{
+    if(!openProfileDatabase()) {
+        return;
+    }
+    QSqlQuery query;
+    if(!isBlogProfileTableExists()) {
+        // create table
+        query.exec("CREATE TABLE blog_profile ("
+                   "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                   "name VARCHAR(100), "
+                   "addr VARCHAR(100), "
+                   "user_name VARCHAR(50), "
+                   "password VARCHAR(50), "
+                   "type VARCHAR(20), "
+                   "publish_url VARCHAR(100))");
+    }
+    // blog_profile exists
+    query.exec(QString("INSERT INTO blog_profile VALUES (null, '%1', '%2', '%3', '%4', '%5', '%6')")
+               .arg(profile.profileName,
+                    profile.blogAddr,
+                    profile.userName,
+                    profile.rememberPassword ? profile.password : "",
+                    profile.blogType,
+                    profile.publishUrl));
+}
+
+QList<BlogProfile *> & ProfileManager::blogProfileList()
+{
+    if(_blogProfileList.isEmpty()) {
+        if(openProfileDatabase() && isBlogProfileTableExists()) {
+            QSqlQuery query("SELECT * FROM blog_profile");
+            while(query.next()) {
+                BlogProfile *profile = new BlogProfile;
+                QSqlRecord record = query.record();
+                int idx = record.indexOf("name");
+                profile->profileName = query.value(idx).toString();
+                idx = record.indexOf("addr");
+                profile->blogAddr = query.value(idx).toString();
+                idx = record.indexOf("user_name");
+                profile->userName = query.value(idx).toString();
+                idx = record.indexOf("password");
+                profile->password = query.value(idx).toString();
+                profile->rememberPassword = !profile->password.isEmpty();
+                idx = record.indexOf("type");
+                profile->blogType = query.value(idx).toString();
+                idx = record.indexOf("publish_url");
+                profile->publishUrl = query.value(idx).toString();
+                _blogProfileList.append(profile);
+            }
+        }
+    }
+    return _blogProfileList;
+}
+
+bool ProfileManager::openProfileDatabase()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("profile");
     if(!db.open()) {
         QMessageBox::critical(0, QObject::tr("Database Error"), QObject::tr("Can not open profile database."));
-        return;
+        return false;
     }
-    QSqlQuery query;
-    query.exec("select count(*) from sqlite_master where name='blog_profile'");
+    return true;
+}
+
+bool ProfileManager::isBlogProfileTableExists()
+{
+    // NOTE this function will not check if database is opened
+    // You should ensure database is opened before this is called
+    QSqlQuery query("select count(*) from sqlite_master where name='blog_profile'");
     if(query.next()) {
-        if(query.value(0).toInt() == 0) {
-            // no such table named blog_profile
-            // create this table
-            query.exec("CREATE TABLE blog_profile ("
-                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                       "name VARCHAR(100), "
-                       "addr VARCHAR(100), "
-                       "user_name VARCHAR(50), "
-                       "password VARCHAR(50), "
-                       "type VARCHAR(20), "
-                       "publish_url VARCHAR(100))");
-        }
+        return query.value(0).toInt() != 0;
     }
-    // blog_profile exists
-    query.exec(QString("INSERT INTO blog_profile VALUES (null, '%1', '%2', '%3', '%4', '%5', '%6')")
-               .arg(profile.profileName, profile.blogAddr, profile.userName, profile.password, profile.blogType, profile.publishUrl));
+    return false;
 }

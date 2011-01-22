@@ -22,6 +22,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
 
 class QActionGroup;
 class QTabWidget;
@@ -145,6 +146,7 @@ private:
      */
     QAction *publishAct;
 
+    QList<QAction *> blogProfileList;
     QAction *blogProfileAct;
 
     QActionGroup *formatGroup;

@@ -22,6 +22,9 @@
 #define PROFILEMANAGER_H
 
 #include <QString>
+#include <QList>
+
+class QSqlDatabase;
 
 namespace orbitswriter
 {
@@ -96,13 +99,20 @@ public:
        \brief Saves the blog profile.
        \param profile blog profile to be saved
      */
-    void saveBlogProfile(const BlogProfile & profile) const;
+    void saveBlogProfile(const BlogProfile & profile);
+
+    QList<BlogProfile *> & blogProfileList();
 
 private:
+    bool openProfileDatabase();
+    bool isBlogProfileTableExists();
+
     ProfileManager();
-    ~ProfileManager() { }
+    ~ProfileManager();
     ProfileManager(const ProfileManager &);
     ProfileManager& operator=(const ProfileManager &);
+
+    QList<BlogProfile *> _blogProfileList;
 }; // end of class ProfileManager
 
 } // end of namespace orbitswriter

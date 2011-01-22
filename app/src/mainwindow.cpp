@@ -30,6 +30,7 @@
 #include "formatdata.h"
 #include "headingcombobox.h"
 #include "blogprofileconfigwizard.h"
+#include "profilemanager.h"
 
 using namespace orbitswriter;
 
@@ -56,7 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-
+    qDeleteAll(blogProfileList.begin(), blogProfileList.end());
+    blogProfileList.clear();
 }
 
 void MainWindow::createActions()
@@ -286,6 +288,15 @@ void MainWindow::createActions()
     alignGroup->addAction(alignRightAct);
 
     blogProfileAct = new QAction(QIcon(":/img/blog_profile"), tr("Add Blog Profile..."), this);
+    QList<BlogProfile *> blogProfiles = ProfileManager::instance()->blogProfileList();
+    BlogProfile *profile;
+    QActionGroup *blogProfileGroup = new QActionGroup(this);
+    foreach (profile, blogProfiles) {
+        QAction *act = new QAction(profile->profileName, this);
+        blogProfileGroup->addAction(act);
+        act->setCheckable(true);
+        blogProfileList.append(act);
+    }
 }
 
 void MainWindow::createMenus()
@@ -347,9 +358,15 @@ void MainWindow::createMenus()
     toolMenu->addAction(pluginAct);
     bar->addMenu(toolMenu);
 
-    QMenu *blogMenu = new QMenu(tr("&Blog"), bar);
-    blogMenu->addAction(blogProfileAct);
-    bar->addMenu(blogMenu);
+    QMenu *profileMenu = new QMenu(tr("&Profile"), bar);
+    QMenu *userProfileMenu = new QMenu(tr("User"), bar);
+    profileMenu->addMenu(userProfileMenu);
+    QMenu *blogProfileMenu = new QMenu(tr("Blogs"), bar);
+    blogProfileMenu->addActions(blogProfileList);
+    blogProfileMenu->addSeparator();
+    blogProfileMenu->addAction(blogProfileAct);
+    profileMenu->addMenu(blogProfileMenu);
+    bar->addMenu(profileMenu);
 
     bar->addSeparator();
 
