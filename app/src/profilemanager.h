@@ -21,10 +21,9 @@
 #ifndef PROFILEMANAGER_H
 #define PROFILEMANAGER_H
 
+#include <QObject>
 #include <QString>
 #include <QList>
-
-class QSqlDatabase;
 
 namespace orbitswriter
 {
@@ -69,6 +68,11 @@ struct BlogProfile
        \brief Name of this profile.
      */
     QString profileName;
+
+    /*!
+       \brief As default account.
+     */
+    bool isDefault;
 };
 
 /*!
@@ -82,8 +86,9 @@ struct BlogProfile
    Note that profiles are different from application settings. Settings need not
    be encrypted.
  */
-class ProfileManager
+class ProfileManager : public QObject
 {
+    Q_OBJECT
 public:
     /*!
        \brief Gets the only singleton instance.
@@ -101,11 +106,20 @@ public:
      */
     void saveBlogProfile(const BlogProfile & profile);
 
+    /*!
+       \brief Gets blog profile list.
+       \return blog profile list read from database
+     */
     QList<BlogProfile *> & blogProfileList();
+
+signals:
+    void blogProfileCreated();
 
 private:
     bool openProfileDatabase();
     bool isBlogProfileTableExists();
+    void closeConnection();
+    void clearBlogProfileList();
 
     ProfileManager();
     ~ProfileManager();

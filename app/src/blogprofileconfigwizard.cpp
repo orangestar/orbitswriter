@@ -50,10 +50,9 @@ void BlogProfileConfigWizard::accept()
     profile.blogType = field("blogType").toString();
     profile.publishUrl = field("publishUrl").toString();
     profile.profileName = field("blogProfileName").toString();
+    profile.isDefault = field("asDefault").toBool();
 
-    ProfileManager *pmgr = ProfileManager::instance();
-    pmgr->saveBlogProfile(profile);
-    // QMessageBox::information(0, "", QString("%1\n%2\n%3\n%4\n%5\n%6\n%7").arg(blogAddr, userName, pwd, remPwd?"true":"false", blogType, publishUrl, profileName));
+    ProfileManager::instance()->saveBlogProfile(profile);
 
     QWizard::accept();
 }
@@ -103,7 +102,7 @@ BlogProfileConfigWizardBlogAccountPage::BlogProfileConfigWizardBlogAccountPage(Q
     QLabel *commentLabel = new QLabel(tr("This should be the address you access your blog using browsers."), this);
     commentLabel->setStyleSheet("color: #888888");
     layout->addWidget(commentLabel);
-    registerField("blogAddress", addrInput);
+    registerField("blogAddress*", addrInput);
 
     QLabel *userNameLabel = new QLabel(tr("&User name: "), this);
     QLineEdit *userNameInput = new QLineEdit(this);
@@ -111,7 +110,7 @@ BlogProfileConfigWizardBlogAccountPage::BlogProfileConfigWizardBlogAccountPage(Q
     userNameLabel->setBuddy(userNameInput);
     layout->addWidget(userNameLabel);
     layout->addWidget(userNameInput);
-    registerField("userName", userNameInput);
+    registerField("userName*", userNameInput);
 
     QLabel *passwordLabel = new QLabel(tr("&Password: "), this);
     QLineEdit *passwordInput = new QLineEdit(this);
@@ -120,11 +119,15 @@ BlogProfileConfigWizardBlogAccountPage::BlogProfileConfigWizardBlogAccountPage(Q
     passwordLabel->setBuddy(passwordInput);
     layout->addWidget(passwordLabel);
     layout->addWidget(passwordInput);
-    registerField("password", passwordInput);
+    registerField("password*", passwordInput);
 
     QCheckBox *remPwdBox = new QCheckBox(tr("&Remember my password."), this);
     layout->addWidget(remPwdBox);
     registerField("rememberPassword", remPwdBox);
+
+    QCheckBox *asDefaultBox = new QCheckBox(tr("Set as &default."), this);
+    layout->addWidget(asDefaultBox);
+    registerField("asDefault", asDefaultBox);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +161,7 @@ BlogProfileConfigWizardApiTypePage::BlogProfileConfigWizardApiTypePage(QWidget *
     urlLabel->setBuddy(urlInput);
     layout->addWidget(urlLabel);
     layout->addWidget(urlInput);
-    registerField("publishUrl", urlInput);
+    registerField("publishUrl*", urlInput);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -185,5 +188,5 @@ BlogProfileConfigWizardProfileNamePage::BlogProfileConfigWizardProfileNamePage(Q
     profileNameLabel->setBuddy(nameInput);
     layout->addWidget(profileNameLabel);
     layout->addWidget(nameInput);
-    registerField("blogProfileName", nameInput);
+    registerField("blogProfileName*", nameInput);
 }

@@ -35,10 +35,9 @@
 using namespace orbitswriter;
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
-      pluginManager(PluginManager::instance())
+    : QMainWindow(parent)
 {
-    pluginManager->loadPlugins();
+    PluginManager::instance()->loadPlugins();
 
     createActions();
     createEditors();
@@ -69,6 +68,7 @@ void MainWindow::createActions()
     eleGroup->setExclusive(false);
     alignGroup = new QActionGroup(this);
     listGroup = new QActionGroup(this);
+    blogProfileGroup = new QActionGroup(this);
 
     newPostAct = new QAction(QIcon(":/img/doc_new"), tr("&New"), this);
     newPostAct->setShortcut(QKeySequence::New);
@@ -288,15 +288,6 @@ void MainWindow::createActions()
     alignGroup->addAction(alignRightAct);
 
     blogProfileAct = new QAction(QIcon(":/img/blog_profile"), tr("Add Blog Profile..."), this);
-    QList<BlogProfile *> blogProfiles = ProfileManager::instance()->blogProfileList();
-    BlogProfile *profile;
-    QActionGroup *blogProfileGroup = new QActionGroup(this);
-    foreach (profile, blogProfiles) {
-        QAction *act = new QAction(profile->profileName, this);
-        blogProfileGroup->addAction(act);
-        act->setCheckable(true);
-        blogProfileList.append(act);
-    }
 }
 
 void MainWindow::createMenus()
@@ -361,10 +352,10 @@ void MainWindow::createMenus()
     QMenu *profileMenu = new QMenu(tr("&Profile"), bar);
     QMenu *userProfileMenu = new QMenu(tr("User"), bar);
     profileMenu->addMenu(userProfileMenu);
-    QMenu *blogProfileMenu = new QMenu(tr("Blogs"), bar);
-    blogProfileMenu->addActions(blogProfileList);
-    blogProfileMenu->addSeparator();
+    blogProfileMenu = new QMenu(tr("Blogs"), bar);
     blogProfileMenu->addAction(blogProfileAct);
+    blogProfileMenu->addSeparator();
+    refreshBlogProfiles();
     profileMenu->addMenu(blogProfileMenu);
     bar->addMenu(profileMenu);
 
@@ -627,6 +618,8 @@ void MainWindow::createConnections()
     connect(visualEditor, SIGNAL(listExists(bool)), numberedListAct, SLOT(setChecked(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
+
+    connect(ProfileManager::instance(), SIGNAL(blogProfileCreated()), SLOT(refreshBlogProfiles()));
 }
 
 void MainWindow::applyFormatToActions(const FormatData &fmt)
@@ -662,4 +655,27 @@ void MainWindow::applyFormatToActions(const FormatData &fmt)
         alignRightAct->setChecked(true);
         break;
     }
+}
+
+void MainWindow::refreshBlogProfiles()
+{
+    while(!blogProfileList.isEmpty()) {
+        QAction *action = blogProfileList.takeFirst();
+        blogProfileGroup->removeAction(action);
+        delete action;
+    }
+    blogProfileList.clear();
+    QList<BlogProfile *> blogProfiles = ProfileManager::instance()->blogProfileList();
+    BlogProfile *profile;
+    foreach(profile, blogProfiles) {
+        QAction *act = new QAction(profile->profileName, this);
+        blogProfileGroup->addAction(act);
+        act->setCheckable(true);
+        if(profile->isDefault) {
+            act->setChecked(true);
+            act->setText(act->text() + tr(" (Default)"));
+        }
+        blogProfileList.append(act);
+    }
+    blogProfileMenu->addActions(blogProfileList);
 }

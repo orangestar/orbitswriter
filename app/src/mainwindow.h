@@ -35,8 +35,8 @@ namespace orbitswriter
 class FormatData;
 class VisualEditor;
 class SourceEditor;
-class PluginManager;
 class HeadingComboBox;
+struct BlogProfile;
 
 /*!
    \class MainWindow
@@ -71,6 +71,7 @@ private slots:
     void showBlogProfileDialog();
     void editorChanged(int idx);
     void applyFormatToActions(const FormatData &fmt);
+    void refreshBlogProfiles();
 
 private:
     /*
@@ -153,19 +154,20 @@ private:
     QActionGroup *listGroup;
     QActionGroup *alignGroup;
     QActionGroup *eleGroup;
+    QActionGroup *blogProfileGroup;
 
     HeadingComboBox *secList;
     QToolBar *webToolBar;
     QToolBar *editToolBar;
     QToolBar *textToolBar;
 
+    QMenu *blogProfileMenu;
+
     QTabWidget *editorStack;
     VisualEditor *visualEditor;
     QTextEdit *previewEditor;
     SourceEditor *sourceEditor;
     QDockWidget *dockWidget;
-
-    PluginManager *pluginManager;
 
     void createActions();
     void createMenus();
