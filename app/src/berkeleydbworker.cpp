@@ -18,10 +18,35 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <QtCore>
+
 #include "berkeleydbworker.h"
+
+#include "db_cxx.h"
 
 using namespace orbitswriter;
 
 BerkeleyDBWorker::BerkeleyDBWorker()
+    : blogProfileDB(new Db(NULL, 0))
 {
+}
+
+BerkeleyDBWorker::~BerkeleyDBWorker()
+{
+    delete blogProfileDB;
+}
+
+bool BerkeleyDBWorker::open(const QString &databaseName, QString * errorMessage /* = 0 */)
+{
+    try {
+        return (blogProfileDB->open(NULL, databaseName.toLatin1().constData(), NULL, DB_HASH, DB_CREATE, 0) == 0);
+    } catch(DbException &e) {
+        errorMessage = new QString(e.what());
+        return false;
+    }
+}
+
+bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile)
+{
+    return false;
 }

@@ -28,6 +28,8 @@
 namespace orbitswriter
 {
 
+class DBWorker;
+
 /*!
    \struct BlogProfile
    \brief Blog profile data.
@@ -125,6 +127,8 @@ private:
     ~ProfileManager();
     ProfileManager(const ProfileManager &);
     ProfileManager& operator=(const ProfileManager &);
+
+    DBWorker *db;
 
     QList<BlogProfile *> _blogProfileList;
 }; // end of class ProfileManager

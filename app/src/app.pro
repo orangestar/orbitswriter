@@ -53,7 +53,7 @@ HEADERS += \
 
 include(qtsingleapplication/qtsingleapplication.pri)
 
-RESOURCES   += ../res/orbitswriter.qrc
+RESOURCES += ../res/orbitswriter.qrc
 
 win32 {
     RC_FILE += ../res/orbitswriter.rc

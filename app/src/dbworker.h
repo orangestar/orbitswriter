@@ -21,6 +21,8 @@
 #ifndef DBWORKER_H
 #define DBWORKER_H
 
+class QString;
+
 namespace orbitswriter
 {
 
@@ -32,15 +34,23 @@ public:
     virtual ~DBWorker() {}
 
     /*!
-       \brief Saves a blog profile into database.
+       \brief Opens a database named \a databaseName, error message will be save in \a errorMessage.
 
-       The blog profile must be valid for this function will not check data values.
-       If database does not exist, a new database should be created and then insert this
-       new value. If inserts successfully, return true.
+       If database opens successfully, return true; otherwise false. The error message will be stored
+       in \a errorMessage. If database is not exists, a new one should be created.
 
-       \param profile blog profile that should be inserted
+       \param databaseName database name
+       \param errorMessage error message string
+       \return true if database opened successfully
      */
-    virtual bool saveBlogProfile(const BlogProfile & profile) = 0;
+    virtual bool open(const QString & databaseName, QString * errorMessage = 0) = 0;
+
+    /*!
+       \brief Inserts a blog profile into database.
+       \param profile blog profile that should be inserted
+       \return true if inserts successfully
+     */
+    virtual bool insertBlogProfile(const BlogProfile & profile) = 0;
 
 }; // end of class DBWorker
 

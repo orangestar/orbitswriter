@@ -23,6 +23,8 @@
 
 #include "dbworker.h"
 
+class Db;
+
 namespace orbitswriter
 {
 
@@ -35,7 +37,14 @@ class BerkeleyDBWorker : public DBWorker
 {
 public:
     BerkeleyDBWorker();
-    ~BerkeleyDBWorker() {}
+    ~BerkeleyDBWorker();
+
+    bool open(const QString &databaseName, QString * errorMessage = 0);
+
+    bool insertBlogProfile(const BlogProfile &profile);
+
+private:
+    Db *blogProfileDB;
 
 }; // end of class BerkeleyDBWorker
 
