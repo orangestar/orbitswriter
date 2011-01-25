@@ -13,6 +13,10 @@ MOC_DIR = $$DESTDIR/moc
 RCC_DIR = $$DESTDIR/rcc
 OBJECTS_DIR = $$DESTDIR/obj
 
+INCLUDEPATH += ../lib/bdb/include
+
+LIBS += ../lib/bdb/libdb_cxx.a
+
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
@@ -26,7 +30,8 @@ SOURCES += \
     htmlutil.cpp \
     htmltag.cpp \
     blogprofileconfigwizard.cpp \
-    profilemanager.cpp
+    profilemanager.cpp \
+    berkeleydbworker.cpp
 
 HEADERS += \
     common.h \
@@ -42,7 +47,9 @@ HEADERS += \
     htmlutil.h \
     htmltag.h \
     blogprofileconfigwizard.h \
-    profilemanager.h
+    profilemanager.h \
+    berkeleydbworker.h \
+    dbworker.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

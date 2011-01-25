@@ -7,3 +7,4 @@ Makefile
 *Release
 docs*
 plugins/src*
+lib*
