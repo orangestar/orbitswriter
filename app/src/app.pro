@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-QT += core gui sql
+QT += core gui
+
+DEFINES += BERKELEYDB
 
 TARGET = OrbitsWriter
 TEMPLATE = app
@@ -48,7 +50,6 @@ HEADERS += \
     htmltag.h \
     blogprofileconfigwizard.h \
     profilemanager.h \
-    berkeleydbworker.h \
     dbworker.h
 
 include(qtsingleapplication/qtsingleapplication.pri)

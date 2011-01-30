@@ -25,57 +25,10 @@
 #include <QString>
 #include <QList>
 
+#include "dbworker.h"
+
 namespace orbitswriter
 {
-
-class DBWorker;
-
-/*!
-   \struct BlogProfile
-   \brief Blog profile data.
- */
-struct BlogProfile
-{
-    /*!
-       \brief Blog address. This is the address browsers access with.
-     */
-    QString blogAddr;
-
-    /*!
-       \brief User name of blog login.
-     */
-    QString userName;
-
-    /*!
-       \brief Password of blog login.
-     */
-    QString password;
-
-    /*!
-       \brief Whether password should be remembered or not.
-     */
-    bool rememberPassword;
-
-    /*!
-       \brief Blog API type.
-     */
-    QString blogType;
-
-    /*!
-       \brief Remote publish URL of this blog.
-     */
-    QString publishUrl;
-
-    /*!
-       \brief Name of this profile.
-     */
-    QString profileName;
-
-    /*!
-       \brief As default account.
-     */
-    bool isDefault;
-};
 
 /*!
    \class ProfileManager

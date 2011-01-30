@@ -20,7 +20,7 @@
 
 #include <QtCore>
 
-#include "berkeleydbworker.h"
+#include "dbworker.h"
 
 #include "db_cxx.h"
 
@@ -39,14 +39,32 @@ BerkeleyDBWorker::~BerkeleyDBWorker()
 bool BerkeleyDBWorker::open(const QString &databaseName, QString * errorMessage /* = 0 */)
 {
     try {
-        return (blogProfileDB->open(NULL, databaseName.toLatin1().constData(), NULL, DB_HASH, DB_CREATE, 0) == 0);
+        return (blogProfileDB->open(NULL, databaseName.toLatin1().constData(), NULL, DB_RECNO, DB_CREATE, 0) == 0);
     } catch(DbException &e) {
+        errorMessage = new QString(e.what());
+        return false;
+    } catch(std::exception &e) {
         errorMessage = new QString(e.what());
         return false;
     }
 }
 
-bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile)
+bool BerkeleyDBWorker::close(QString *errorMessage)
 {
+    try {
+        return (blogProfileDB->close(0) == 0);
+    } catch(DbException &e) {
+        errorMessage = new QString(e.what());
+        return false;
+    } catch(std::exception &e) {
+        errorMessage = new QString(e.what());
+        return false;
+    }
+}
+
+bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile, QString * errorMessage /* = 0 */)
+{
+    DBT key, data;
+
     return false;
 }

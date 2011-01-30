@@ -19,11 +19,8 @@
 //
 
 #include <QtGui>
-#include <QtSql>
 
 #include "profilemanager.h"
-
-#include "berkeleydbworker.h"
 
 #define DB_BLOG_PROFILE "blog.profile"
 #define DB_USER_PROFILE "user.profile"
@@ -32,17 +29,27 @@ using namespace orbitswriter;
 
 ProfileManager::ProfileManager()
     : QObject(0),
+#ifdef BERKELEYDB
       db(new BerkeleyDBWorker)
+#endif
 {
 }
 
 ProfileManager::~ProfileManager()
 {
 //    clearBlogProfileList();
+    delete db;
 }
 
 void ProfileManager::saveBlogProfile(const BlogProfile & profile)
 {
+    if(openProfileDatabase()) {
+        if(!db->insertBlogProfile(profile)) {
+            QMessageBox::warning(NULL,
+                                 tr("Insert Blog Profile Failed"),
+                                 tr("Insert blog profile failed."));
+        }
+    }
 //    if(!openProfileDatabase()) {
 //        return;
 //    }
@@ -77,12 +84,6 @@ void ProfileManager::saveBlogProfile(const BlogProfile & profile)
 
 QList<BlogProfile *> & ProfileManager::blogProfileList()
 {
-    QString err;
-    if(db->open(QString(DB_BLOG_PROFILE), &err)) {
-        qDebug() << "opened";
-    } else {
-        QMessageBox::critical(0, tr("Database Error"), tr("Can not open profile database. Error message: \n%1").arg(err));
-    }
 //    if(_blogProfileList.isEmpty()) {
 //        clearBlogProfileList();
 //    }
@@ -115,35 +116,34 @@ QList<BlogProfile *> & ProfileManager::blogProfileList()
 
 bool ProfileManager::openProfileDatabase()
 {
-    QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection);
-    if(!db.isValid()) {
-        db = QSqlDatabase::addDatabase("QSQLITE", QSqlDatabase::defaultConnection);
+    QString err;
+    if(bool opened = db->open(QString(DB_BLOG_PROFILE), &err)) {
+        return opened;
+    } else {
+        QMessageBox::critical(0,
+                              tr("Database Error"),
+                              tr("Can not open profile database. Error message: \n%1").arg(err));
     }
-    db.setDatabaseName("profile");
-    if(!db.open()) {
-        QMessageBox::critical(0, tr("Database Error"), tr("Can not open profile database."));
-        return false;
-    }
-    return true;
+    return false;
 }
 
 bool ProfileManager::isBlogProfileTableExists()
 {
     // NOTE this function will not check if database is opened
     // You should ensure database is opened before this is called
-    QSqlQuery query("select count(*) from sqlite_master where name='blog_profile'");
-    if(query.next()) {
-        return query.value(0).toInt() != 0;
-    }
+//    QSqlQuery query("select count(*) from sqlite_master where name='blog_profile'");
+//    if(query.next()) {
+//        return query.value(0).toInt() != 0;
+//    }
     return false;
 }
 
 void ProfileManager::closeConnection()
 {
-    QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection);
-    if(db.isValid()) {
-        db.close();
-    }
+//    QSqlDatabase db = QSqlDatabase::database(QSqlDatabase::defaultConnection);
+//    if(db.isValid()) {
+//        db.close();
+//    }
 }
 
 void ProfileManager::clearBlogProfileList()

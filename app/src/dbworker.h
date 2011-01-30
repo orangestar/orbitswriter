@@ -21,12 +21,72 @@
 #ifndef DBWORKER_H
 #define DBWORKER_H
 
-class QString;
+#include <QString>
+
+#include "dbworker.h"
+
+#ifdef BERKELEYDB
+class Db;
+#endif
 
 namespace orbitswriter
 {
 
-struct BlogProfile;
+/*!
+   \struct BlogProfile
+   \brief Blog profile data.
+ */
+struct BlogProfile
+{
+    /*!
+       \brief Blog address. This is the address browsers access with.
+     */
+    QString blogAddr;
+
+    /*!
+       \brief User name of blog login.
+     */
+    QString userName;
+
+    /*!
+       \brief Password of blog login.
+     */
+    QString password;
+
+    /*!
+       \brief Whether password should be remembered or not.
+     */
+    bool rememberPassword;
+
+    /*!
+       \brief Blog API type.
+     */
+    QString blogType;
+
+    /*!
+       \brief Remote publish URL of this blog.
+     */
+    QString publishUrl;
+
+    /*!
+       \brief Name of this profile.
+     */
+    QString profileName;
+
+    /*!
+       \brief As default account.
+     */
+    bool isDefault;
+};
+
+/*!
+   \class DBWorker
+   \brief Business database interface.
+
+   This is an interface for all database operations used in OrbitsWriter. Note that
+   each function only need to do what described in the comments. For example,
+   function that inserts data need not to check if the database is opened first.
+ */
 
 class DBWorker
 {
@@ -34,7 +94,7 @@ public:
     virtual ~DBWorker() {}
 
     /*!
-       \brief Opens a database named \a databaseName, error message will be save in \a errorMessage.
+       \brief Opens a database named \a databaseName, error message will be saved in \a errorMessage.
 
        If database opens successfully, return true; otherwise false. The error message will be stored
        in \a errorMessage. If database is not exists, a new one should be created.
@@ -46,13 +106,56 @@ public:
     virtual bool open(const QString & databaseName, QString * errorMessage = 0) = 0;
 
     /*!
-       \brief Inserts a blog profile into database.
+       \brief Inserts a blog profile \a profile into profile database,
+       error message will be saved in \a errorMessage.
+
+       If inserts successfully, return true; otherwise false. The error message will be stored
+       in \a errorMessage.
+
        \param profile blog profile that should be inserted
+       \param errorMessage error message string
        \return true if inserts successfully
      */
-    virtual bool insertBlogProfile(const BlogProfile & profile) = 0;
+    virtual bool insertBlogProfile(const BlogProfile & profile, QString * errorMessage = 0) = 0;
+
+    /*!
+       \brief Closes the database, error message will be saved in \a errorMessage.
+
+       If database closes successfully, return true; otherwise false. The error message will be stored
+       in \a errorMessage.
+
+       \param errorMessage error message string
+       \return true if database closed successfully
+     */
+    virtual bool close(QString * errorMessage = 0) = 0;
 
 }; // end of class DBWorker
+
+#ifdef BERKELEYDB
+
+/*!
+   \class BerkeleyDBWorker
+   \brief Database operations of Berkeley DB.
+ */
+
+class BerkeleyDBWorker : public DBWorker
+{
+public:
+    BerkeleyDBWorker();
+    ~BerkeleyDBWorker();
+
+    bool open(const QString &databaseName, QString * errorMessage = 0);
+
+    bool close(QString * errorMessage = 0);
+
+    bool insertBlogProfile(const BlogProfile &profile, QString * errorMessage = 0);
+
+private:
+    Db *blogProfileDB;
+
+}; // end of class BerkeleyDBWorker
+
+#endif
 
 } // end of namespace orbitswriter
 
