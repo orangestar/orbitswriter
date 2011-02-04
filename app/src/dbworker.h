@@ -22,11 +22,12 @@
 #define DBWORKER_H
 
 #include <QString>
+#include <QList>
 
 #include "dbworker.h"
 
 #ifdef BERKELEYDB
-class Db;
+#include "db_cxx.h"
 #endif
 
 namespace orbitswriter
@@ -94,40 +95,49 @@ public:
     virtual ~DBWorker() {}
 
     /*!
-       \brief Opens a database named \a databaseName, error message will be saved in \a errorMessage.
+       \brief Opens a database named \a databaseName.
 
-       If database opens successfully, return true; otherwise false. The error message will be stored
-       in \a errorMessage. If database is not exists, a new one should be created.
+       If database opens successfully, return true; otherwise false.
+       The error message will be stored in \a message.
+       If the database does not exist, a new one should be created.
 
        \param databaseName database name
-       \param errorMessage error message string
-       \return true if database opened successfully
+       \param message message string
+       \return true if success
      */
-    virtual bool open(const QString & databaseName, QString * errorMessage = 0) = 0;
+    virtual bool open(const QString & databaseName, QString & message) = 0;
 
     /*!
-       \brief Inserts a blog profile \a profile into profile database,
-       error message will be saved in \a errorMessage.
+       \brief Inserts a blog profile \a profile into profile database.
 
-       If inserts successfully, return true; otherwise false. The error message will be stored
-       in \a errorMessage.
+       If inserts successfully, return true; otherwise false.
+       The error message will be stored in \a message.
 
-       \param profile blog profile that should be inserted
-       \param errorMessage error message string
-       \return true if inserts successfully
+       \param profile blog profile that need to be inserted
+       \param message message string
+       \return true if success
      */
-    virtual bool insertBlogProfile(const BlogProfile & profile, QString * errorMessage = 0) = 0;
+    virtual bool insertBlogProfile(const BlogProfile & profile, QString & message) = 0;
 
     /*!
-       \brief Closes the database, error message will be saved in \a errorMessage.
+       \brief Closes the database.
 
-       If database closes successfully, return true; otherwise false. The error message will be stored
-       in \a errorMessage.
+       If database closes successfully, return true; otherwise false.
+       The error message will be stored in \a message.
 
-       \param errorMessage error message string
-       \return true if database closed successfully
+       \param message message string
+       \return true if success
      */
-    virtual bool close(QString * errorMessage = 0) = 0;
+    virtual bool close(QString & message) = 0;
+
+    /*!
+       \brief Gets all saved blog profiles.
+
+       \param list blog profile list to be saved in
+       \param message message string
+       \return true if success
+     */
+    virtual bool blogProfileList(QList<BlogProfile> & list, QString & message) = 0;
 
 }; // end of class DBWorker
 
@@ -144,15 +154,21 @@ public:
     BerkeleyDBWorker();
     ~BerkeleyDBWorker();
 
-    bool open(const QString &databaseName, QString * errorMessage = 0);
+    bool open(const QString &databaseName, QString & message);
 
-    bool close(QString * errorMessage = 0);
+    bool close(QString & message);
 
-    bool insertBlogProfile(const BlogProfile &profile, QString * errorMessage = 0);
+    bool insertBlogProfile(const BlogProfile &profile, QString & message);
+
+    bool blogProfileList(QList<BlogProfile> & list, QString & message);
 
 private:
+//    Dbt createDbt(QString &string);
+    Dbt createDbt(const BlogProfile &profile) const;
+
     Db *blogProfileDB;
 
+    const static QString DATA_SEPARATOR;
 }; // end of class BerkeleyDBWorker
 
 #endif

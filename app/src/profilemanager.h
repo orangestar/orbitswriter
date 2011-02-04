@@ -65,25 +65,19 @@ public:
        \brief Gets blog profile list.
        \return blog profile list read from database
      */
-    QList<BlogProfile *> & blogProfileList();
+    QList<BlogProfile> blogProfileList();
 
 signals:
     void blogProfileCreated();
 
 private:
-    bool openProfileDatabase();
-    bool isBlogProfileTableExists();
-    void closeConnection();
-    void clearBlogProfileList();
+    bool openProfileDatabase(DBWorker * db);
+    void closeConnection(DBWorker * db);
 
     ProfileManager();
     ~ProfileManager();
     ProfileManager(const ProfileManager &);
     ProfileManager& operator=(const ProfileManager &);
-
-    DBWorker *db;
-
-    QList<BlogProfile *> _blogProfileList;
 }; // end of class ProfileManager
 
 } // end of namespace orbitswriter

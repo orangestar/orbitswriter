@@ -22,8 +22,6 @@
 
 #include "dbworker.h"
 
-#include "db_cxx.h"
-
 using namespace orbitswriter;
 
 BerkeleyDBWorker::BerkeleyDBWorker()
@@ -34,37 +32,116 @@ BerkeleyDBWorker::BerkeleyDBWorker()
 BerkeleyDBWorker::~BerkeleyDBWorker()
 {
     delete blogProfileDB;
+    blogProfileDB = 0;
 }
 
-bool BerkeleyDBWorker::open(const QString &databaseName, QString * errorMessage /* = 0 */)
+bool BerkeleyDBWorker::open(const QString &databaseName, QString & message)
 {
     try {
-        return (blogProfileDB->open(NULL, databaseName.toLatin1().constData(), NULL, DB_RECNO, DB_CREATE, 0) == 0);
+        return blogProfileDB->open(NULL, databaseName.toUtf8().constData(), NULL, DB_HASH, DB_CREATE, 0) == 0;
     } catch(DbException &e) {
-        errorMessage = new QString(e.what());
-        return false;
+        message = e.what();
     } catch(std::exception &e) {
-        errorMessage = new QString(e.what());
-        return false;
+        message = e.what();
     }
-}
-
-bool BerkeleyDBWorker::close(QString *errorMessage)
-{
-    try {
-        return (blogProfileDB->close(0) == 0);
-    } catch(DbException &e) {
-        errorMessage = new QString(e.what());
-        return false;
-    } catch(std::exception &e) {
-        errorMessage = new QString(e.what());
-        return false;
-    }
-}
-
-bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile, QString * errorMessage /* = 0 */)
-{
-    DBT key, data;
-
+    QString msg;
+    close(msg);
     return false;
 }
+
+bool BerkeleyDBWorker::close(QString & message)
+{
+    try {
+        return blogProfileDB->close(0) == 0;
+    } catch(DbException &e) {
+        message = e.what();
+    } catch(std::exception &e) {
+        message = e.what();
+    }
+    return false;
+}
+
+bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile, QString & message)
+{
+    QByteArray arr = profile.profileName.toUtf8();
+    Dbt key((void *)arr.data(), arr.length() + 1);
+    Dbt data = createDbt(profile);
+    try {
+        int ret = blogProfileDB->put(0, &key, &data, DB_NOOVERWRITE);
+        if(ret == DB_KEYEXIST) {
+            message = QObject::tr("Key %1 already exists.").arg(profile.profileName);
+        }
+        return ret == 0;
+    } catch(DbException &e) {
+        message = e.what();
+    } catch(std::exception &e) {
+        message = e.what();
+    }
+    return false;
+}
+
+bool BerkeleyDBWorker::blogProfileList(QList<BlogProfile> & list, QString & message)
+{
+    bool success = false;
+    Dbc *cursor = NULL;
+    try {
+        blogProfileDB->cursor(NULL, &cursor, 0);
+        Dbt key;
+        Dbt data;
+        int ret;
+        while((ret = cursor->get(&key, &data, DB_NEXT)) == 0) {
+            BlogProfile p;
+            p.profileName = QString::fromUtf8((char *)key.get_data());
+            QString d = QString::fromUtf8((char *)data.get_data());
+            QStringList dl = d.split(DATA_SEPARATOR);
+            //        QString blogAddr;
+            //        QString userName;
+            //        QString password;
+            //        bool rememberPassword;
+            //        QString blogType;
+            //        QString publishUrl;
+            //        QString profileName;
+            //        bool isDefault;
+            p.blogAddr = dl.at(0);
+            p.userName = dl.at(1);
+            p.blogType = dl.at(2);
+            p.publishUrl = dl.at(3);
+            if(dl.size() > 4) {
+                p.password = dl.at(4);
+            }
+            list.append(p);
+        }
+        success = true;
+    } catch(DbException &e) {
+        message = e.what();
+    } catch(std::exception &e) {
+        message = e.what();
+    }
+    if(cursor != NULL) {
+        cursor->close();
+    }
+    return success;
+}
+
+Dbt BerkeleyDBWorker::createDbt(const BlogProfile &profile) const
+{
+//        QString blogAddr;
+//        QString userName;
+//        QString password;
+//        bool rememberPassword;
+//        QString blogType;
+//        QString publishUrl;
+//        QString profileName;
+//        bool isDefault;
+    QByteArray arr;
+    arr.append(profile.blogAddr.toUtf8()).append(DATA_SEPARATOR)
+       .append(profile.userName.toUtf8()).append(DATA_SEPARATOR)
+       .append(profile.blogType.toUtf8()).append(DATA_SEPARATOR)
+       .append(profile.publishUrl.toUtf8());
+    if(profile.rememberPassword) {
+        arr.append(DATA_SEPARATOR).append(profile.password.toUtf8());
+    }
+    return Dbt((void *)arr.data(), arr.length() + 1);
+}
+
+const QString BerkeleyDBWorker::DATA_SEPARATOR = QString("*");

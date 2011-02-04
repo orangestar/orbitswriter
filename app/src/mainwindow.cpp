@@ -665,13 +665,13 @@ void MainWindow::refreshBlogProfiles()
         delete action;
     }
     blogProfileList.clear();
-    QList<BlogProfile *> blogProfiles = ProfileManager::instance()->blogProfileList();
-    BlogProfile *profile;
+    QList<BlogProfile> blogProfiles = ProfileManager::instance()->blogProfileList();
+    BlogProfile profile;
     foreach(profile, blogProfiles) {
-        QAction *act = new QAction(profile->profileName, this);
+        QAction *act = new QAction(profile.profileName, this);
         blogProfileGroup->addAction(act);
         act->setCheckable(true);
-        if(profile->isDefault) {
+        if(profile.isDefault) {
             act->setChecked(true);
             act->setText(act->text() + tr(" (Default)"));
         }
