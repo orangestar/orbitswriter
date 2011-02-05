@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-//    AppContext::instance()->loadData();
+    AppContext::instance()->loadData();
     MainWindow w;
     w.showMaximized();
     app.setActivationWindow(&w);

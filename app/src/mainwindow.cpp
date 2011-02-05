@@ -56,8 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    qDeleteAll(blogProfileList.begin(), blogProfileList.end());
-    blogProfileList.clear();
+    qDeleteAll(blogProfileActionList.begin(), blogProfileActionList.end());
+    blogProfileActionList.clear();
 }
 
 void MainWindow::createActions()
@@ -539,7 +539,7 @@ void MainWindow::editorChanged(int idx)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 //    if (continueToClose()) {
-//        AppContext::instance()->saveData();
+        AppContext::instance()->saveData();
         event->accept();
 //    } else {
 //        event->ignore();
@@ -659,23 +659,25 @@ void MainWindow::applyFormatToActions(const FormatData &fmt)
 
 void MainWindow::refreshBlogProfiles()
 {
-    while(!blogProfileList.isEmpty()) {
-        QAction *action = blogProfileList.takeFirst();
+    while(!blogProfileActionList.isEmpty()) {
+        QAction *action = blogProfileActionList.takeFirst();
         blogProfileGroup->removeAction(action);
         delete action;
     }
-    blogProfileList.clear();
+    blogProfileActionList.clear();
     QList<BlogProfile> blogProfiles = ProfileManager::instance()->blogProfileList();
+    QString defaultBlogProfile = AppContext::instance()->defaultBlogProfile();
     BlogProfile profile;
     foreach(profile, blogProfiles) {
         QAction *act = new QAction(profile.profileName, this);
         blogProfileGroup->addAction(act);
         act->setCheckable(true);
-        if(profile.isDefault) {
+        if(profile.profileName == defaultBlogProfile) {
+            profile.isDefault = true;
             act->setChecked(true);
             act->setText(act->text() + tr(" (Default)"));
         }
-        blogProfileList.append(act);
+        blogProfileActionList.append(act);
     }
-    blogProfileMenu->addActions(blogProfileList);
+    blogProfileMenu->addActions(blogProfileActionList);
 }

@@ -147,7 +147,7 @@ private:
      */
     QAction *publishAct;
 
-    QList<QAction *> blogProfileList;
+    QList<QAction *> blogProfileActionList;
     QAction *blogProfileAct;
 
     QActionGroup *formatGroup;

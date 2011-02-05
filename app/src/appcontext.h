@@ -22,6 +22,7 @@
 #define APPCONTEXT_H
 
 #include <QFont>
+#include <QString>
 
 namespace orbitswriter
 {
@@ -32,11 +33,15 @@ namespace orbitswriter
 
    Application context is usually global data. When application exits,
    context data may need be written into local files.
+
    This is a singleton class.
  */
 class AppContext
 {
 public:
+
+    static const QString DefaultBlogProfile;
+
     /*!
        \brief Gets the only singleton instance.
        \return the pointer to the instance
@@ -66,7 +71,25 @@ public:
      */
     void saveData();
 
-    void setDefaultFont(QFont &font)
+    /*!
+       \brief Sets default blog profile name.
+       \param bp blog profile name
+     */
+    void setDefaultBlogProfile(const QString & bp)
+    {
+        _defaultBlogProfile = bp;
+    }
+
+    /*!
+       \brief Gets default blog profile name.
+       \return default blog profile name
+     */
+    const QString & defaultBlogProfile() const
+    {
+        return _defaultBlogProfile;
+    }
+
+    void setDefaultFont(const QFont & font)
     {
         _defaultFont = font;
     }
@@ -82,6 +105,7 @@ private:
     AppContext(const AppContext &);
     AppContext& operator=(const AppContext &);
 
+    QString _defaultBlogProfile;
     QFont _defaultFont;
 
 }; // end of class AppContext

@@ -163,12 +163,13 @@ public:
     bool blogProfileList(QList<BlogProfile> & list, QString & message);
 
 private:
-//    Dbt createDbt(QString &string);
     Dbt createDbt(const BlogProfile &profile) const;
 
     Db *blogProfileDB;
 
     const static QString DATA_SEPARATOR;
+    const static QString DATA_DEFAULT;
+    const static QString DATA_NORMAL;
 }; // end of class BerkeleyDBWorker
 
 #endif

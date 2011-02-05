@@ -18,10 +18,8 @@
 // along with OrbitsWriter.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include <QApplication>
-#include <QSettings>
+#include <QtCore>
 
-#include "common.h"
 #include "appcontext.h"
 
 using namespace orbitswriter;
@@ -29,21 +27,21 @@ using namespace orbitswriter;
 AppContext::AppContext()
     : _defaultFont(QFont("Verdana", 12))
 {
-
 }
 
 void AppContext::loadData()
 {
-//    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
-//    if(settings.contains(AppContextValue::DEFAULT_FONT)) {
-//        // _defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
-//    }
+    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
+    if(settings.contains(DefaultBlogProfile)) {
+        // _defaultFont = settings.value(AppContextValue::DEFAULT_FONT).value<QFont>();
+        _defaultBlogProfile = settings.value(DefaultBlogProfile).toString();
+    }
 }
 
 void AppContext::saveData()
 {
-//    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
-//    settings.beginGroup("DefaultValues");
-//    // settings.setValue(AppContextValue::DEFAULT_FONT, _defaultFont);
-//    settings.endGroup();
+    QSettings settings(qApp->applicationDirPath().append("/OrbitsWriter.conf"), QSettings::IniFormat);
+    settings.setValue(DefaultBlogProfile, _defaultBlogProfile);
 }
+
+const QString AppContext::DefaultBlogProfile = QString("Default/BlogProfile");
