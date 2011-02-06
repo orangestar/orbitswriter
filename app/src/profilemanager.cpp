@@ -33,12 +33,13 @@
 using namespace orbitswriter;
 
 ProfileManager::ProfileManager()
-    : QObject(0)
+    : shouldReload(true)
 {
 }
 
 ProfileManager::~ProfileManager()
 {
+    clearBlogProfileList();
 }
 
 void ProfileManager::saveBlogProfile(const BlogProfile & profile)
@@ -48,8 +49,8 @@ void ProfileManager::saveBlogProfile(const BlogProfile & profile)
         QString errMsg;
         if(!db->insertBlogProfile(profile, errMsg)) {
             QMessageBox::warning(NULL,
-                                 tr("Insert Failed"),
-                                 tr("Insert blog profile failed. Error message: \n%1").arg(errMsg));
+                                 QObject::tr("Insert Failed"),
+                                 QObject::tr("Insert blog profile failed. Error message: \n%1").arg(errMsg));
         }
         closeConnection(db);
     }
@@ -57,20 +58,30 @@ void ProfileManager::saveBlogProfile(const BlogProfile & profile)
     if(profile.isDefault) {
         AppContext::instance()->setDefaultBlogProfile(profile.profileName);
     }
-    emit blogProfileCreated();
+    shouldReload = true;
 }
 
-QList<BlogProfile> ProfileManager::blogProfileList()
+QList<BlogProfile *> ProfileManager::blogProfileList()
 {
-    DBWorker *db = new CLASS_DBWORKER;
-    QList<BlogProfile> list;
-    if(openProfileDatabase(db)) {
-        QString errMsg;
-        db->blogProfileList(list, errMsg);
-        closeConnection(db);
+    if(shouldReload) {
+        clearBlogProfileList();
+        DBWorker *db = new CLASS_DBWORKER;
+        if(openProfileDatabase(db)) {
+            QString errMsg;
+            db->blogProfileList(_blogProfileList, errMsg);
+            closeConnection(db);
+        }
+        delete db;
+        QString defaultBlogProfile = AppContext::instance()->defaultBlogProfile();
+        BlogProfile *profile;
+        foreach(profile, _blogProfileList) {
+            if(profile->profileName == defaultBlogProfile) {
+                profile->isDefault = true;
+            }
+        }
+        shouldReload = false;
     }
-    delete db;
-    return list;
+    return _blogProfileList;
 }
 
 bool ProfileManager::openProfileDatabase(DBWorker * db)
@@ -78,9 +89,9 @@ bool ProfileManager::openProfileDatabase(DBWorker * db)
     QString errMsg;
     bool ret = db->open(QString(DB_BLOG_PROFILE), errMsg);
     if(!ret) {
-        QMessageBox::critical(0,
-                              tr("Database Error"),
-                              tr("Can not open profile database. Error message: \n%1").arg(errMsg));
+        QMessageBox::critical(NULL,
+                              QObject::tr("Database Error"),
+                              QObject::tr("Can not open profile database. Error message: \n%1").arg(errMsg));
     }
     return ret;
 }
@@ -89,8 +100,14 @@ void ProfileManager::closeConnection(DBWorker * db)
 {
     QString msg;
     if(!db->close(msg)) {
-        QMessageBox::critical(0,
-                              tr("Database Error"),
-                              tr("Can not close profile database. Error message: \n%1").arg(msg));
+        QMessageBox::critical(NULL,
+                              QObject::tr("Database Error"),
+                              QObject::tr("Can not close profile database. Error message: \n%1").arg(msg));
     }
+}
+
+void ProfileManager::clearBlogProfileList()
+{
+    qDeleteAll(_blogProfileList.begin(), _blogProfileList.end());
+    _blogProfileList.clear();
 }

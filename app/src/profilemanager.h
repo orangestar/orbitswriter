@@ -21,7 +21,6 @@
 #ifndef PROFILEMANAGER_H
 #define PROFILEMANAGER_H
 
-#include <QObject>
 #include <QString>
 #include <QList>
 
@@ -41,9 +40,8 @@ namespace orbitswriter
    Note that profiles are different from application settings. Settings need not
    be encrypted.
  */
-class ProfileManager : public QObject
+class ProfileManager
 {
-    Q_OBJECT
 public:
     /*!
        \brief Gets the only singleton instance.
@@ -65,19 +63,20 @@ public:
        \brief Gets blog profile list.
        \return blog profile list read from database
      */
-    QList<BlogProfile> blogProfileList();
-
-signals:
-    void blogProfileCreated();
+    QList<BlogProfile *> blogProfileList();
 
 private:
     bool openProfileDatabase(DBWorker * db);
     void closeConnection(DBWorker * db);
+    void clearBlogProfileList();
 
     ProfileManager();
     ~ProfileManager();
     ProfileManager(const ProfileManager &);
     ProfileManager& operator=(const ProfileManager &);
+
+    QList<BlogProfile *> _blogProfileList;
+    bool shouldReload;
 }; // end of class ProfileManager
 
 } // end of namespace orbitswriter

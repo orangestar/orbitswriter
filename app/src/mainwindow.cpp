@@ -29,8 +29,8 @@
 #include "styleutil.h"
 #include "formatdata.h"
 #include "headingcombobox.h"
-#include "blogprofileconfigwizard.h"
 #include "profilemanager.h"
+#include "blogprofiledialog.h"
 
 using namespace orbitswriter;
 
@@ -287,7 +287,7 @@ void MainWindow::createActions()
     alignRightAct->setCheckable(true);
     alignGroup->addAction(alignRightAct);
 
-    blogProfileAct = new QAction(QIcon(":/img/blog_profile"), tr("Add Blog Profile..."), this);
+    blogProfileAct = new QAction(QIcon(":/img/blog_profile"), tr("Manage Blog Profile..."), this);
 }
 
 void MainWindow::createMenus()
@@ -474,8 +474,11 @@ void MainWindow::showTextBackgroundColorDialog()
 
 void MainWindow::showBlogProfileDialog()
 {
-    BlogProfileConfigWizard w(this);
-    w.exec();
+    BlogProfileDialog bpd(this);
+    bpd.exec();
+    if(bpd.shouldReload()) {
+        refreshBlogProfiles();
+    }
 }
 
 void MainWindow::currentTextColorChanged(const QColor &color)
@@ -618,8 +621,6 @@ void MainWindow::createConnections()
     connect(visualEditor, SIGNAL(listExists(bool)), numberedListAct, SLOT(setChecked(bool)));
     connect(sourceEditor->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(editorStack, SIGNAL(currentChanged(int)), this, SLOT(editorChanged(int)));
-
-    connect(ProfileManager::instance(), SIGNAL(blogProfileCreated()), SLOT(refreshBlogProfiles()));
 }
 
 void MainWindow::applyFormatToActions(const FormatData &fmt)
@@ -665,17 +666,15 @@ void MainWindow::refreshBlogProfiles()
         delete action;
     }
     blogProfileActionList.clear();
-    QList<BlogProfile> blogProfiles = ProfileManager::instance()->blogProfileList();
-    QString defaultBlogProfile = AppContext::instance()->defaultBlogProfile();
-    BlogProfile profile;
+    QList<BlogProfile *> blogProfiles = ProfileManager::instance()->blogProfileList();
+    BlogProfile *profile = NULL;
     foreach(profile, blogProfiles) {
-        QAction *act = new QAction(profile.profileName, this);
+        QAction *act = new QAction(profile->profileName, this);
         blogProfileGroup->addAction(act);
         act->setCheckable(true);
-        if(profile.profileName == defaultBlogProfile) {
-            profile.isDefault = true;
+        if(profile->isDefault) {
             act->setChecked(true);
-            act->setText(act->text() + tr(" (Default)"));
+            act->setText(act->text() + Constants::DefaultFlagString);
         }
         blogProfileActionList.append(act);
     }

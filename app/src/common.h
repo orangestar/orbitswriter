@@ -22,6 +22,7 @@
 #define COMMON_H
 
 #include <QString>
+#include <QObject>
 
 namespace orbitswriter
 {
@@ -50,6 +51,8 @@ namespace Constants
         AlignCenter,   /*!< Alignment center. */
         AlignJustify   /*!< Alignment justify. */
     };
+
+    const QString DefaultFlagString = QObject::tr(" (Default)");
 
 } // end of namespace Constants
 

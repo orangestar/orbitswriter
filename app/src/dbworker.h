@@ -23,6 +23,7 @@
 
 #include <QString>
 #include <QList>
+#include <QMetaType>
 
 #include "dbworker.h"
 
@@ -137,7 +138,7 @@ public:
        \param message message string
        \return true if success
      */
-    virtual bool blogProfileList(QList<BlogProfile> & list, QString & message) = 0;
+    virtual bool blogProfileList(QList<BlogProfile *> & list, QString & message) = 0;
 
 }; // end of class DBWorker
 
@@ -160,7 +161,7 @@ public:
 
     bool insertBlogProfile(const BlogProfile &profile, QString & message);
 
-    bool blogProfileList(QList<BlogProfile> & list, QString & message);
+    bool blogProfileList(QList<BlogProfile *> & list, QString & message);
 
 private:
     Dbt createDbt(const BlogProfile &profile) const;
@@ -175,5 +176,7 @@ private:
 #endif
 
 } // end of namespace orbitswriter
+
+Q_DECLARE_METATYPE(orbitswriter::BlogProfile)
 
 #endif // DBWORKER_H

@@ -42,7 +42,6 @@ BlogProfileConfigWizard::BlogProfileConfigWizard(QWidget *parent) :
 
 void BlogProfileConfigWizard::accept()
 {
-    BlogProfile profile;
     profile.blogAddr = field("blogAddress").toString();
     profile.userName = field("userName").toString();
     profile.password = field("password").toString();

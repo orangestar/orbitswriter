@@ -71,7 +71,6 @@ private slots:
     void showBlogProfileDialog();
     void editorChanged(int idx);
     void applyFormatToActions(const FormatData &fmt);
-    void refreshBlogProfiles();
 
 private:
     /*
@@ -181,6 +180,7 @@ private:
     void currentTextColorChanged(const QColor &color);
     void currentTextBackgroundColorChanged(const QColor &color);
     void enabledOnEditorChange(bool enable);
+    void refreshBlogProfiles();
 
 }; // end of class MainWindow
 

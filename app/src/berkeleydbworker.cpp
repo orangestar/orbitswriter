@@ -68,19 +68,7 @@ bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile, QString & m
     Dbt data = createDbt(profile);
     try {
         int ret = blogProfileDB->put(0, &key, &data, DB_NOOVERWRITE);
-        if(ret != DB_KEYEXIST) {
-            // if the new profile is default
-            // remove the old default flag
-            QList<BlogProfile> profileList;
-            QString message;
-            blogProfileList(profileList, message);
-            BlogProfile bp;
-            foreach(bp, profileList) {
-                if(bp.profileName != profile.profileName) {
-                    bp.isDefault = false;
-                }
-            }
-        } else {
+        if(ret == DB_KEYEXIST) {
             message = QObject::tr("Key %1 already exists.").arg(profile.profileName);
         }
         return ret == 0;
@@ -92,7 +80,7 @@ bool BerkeleyDBWorker::insertBlogProfile(const BlogProfile &profile, QString & m
     return false;
 }
 
-bool BerkeleyDBWorker::blogProfileList(QList<BlogProfile> & list, QString & message)
+bool BerkeleyDBWorker::blogProfileList(QList<BlogProfile *> & list, QString & message)
 {
     bool success = false;
     Dbc *cursor = NULL;
@@ -102,17 +90,17 @@ bool BerkeleyDBWorker::blogProfileList(QList<BlogProfile> & list, QString & mess
         Dbt data;
         int ret;
         while((ret = cursor->get(&key, &data, DB_NEXT)) == 0) {
-            BlogProfile p;
-            p.profileName = QString::fromUtf8((char *)key.get_data());
+            BlogProfile *p = new BlogProfile;
+            p->profileName = QString::fromUtf8((char *)key.get_data());
             QString d = QString::fromUtf8((char *)data.get_data());
             QStringList dl = d.split(DATA_SEPARATOR);
-            p.blogAddr = dl.at(0);
-            p.userName = dl.at(1);
-            p.blogType = dl.at(2);
-            p.publishUrl = dl.at(3);
-            p.isDefault = false;
+            p->blogAddr = dl.at(0);
+            p->userName = dl.at(1);
+            p->blogType = dl.at(2);
+            p->publishUrl = dl.at(3);
+            p->isDefault = false;
             if(dl.size() > 4) {
-                p.password = dl.at(4);
+                p->password = dl.at(4);
             }
             list.append(p);
         }

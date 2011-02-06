@@ -33,7 +33,8 @@ SOURCES += \
     htmltag.cpp \
     blogprofileconfigwizard.cpp \
     profilemanager.cpp \
-    berkeleydbworker.cpp
+    berkeleydbworker.cpp \
+    blogprofiledialog.cpp
 
 HEADERS += \
     common.h \
@@ -50,7 +51,8 @@ HEADERS += \
     htmltag.h \
     blogprofileconfigwizard.h \
     profilemanager.h \
-    dbworker.h
+    dbworker.h \
+    blogprofiledialog.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

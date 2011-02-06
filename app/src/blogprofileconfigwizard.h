@@ -24,6 +24,8 @@
 #include <QWizard>
 #include <QWizardPage>
 
+#include "dbworker.h"
+
 namespace orbitswriter
 {
 
@@ -43,6 +45,18 @@ public:
     explicit BlogProfileConfigWizard(QWidget *parent = 0);
 
     void accept();
+
+    /*!
+       \brief Gets the created blog profile.
+       \return the created blog profile
+     */
+    const BlogProfile & blogProfile() const
+    {
+        return profile;
+    }
+
+private:
+    BlogProfile profile;
 }; // end of class ProfileConfigWizard
 
 /*!
