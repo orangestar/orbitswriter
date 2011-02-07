@@ -116,16 +116,22 @@ bool BerkeleyDBWorker::blogProfileList(QList<BlogProfile *> & list, QString & me
     return success;
 }
 
+bool BerkeleyDBWorker::deleteBlogProfile(const QString &profileName, QString & message)
+{
+    QByteArray arr = profileName.toUtf8();
+    Dbt key((void *)arr.data(), arr.length() + 1);
+    try {
+        return blogProfileDB->del(NULL, &key, 0) == 0;
+    } catch(DbException &e) {
+        message = e.what();
+    } catch(std::exception &e) {
+        message = e.what();
+    }
+    return false;
+}
+
 Dbt BerkeleyDBWorker::createDbt(const BlogProfile &profile) const
 {
-//        QString blogAddr;
-//        QString userName;
-//        QString password;
-//        bool rememberPassword;
-//        QString blogType;
-//        QString publishUrl;
-//        QString profileName;
-//        bool isDefault;
     QByteArray arr;
     arr.append(profile.blogAddr.toUtf8()).append(DATA_SEPARATOR)
        .append(profile.userName.toUtf8()).append(DATA_SEPARATOR)
@@ -138,7 +144,3 @@ Dbt BerkeleyDBWorker::createDbt(const BlogProfile &profile) const
 }
 
 const QString BerkeleyDBWorker::DATA_SEPARATOR = QString("*");
-
-const QString BerkeleyDBWorker::DATA_DEFAULT = QString("d");
-
-const QString BerkeleyDBWorker::DATA_NORMAL = QString("n");

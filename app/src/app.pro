@@ -31,7 +31,6 @@ SOURCES += \
     headingcombobox.cpp \
     htmlutil.cpp \
     htmltag.cpp \
-    blogprofileconfigwizard.cpp \
     profilemanager.cpp \
     berkeleydbworker.cpp \
     blogprofiledialog.cpp
@@ -49,7 +48,6 @@ HEADERS += \
     headingcombobox.h \
     htmlutil.h \
     htmltag.h \
-    blogprofileconfigwizard.h \
     profilemanager.h \
     dbworker.h \
     blogprofiledialog.h

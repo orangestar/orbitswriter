@@ -65,6 +65,16 @@ public:
      */
     QList<BlogProfile *> blogProfileList();
 
+    /*!
+       \brief Deletes blog profile \a profile from database.
+
+       If the deleted is default item, no default will be set.
+
+       \param profile profile to delete
+       \return true if deletes success
+     */
+    bool deleteBlogProfile(const BlogProfile & profile);
+
 private:
     bool openProfileDatabase(DBWorker * db);
     void closeConnection(DBWorker * db);

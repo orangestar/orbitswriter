@@ -84,6 +84,29 @@ QList<BlogProfile *> ProfileManager::blogProfileList()
     return _blogProfileList;
 }
 
+bool ProfileManager::deleteBlogProfile(const BlogProfile &profile)
+{
+    bool success = false;
+    DBWorker *db = new CLASS_DBWORKER;
+    if(openProfileDatabase(db)) {
+        QString errMsg;
+        success = db->deleteBlogProfile(profile.profileName, errMsg);
+        if(success) {
+            if(profile.isDefault) {
+                AppContext::instance()->setDefaultBlogProfile("");
+            }
+            shouldReload = true;
+        } else {
+            QMessageBox::warning(NULL,
+                                 QObject::tr("Delete Failed"),
+                                 QObject::tr("Delete blog profile failed. Error message: \n%1").arg(errMsg));
+        }
+        closeConnection(db);
+    }
+    delete db;
+    return success;
+}
+
 bool ProfileManager::openProfileDatabase(DBWorker * db)
 {
     QString errMsg;

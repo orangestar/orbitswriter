@@ -476,7 +476,7 @@ void MainWindow::showBlogProfileDialog()
 {
     BlogProfileDialog bpd(this);
     bpd.exec();
-    if(bpd.shouldReload()) {
+    if(bpd.result() == QDialog::Accepted) {
         refreshBlogProfiles();
     }
 }
@@ -674,7 +674,7 @@ void MainWindow::refreshBlogProfiles()
         act->setCheckable(true);
         if(profile->isDefault) {
             act->setChecked(true);
-            act->setText(act->text() + Constants::DefaultFlagString);
+            act->setText(act->text() + Constants::DefaultFlagStringPostfix);
         }
         blogProfileActionList.append(act);
     }

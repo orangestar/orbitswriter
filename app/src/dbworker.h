@@ -140,6 +140,15 @@ public:
      */
     virtual bool blogProfileList(QList<BlogProfile *> & list, QString & message) = 0;
 
+    /*!
+       \brief Deletes the existing blog profile named \a profileName from database.
+
+       \param profileName profile name
+       \param message message string
+       \return true if success
+     */
+    virtual bool deleteBlogProfile(const QString & profileName, QString & message) = 0;
+
 }; // end of class DBWorker
 
 #ifdef BERKELEYDB
@@ -156,12 +165,10 @@ public:
     ~BerkeleyDBWorker();
 
     bool open(const QString &databaseName, QString & message);
-
     bool close(QString & message);
-
     bool insertBlogProfile(const BlogProfile &profile, QString & message);
-
     bool blogProfileList(QList<BlogProfile *> & list, QString & message);
+    bool deleteBlogProfile(const QString &profileName, QString &message);
 
 private:
     Dbt createDbt(const BlogProfile &profile) const;
@@ -169,8 +176,6 @@ private:
     Db *blogProfileDB;
 
     const static QString DATA_SEPARATOR;
-    const static QString DATA_DEFAULT;
-    const static QString DATA_NORMAL;
 }; // end of class BerkeleyDBWorker
 
 #endif

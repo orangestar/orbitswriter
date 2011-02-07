@@ -22,6 +22,10 @@
 #define BLOGPROFILEDIALOG_H
 
 #include <QDialog>
+#include <QWizard>
+#include <QWizardPage>
+
+#include "dbworker.h"
 
 class QAbstractButton;
 class QPushButton;
@@ -35,6 +39,100 @@ namespace orbitswriter
 struct BlogProfile;
 
 /*!
+   \class BlogProfileConfigWizard
+   \brief Blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizard : public QWizard
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizard(QWidget *parent = 0);
+
+    void accept();
+
+    /*!
+       \brief Gets the created blog profile.
+       \return the created blog profile
+     */
+    const BlogProfile & blogProfile() const
+    {
+        return profile;
+    }
+
+private:
+    BlogProfile profile;
+}; // end of class ProfileConfigWizard
+
+/*!
+   \class BlogProfileConfigWizardIntroPage
+   \brief Introduction page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardIntroPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard introduction page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardIntroPage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardIntroPage
+
+/*!
+   \class BlogProfileConfigWizardBlogAccountPage
+   \brief Blog account page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardBlogAccountPage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard blog account page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardBlogAccountPage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardBlogAccountPage
+
+/*!
+   \class BlogProfileConfigWizardApiTypePage
+   \brief API type page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardApiTypePage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard API type page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardApiTypePage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardApiTypePage
+
+/*!
+   \class BlogProfileConfigWizardProfileNamePage
+   \brief Introduction page for blog profile configuration wizard.
+ */
+
+class BlogProfileConfigWizardProfileNamePage : public QWizardPage
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a blog profile configuration wizard profile name page with the given parent.
+       \param parent parent of this wizard
+     */
+    explicit BlogProfileConfigWizardProfileNamePage(QWidget *parent = 0);
+}; // end of class BlogProfileConfigWizardProfileNamePage
+
+/*!
    \class BlogProfileDialog
    \brief Blog profile management dialog.
  */
@@ -44,11 +142,6 @@ class BlogProfileDialog : public QDialog
     Q_OBJECT
 public:
     explicit BlogProfileDialog(QWidget *parent = 0);
-
-    bool shouldReload() const
-    {
-        return _shouldReload;
-    }
 
 private slots:
     void buttonClicked(QAbstractButton *button);
@@ -60,12 +153,11 @@ private:
     QPushButton *modButton;
     QPushButton *delButton;
     QDialogButtonBox *buttonBox;
-    bool _shouldReload;
 
     void addBlogProfile();
-    void delBlogProfile();
-    void modifyBlogProfile(BlogProfile & profile);
-    void save();
+    void delBlogProfile(const BlogProfile & profile);
+    void modifyBlogProfile(const BlogProfile & profile);
+    void refreshData();
 
 }; // end of class BlogProfileDialog
 

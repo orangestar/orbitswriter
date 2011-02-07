@@ -52,7 +52,10 @@ namespace Constants
         AlignJustify   /*!< Alignment justify. */
     };
 
-    const QString DefaultFlagString = QObject::tr(" (Default)");
+    /*!
+       \brief The postfix of default flag.
+     */
+    const QString DefaultFlagStringPostfix = QObject::tr(" (Default)", "The postfix for default item flag.");
 
 } // end of namespace Constants
 
