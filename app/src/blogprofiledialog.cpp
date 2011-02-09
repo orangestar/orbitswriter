@@ -66,13 +66,12 @@ BlogProfileDialog::BlogProfileDialog(QWidget *parent) :
 
 void BlogProfileDialog::buttonClicked(QAbstractButton *button)
 {
-    BlogProfile profile = blogProfileListWidget->currentItem()->data(Qt::UserRole).value<BlogProfile>();
-    if(button == addButton) {
-        addBlogProfile();
-    } else if(button == modButton) {
-        modifyBlogProfile(profile);
+    if(button == modButton) {
+        modifyBlogProfile(blogProfileListWidget->currentItem()->data(Qt::UserRole).value<BlogProfile>());
     } else if(button == delButton) {
-        delBlogProfile(profile);
+        delBlogProfile(blogProfileListWidget->currentItem()->data(Qt::UserRole).value<BlogProfile>());
+    } else if(button == addButton) {
+        addBlogProfile();
     } else if(button == buttonBox->button(QDialogButtonBox::Ok)) {
         QDialog::accept();
     }
