@@ -36,7 +36,7 @@ class FormatData;
 class VisualEditor;
 class SourceEditor;
 class HeadingComboBox;
-struct BlogProfile;
+class BlogProfile;
 
 /*!
    \class MainWindow

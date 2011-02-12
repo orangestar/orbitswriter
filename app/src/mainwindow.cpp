@@ -475,8 +475,7 @@ void MainWindow::showTextBackgroundColorDialog()
 void MainWindow::showBlogProfileDialog()
 {
     BlogProfileDialog bpd(this);
-    bpd.exec();
-    if(bpd.result() == QDialog::Accepted) {
+    if(bpd.exec() == QDialog::Accepted) {
         refreshBlogProfiles();
     }
 }

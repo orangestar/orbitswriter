@@ -21,6 +21,7 @@
 #include <QtCore>
 
 #include "dbworker.h"
+#include "dataobjs.h"
 
 using namespace orbitswriter;
 

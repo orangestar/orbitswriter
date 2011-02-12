@@ -50,7 +50,8 @@ HEADERS += \
     htmltag.h \
     profilemanager.h \
     dbworker.h \
-    blogprofiledialog.h
+    blogprofiledialog.h \
+    dataobjs.h
 
 include(qtsingleapplication/qtsingleapplication.pri)
 

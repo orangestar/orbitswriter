@@ -25,18 +25,18 @@
 #include <QWizard>
 #include <QWizardPage>
 
-#include "dbworker.h"
+#include "dataobjs.h"
 
 class QAbstractButton;
 class QPushButton;
 class QDialogButtonBox;
 class QListWidgetItem;
 class QListWidget;
+class QLineEdit;
+class QCheckBox;
 
 namespace orbitswriter
 {
-
-struct BlogProfile;
 
 /*!
    \class BlogProfileConfigWizard
@@ -131,6 +131,47 @@ public:
      */
     explicit BlogProfileConfigWizardProfileNamePage(QWidget *parent = 0);
 }; // end of class BlogProfileConfigWizardProfileNamePage
+
+/*!
+   \class BlogProfileEditor
+   \brief Dialog for modifying blog profile.
+ */
+
+class BlogProfileEditor : public QDialog
+{
+    Q_OBJECT
+public:
+    /*!
+       \brief Constructs a dialog for modifying blog profile with the given parent.
+       \param parent parent of this dialog
+     */
+    explicit BlogProfileEditor(BlogProfile p, QWidget *parent = 0);
+
+    /*!
+       \brief Gets the blog profile details.
+       \return blog profile
+     */
+    BlogProfile & blogProfile()
+    {
+        return profile;
+    }
+
+public slots:
+    void buttonClicked(QAbstractButton *button);
+
+private:
+    BlogProfile profile;
+
+    QDialogButtonBox *buttonBox;
+    QLineEdit *bpNameInput;
+    QLineEdit *uNameInput;
+    QLineEdit *pwdInput;
+    QLineEdit *bAddrInput;
+    QLineEdit *bTypeInput;
+    QLineEdit *bUrlInput;
+    QCheckBox *pBox;
+    QCheckBox *dBox;
+}; // end of class BlogProfileEditor
 
 /*!
    \class BlogProfileDialog

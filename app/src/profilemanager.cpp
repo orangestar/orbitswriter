@@ -20,8 +20,10 @@
 
 #include <QtGui>
 
+#include "dbworker.h"
 #include "profilemanager.h"
 #include "appcontext.h"
+#include "dataobjs.h"
 
 #define DB_BLOG_PROFILE "blog_profile.db"
 #define DB_USER_PROFILE "user_profile.db"

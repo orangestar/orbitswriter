@@ -24,10 +24,11 @@
 #include <QString>
 #include <QList>
 
-#include "dbworker.h"
-
 namespace orbitswriter
 {
+
+class DBWorker;
+class BlogProfile;
 
 /*!
    \class ProfileManager

@@ -86,8 +86,7 @@ void BlogProfileDialog::listDoubleClicked(QListWidgetItem * item)
 void BlogProfileDialog::addBlogProfile()
 {
     BlogProfileConfigWizard w(this);
-    w.exec();
-    if(w.result() == QDialog::Accepted) {
+    if(w.exec() == QDialog::Accepted) {
         BlogProfile profile = w.blogProfile();
         QListWidgetItem *item = new QListWidgetItem;
         if(profile.isDefault) {
@@ -123,7 +122,10 @@ void BlogProfileDialog::delBlogProfile(const BlogProfile & profile)
 
 void BlogProfileDialog::modifyBlogProfile(const BlogProfile & profile)
 {
+    BlogProfileEditor bpe(profile);
+    if(bpe.exec() == QDialog::Accepted) {
 
+    }
 }
 
 void BlogProfileDialog::refreshData()
@@ -307,4 +309,62 @@ BlogProfileConfigWizardProfileNamePage::BlogProfileConfigWizardProfileNamePage(Q
     layout->addWidget(profileNameLabel);
     layout->addWidget(nameInput);
     registerField("blogProfileName*", nameInput);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// BlogProfileEditor
+//
+////////////////////////////////////////////////////////////////////////////////
+
+BlogProfileEditor::BlogProfileEditor(BlogProfile p, QWidget *parent /* = 0 */)
+    : QDialog(parent),
+      profile(p)
+{
+    bpNameInput = new QLineEdit(profile.profileName, this);
+    uNameInput = new QLineEdit(profile.userName, this);
+    pwdInput = new QLineEdit(profile.password, this);
+    bAddrInput = new QLineEdit(profile.blogAddr, this);
+    bTypeInput = new QLineEdit(profile.blogType, this);
+    bUrlInput = new QLineEdit(profile.publishUrl, this);
+    pBox = new QCheckBox(this);
+    pBox->setChecked(profile.rememberPassword);
+    dBox = new QCheckBox(this);
+    dBox->setChecked(profile.isDefault);
+
+    QFormLayout *layout = new QFormLayout;
+    layout->addRow(tr("&Name:"), bpNameInput);
+    layout->addRow(tr("&User Name:"), uNameInput);
+    layout->addRow(tr("&Password:"), pwdInput);
+    layout->addRow(tr("&Remember password."), pBox);
+    layout->addRow(tr("Blog &Address:"), bAddrInput);
+    layout->addRow(tr("Blog &Type:"), bTypeInput);
+    layout->addRow(tr("Publish &URL:"), bUrlInput);
+    layout->addRow(tr("Sets as &default"), dBox);
+
+    buttonBox = new QDialogButtonBox(this);
+    buttonBox->setStandardButtons(QDialogButtonBox::Yes | QDialogButtonBox::Cancel);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->addLayout(layout);
+    mainLayout->addWidget(buttonBox);
+
+    connect(buttonBox, SIGNAL(clicked(QAbstractButton*)), SLOT(buttonClicked(QAbstractButton*)));
+}
+
+void BlogProfileEditor::buttonClicked(QAbstractButton *button)
+{
+    if(button == buttonBox->button(QDialogButtonBox::Cancel)) {
+        QDialog::reject();
+    } else if(button == buttonBox->button(QDialogButtonBox::Ok)) {
+        profile.profileName = bpNameInput->text();
+        profile.userName = uNameInput->text();
+        profile.password = pwdInput->text();
+        profile.blogAddr = bAddrInput->text();
+        profile.blogType = bTypeInput->text();
+        profile.publishUrl = bUrlInput->text();
+        profile.rememberPassword = pBox->isChecked();
+        profile.isDefault = dBox->isChecked();
+        QDialog::accept();
+    }
 }
