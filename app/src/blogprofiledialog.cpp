@@ -42,6 +42,10 @@ BlogProfileDialog::BlogProfileDialog(QWidget *parent) :
     addButton = new QPushButton(tr("Add..."), this);
     modButton = new QPushButton(tr("Modify..."), this);
     delButton = new QPushButton(tr("Remove"), this);
+    if(blogProfileListWidget->currentItem() == 0) {
+        modButton->setEnabled(false);
+        delButton->setEnabled(false);
+    }
 
     buttonBox = new QDialogButtonBox(Qt::Vertical, this);
     buttonBox->addButton(addButton, QDialogButtonBox::ActionRole);
@@ -67,9 +71,13 @@ BlogProfileDialog::BlogProfileDialog(QWidget *parent) :
 void BlogProfileDialog::buttonClicked(QAbstractButton *button)
 {
     if(button == modButton) {
-        modifyBlogProfile(blogProfileListWidget->currentItem()->data(Qt::UserRole).value<BlogProfile>());
+        if(QListWidgetItem *item = blogProfileListWidget->currentItem()) {
+            modifyBlogProfile(item->data(Qt::UserRole).value<BlogProfile>());
+        }
     } else if(button == delButton) {
-        delBlogProfile(blogProfileListWidget->currentItem()->data(Qt::UserRole).value<BlogProfile>());
+        if(QListWidgetItem *item = blogProfileListWidget->currentItem()) {
+            delBlogProfile(item->data(Qt::UserRole).value<BlogProfile>());
+        }
     } else if(button == addButton) {
         addBlogProfile();
     } else if(button == buttonBox->button(QDialogButtonBox::Ok)) {
@@ -104,6 +112,10 @@ void BlogProfileDialog::addBlogProfile()
         item->setData(Qt::UserRole, var);
         blogProfileListWidget->addItem(item);
         blogProfileListWidget->setCurrentItem(item);
+        if(blogProfileListWidget->currentItem() != 0) {
+            modButton->setEnabled(true);
+            delButton->setEnabled(true);
+        }
     }
 }
 
