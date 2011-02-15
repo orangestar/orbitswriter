@@ -70,11 +70,11 @@ void MainWindow::createActions()
     listGroup = new QActionGroup(this);
     blogProfileGroup = new QActionGroup(this);
 
-    newPostAct = new QAction(QIcon(":/img/doc_new"), tr("&New"), this);
+    newPostAct = new QAction(QIcon::fromTheme("document-new", QIcon(":/img/doc_new")), tr("&New"), this);
     newPostAct->setShortcut(QKeySequence::New);
     newPostAct->setStatusTip(tr("Create a new post."));
 
-    openPostAct = new QAction(QIcon(":/img/open"), tr("&Open..."), this);
+    openPostAct = new QAction(QIcon::fromTheme("document-open", QIcon(":/img/open")), tr("&Open..."), this);
     openPostAct->setShortcut(QKeySequence::Open);
     openPostAct->setStatusTip(tr("Open a post."));
 
@@ -82,77 +82,77 @@ void MainWindow::createActions()
     closePostAct->setShortcut(QKeySequence::Close);
     closePostAct->setStatusTip(tr("Close the post."));
 
-    savePostAct = new QAction(QIcon(":/img/save"), tr("Save"), this);
+    savePostAct = new QAction(QIcon::fromTheme("document-save", QIcon(":/img/save")), tr("Save"), this);
     savePostAct->setEnabled(false);
     savePostAct->setShortcut(QKeySequence::Save);
     savePostAct->setStatusTip(tr("Save the post."));
 
-    saveAsPostAct = new QAction(QIcon(":/img/save_as"), tr("Save As"), this);
+    saveAsPostAct = new QAction(QIcon::fromTheme("document-save-as", QIcon(":/img/save_as")), tr("Save As"), this);
     saveAsPostAct->setShortcut(QKeySequence::SaveAs);
     saveAsPostAct->setStatusTip(tr("Save the post as another one."));
 
-    exitAct = new QAction(QIcon(":/img/exit"), tr("E&xit..."), this);
+    exitAct = new QAction(QIcon::fromTheme("application-exit", QIcon(":/img/exit")), tr("E&xit..."), this);
     exitAct->setMenuRole(QAction::QuitRole);
     exitAct->setShortcut(tr("Ctrl+Q"));
     exitAct->setStatusTip(tr("Exit OrbitsWriter."));
 
-    undoAct = new QAction(QIcon(":/img/undo"), tr("Undo"), this);
+    undoAct = new QAction(QIcon::fromTheme("edit-undo", QIcon(":/img/undo")), tr("Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
     undoAct->setStatusTip(tr("Undo."));
     undoAct->setEnabled(false);
 
-    redoAct = new QAction(QIcon(":/img/redo"), tr("Redo"), this);
+    redoAct = new QAction(QIcon::fromTheme("edit-redo", QIcon(":/img/redo")), tr("Redo"), this);
     redoAct->setShortcut(QKeySequence::Redo);
     redoAct->setStatusTip(tr("Redo."));
     redoAct->setEnabled(false);
 
-    cutAct = new QAction(QIcon(":/img/cut"), tr("Cut"), this);
+    cutAct = new QAction(QIcon::fromTheme("edit-cut", QIcon(":/img/cut")), tr("Cut"), this);
     cutAct->setShortcut(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut."));
     cutAct->setEnabled(false);
 
-    copyAct = new QAction(QIcon(":/img/copy"), tr("Copy"), this);
+    copyAct = new QAction(QIcon::fromTheme("edit-copy", QIcon(":/img/copy")), tr("Copy"), this);
     copyAct->setShortcut(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy."));
     copyAct->setEnabled(false);
 
-    pasteAct = new QAction(QIcon(":/img/paste"), tr("Paste"), this);
+    pasteAct = new QAction(QIcon::fromTheme("edit-paste", QIcon(":/img/paste")), tr("Paste"), this);
     pasteAct->setShortcut(QKeySequence::Paste);
     pasteAct->setStatusTip(tr("Paste."));
 
     pluginAct = new QAction(QIcon(":/img/plugin"), tr("Plugins..."), this);
     pluginAct->setStatusTip(tr("Manage plugins."));
 
-    helpAct = new QAction(QIcon(":/img/help"), tr("Help"), this);
+    helpAct = new QAction(QIcon::fromTheme("help-contents", QIcon(":/img/help")), tr("Help"), this);
     helpAct->setShortcut(QKeySequence::HelpContents);
     helpAct->setStatusTip(tr("Open help contents."));
 
-    aboutAct = new QAction(QIcon(":/img/about"), tr("About"), this);
+    aboutAct = new QAction(QIcon::fromTheme("help-about", QIcon(":/img/about")), tr("About"), this);
     aboutAct->setMenuRole(QAction::AboutRole);
     aboutAct->setStatusTip(tr("About OrbitsWriter."));
 
     publishAct = new QAction(QIcon(":/img/publish"), tr("Publish"), this);
     publishAct->setStatusTip(tr("Publish the post."));
 
-    textBoldAct = new QAction(QIcon(":/img/bold"), tr("Bold"), this);
+    textBoldAct = new QAction(QIcon::fromTheme("format-text-bold", QIcon(":/img/bold")), tr("Bold"), this);
     textBoldAct->setShortcut(Qt::CTRL + Qt::Key_B);
     textBoldAct->setStatusTip(tr("Set text bold."));
     textBoldAct->setCheckable(true);
     formatGroup->addAction(textBoldAct);
 
-    textItalicAct = new QAction(QIcon(":/img/italic"), tr("Italic"), this);
+    textItalicAct = new QAction(QIcon::fromTheme("format-text-italic", QIcon(":/img/italic")), tr("Italic"), this);
     textItalicAct->setShortcut(Qt::CTRL + Qt::Key_I);
     textItalicAct->setStatusTip(tr("Set text italic."));
     textItalicAct->setCheckable(true);
     formatGroup->addAction(textItalicAct);
 
-    textUnderlineAct = new QAction(QIcon(":/img/underline"), tr("Underline"), this);
+    textUnderlineAct = new QAction(QIcon::fromTheme("format-text-underline", QIcon(":/img/underline")), tr("Underline"), this);
     textUnderlineAct->setShortcut(Qt::CTRL + Qt::Key_U);
     textUnderlineAct->setStatusTip(tr("Add underline."));
     textUnderlineAct->setCheckable(true);
     formatGroup->addAction(textUnderlineAct);
 
-    textStrikeoutAct = new QAction(QIcon(":/img/strike"), tr("Strike"), this);
+    textStrikeoutAct = new QAction(QIcon::fromTheme("format-text-strikethrough", QIcon(":/img/strike")), tr("Strike"), this);
     textStrikeoutAct->setShortcut(Qt::CTRL + Qt::Key_D);
     textStrikeoutAct->setStatusTip(tr("Strike out."));
     textStrikeoutAct->setCheckable(true);
@@ -184,12 +184,12 @@ void MainWindow::createActions()
     bulletListAct->setCheckable(true);
     listGroup->addAction(bulletListAct);
 
-    indentMoreAct = new QAction(QIcon(":/img/indent_more"), tr("Indent More"), this);
+    indentMoreAct = new QAction(QIcon::fromTheme("format-indent-more", QIcon(":/img/indent_more")), tr("Indent More"), this);
     indentMoreAct->setStatusTip(tr("Indent list more."));
     indentMoreAct->setShortcut(Qt::Key_Tab);
     eleGroup->addAction(indentMoreAct);
 
-    indentLessAct = new QAction(QIcon(":/img/indent_less"), tr("Indent Less"), this);
+    indentLessAct = new QAction(QIcon::fromTheme("format-indent-less", QIcon(":/img/indent_less")), tr("Indent Less"), this);
     indentLessAct->setStatusTip(tr("Indent list less."));
     indentLessAct->setShortcut(Qt::CTRL + Qt::Key_Backspace);
     eleGroup->addAction(indentLessAct);
@@ -262,26 +262,26 @@ void MainWindow::createActions()
     tableCellClearAct->setStatusTip(tr("Clear cell."));
     eleGroup->addAction(tableCellClearAct);
 
-    alignCenterAct = new QAction(QIcon(":/img/justify_center"), tr("Center"), this);
+    alignCenterAct = new QAction(QIcon::fromTheme("format-justify-center", QIcon(":/img/justify_center")), tr("Center"), this);
     alignCenterAct->setStatusTip(tr("Justify center."));
     alignCenterAct->setShortcut(Qt::CTRL + Qt::Key_E);
     alignCenterAct->setCheckable(true);
     alignGroup->addAction(alignCenterAct);
 
-    alignJustifyAct = new QAction(QIcon(":/img/justify_fill"), tr("Fill"), this);
+    alignJustifyAct = new QAction(QIcon::fromTheme("format-justify-fill", QIcon(":/img/justify_fill")), tr("Fill"), this);
     alignJustifyAct->setStatusTip(tr("Justify fill."));
     alignJustifyAct->setShortcut(Qt::CTRL + Qt::Key_F);
     alignJustifyAct->setCheckable(true);
     alignJustifyAct->setChecked(true);
     alignGroup->addAction(alignJustifyAct);
 
-    alignLeftAct = new QAction(QIcon(":/img/justify_left"), tr("Left"), this);
+    alignLeftAct = new QAction(QIcon::fromTheme("format-justify-left", QIcon(":/img/justify_left")), tr("Left"), this);
     alignLeftAct->setStatusTip(tr("Justify left."));
     alignLeftAct->setShortcut(Qt::CTRL + Qt::Key_L);
     alignLeftAct->setCheckable(true);
     alignGroup->addAction(alignLeftAct);
 
-    alignRightAct = new QAction(QIcon(":/img/justify_right"), tr("Right"), this);
+    alignRightAct = new QAction(QIcon::fromTheme("format-justify-right", QIcon(":/img/justify_right")), tr("Right"), this);
     alignRightAct->setStatusTip(tr("Justify Right."));
     alignRightAct->setShortcut(Qt::CTRL + Qt::Key_R);
     alignRightAct->setCheckable(true);
